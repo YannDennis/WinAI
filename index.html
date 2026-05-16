@@ -3,150 +3,255 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WinAI — Pronostics IA Paris Sportifs</title>
+<title>WinAI.pro — Pronostics IA pour Paris Sportifs</title>
+<meta name="description" content="Analyse chaque match en quelques secondes grâce à l'IA. Pronostics Football, Tennis, Basketball, Rugby et MMA. 1er pronostic gratuit, sans inscription.">
+<meta property="og:title" content="WinAI.pro — Pronostics IA Paris Sportifs">
+<meta property="og:description" content="Analyse chaque match en quelques secondes grâce à l'IA.">
+<meta property="og:url" content="https://winai.pro">
+<meta name="theme-color" content="#E8182C">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root{--red:#E8182C;--red-light:#FF3347;--black:#0A0A0A;--black-2:#111;--black-3:#1A1A1A;--black-4:#242424;--gray:#888;--gray-light:#AAA;--white:#F5F5F5;}
-  *{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
-  body{background:var(--black);color:var(--white);font-family:'DM Sans',sans-serif;font-size:16px;line-height:1.6;overflow-x:hidden;}
-  nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1.2rem 6%;background:rgba(10,10,10,0.96);border-bottom:1px solid rgba(232,24,44,0.15);}
-  .nav-logo{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;}.nav-logo span{color:var(--red);}
-  .nav-links{display:flex;gap:2rem;align-items:center;}
-  .nav-links a{color:var(--gray-light);text-decoration:none;font-size:14px;font-weight:500;transition:color .2s;}
-  .nav-links a:hover{color:var(--white);}
-  .nav-cta{background:var(--red)!important;color:var(--white)!important;padding:8px 20px;border-radius:4px;font-weight:600!important;}
-  .hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:8rem 6% 5rem;position:relative;overflow:hidden;}
-  .hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 60% 60% at 80% 50%,rgba(232,24,44,0.1) 0%,transparent 70%);}
-  .hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(232,24,44,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(232,24,44,0.03) 1px,transparent 1px);background-size:60px 60px;}
-  .hero-tag{display:inline-flex;align-items:center;gap:8px;background:rgba(232,24,44,0.1);border:1px solid rgba(232,24,44,0.3);border-radius:2px;padding:6px 14px;font-size:12px;font-weight:600;letter-spacing:.1em;color:var(--red-light);text-transform:uppercase;margin-bottom:1.5rem;width:fit-content;position:relative;z-index:1;animation:fadeUp .6s ease both;}
-  .live-dot{width:6px;height:6px;background:var(--red);border-radius:50%;animation:pulse 1.5s infinite;}
-  @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.4)}}
-  .hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(4rem,10vw,9rem);line-height:.92;letter-spacing:2px;position:relative;z-index:1;animation:fadeUp .7s .1s ease both;}
-  .hero h1 .outline{-webkit-text-stroke:2px var(--white);color:transparent;}.hero h1 .red{color:var(--red);}
-  .hero-sub{font-size:18px;color:var(--gray-light);font-weight:300;max-width:520px;margin-top:1.5rem;position:relative;z-index:1;animation:fadeUp .7s .2s ease both;}
-  .hero-actions{display:flex;gap:1rem;margin-top:2.5rem;flex-wrap:wrap;position:relative;z-index:1;animation:fadeUp .7s .3s ease both;}
-  .btn-primary{background:var(--red);color:var(--white);padding:14px 32px;border-radius:4px;font-size:15px;font-weight:600;text-decoration:none;transition:background .2s,transform .1s;display:inline-flex;align-items:center;gap:8px;}
-  .btn-primary:hover{background:var(--red-light);transform:translateY(-1px);}
-  .btn-secondary{background:transparent;color:var(--white);padding:14px 32px;border-radius:4px;border:1px solid rgba(255,255,255,0.2);font-size:15px;font-weight:500;text-decoration:none;transition:border-color .2s;cursor:pointer;font-family:'DM Sans',sans-serif;}
-  .btn-secondary:hover{border-color:var(--white);}
-  section{padding:6rem 6%;}
-  .section-label{font-size:12px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--red);margin-bottom:.75rem;}
-  .section-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,5vw,4.5rem);letter-spacing:1px;line-height:1;margin-bottom:1.25rem;}
-  .section-sub{color:var(--gray-light);max-width:520px;font-size:16px;}
-  .divider{height:1px;background:linear-gradient(90deg,transparent,rgba(232,24,44,0.3),transparent);margin:0 6%;}
-  .matches-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px;margin-top:2rem;}
-  .match-card{background:var(--black-2);border:1px solid var(--black-4);border-radius:6px;padding:1.25rem;cursor:pointer;transition:border-color .2s,transform .15s;position:relative;}
-  .match-card:hover{border-color:rgba(232,24,44,0.4);transform:translateY(-2px);}
-  .match-hint{position:absolute;bottom:.75rem;right:1rem;font-size:11px;color:var(--red);font-weight:600;opacity:0;transition:opacity .2s;}
-  .match-card:hover .match-hint{opacity:1;}
-  .match-league{font-size:11px;color:var(--gray);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.75rem;display:flex;align-items:center;gap:6px;}
-  .league-dot{width:5px;height:5px;background:var(--red);border-radius:50%;}
-  .match-teams{display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem;}
-  .match-team{font-weight:600;font-size:15px;}
-  .match-vs{font-size:11px;color:var(--gray);padding:3px 8px;border:1px solid var(--black-4);border-radius:2px;}
-  .match-time{font-size:12px;color:var(--gray);margin-bottom:.75rem;}
-  .prob-bars{display:flex;gap:3px;margin-bottom:4px;}.prob-bar{height:3px;border-radius:2px;}
-  .prob-w{background:var(--red);}.prob-d{background:var(--gray);}.prob-l{background:var(--black-4);}
-  .prob-labels{display:flex;justify-content:space-between;}.prob-label{font-size:10px;color:var(--gray);}
-  #prono{background:var(--black-2);border-top:1px solid var(--black-4);border-bottom:1px solid var(--black-4);}
-  .prono-inner{max-width:720px;}
-  .sport-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1.5rem;}
-  .sport-tab{padding:8px 16px;border:1px solid var(--black-4);border-radius:20px;background:var(--black-3);color:var(--gray-light);font-size:13px;cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif;}
-  .sport-tab.active{border-color:var(--red);color:var(--white);background:rgba(232,24,44,0.1);font-weight:600;}
-  .mode-toggle{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--black-4);border-radius:4px;overflow:hidden;margin-bottom:8px;}
-  .mode-btn{padding:11px;background:var(--black-3);color:var(--gray);font-size:13px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px;}
-  .mode-btn:first-child{border-right:1px solid var(--black-4);}.mode-btn.active{background:var(--black-4);color:var(--white);font-weight:600;}
-  .mode-desc{font-size:12px;color:var(--gray);margin-bottom:1.5rem;}
-  .input-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
-  .input-group label{display:block;font-size:12px;color:var(--gray);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em;}
-  .input-group input,.input-group select{width:100%;background:var(--black-3);border:1px solid var(--black-4);color:var(--white);padding:10px 14px;border-radius:4px;font-size:14px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s;}
-  .input-group input:focus,.input-group select:focus{border-color:var(--red);}
-  .input-group select option{background:var(--black-3);}.full{grid-column:1/-1;}
+:root{--red:#E8182C;--red-light:#FF3347;--black:#0A0A0A;--black-2:#111;--black-3:#1A1A1A;--black-4:#242424;--gray:#888;--gray-light:#AAA;--white:#F5F5F5;}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--black);color:var(--white);font-family:'DM Sans',sans-serif;font-size:16px;line-height:1.6;overflow-x:hidden;}
 
-  /* HISTORIQUE */
-  .history-block{background:var(--black-3);border:1px solid var(--black-4);border-radius:6px;padding:1.5rem;margin-bottom:1.5rem;}
-  .history-title{font-size:14px;font-weight:600;color:var(--white);margin-bottom:1.25rem;display:flex;align-items:center;gap:8px;}
-  .hist-sublabel{font-size:11px;color:var(--gray);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.6rem;}
-  .hist-chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1.25rem;}
-  .hist-chip{padding:7px 16px;border:1px solid var(--black-4);border-radius:20px;background:var(--black-4);color:var(--gray);font-size:13px;cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif;}
-  .hist-chip.active{border-color:var(--red);color:var(--white);background:rgba(232,24,44,0.12);font-weight:600;}
-  .toggle-row{display:flex;align-items:center;gap:12px;cursor:pointer;user-select:none;}
-  .toggle-sw{width:38px;height:22px;background:var(--black-4);border-radius:11px;position:relative;transition:background .2s;flex-shrink:0;border:1px solid var(--black-4);}
-  .toggle-sw.on{background:var(--red);border-color:var(--red);}
-  .toggle-knob{width:16px;height:16px;background:white;border-radius:50%;position:absolute;top:2px;left:2px;transition:left .2s;}
-  .toggle-sw.on .toggle-knob{left:18px;}
-  .toggle-label{font-size:13px;color:var(--gray-light);}
+/* ===== SPLASH ===== */
+#splash{position:fixed;inset:0;z-index:9999;background:#0A0A0A;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .8s ease,visibility .8s ease;}
+#splash.hidden{opacity:0;visibility:hidden;pointer-events:none;}
+.splash-logo-box{width:380px;height:155px;background:#E8182C;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;animation:boxGlow 2.5s .3s ease forwards;box-shadow:0 0 0 rgba(232,24,44,0);}
+@keyframes boxGlow{0%{box-shadow:0 0 0 rgba(232,24,44,0)}50%{box-shadow:0 0 80px rgba(232,24,44,.7)}100%{box-shadow:0 0 40px rgba(232,24,44,.4)}}
+.splash-shimmer{position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.15),transparent);animation:shimmer 1.5s 1s ease forwards;}
+@keyframes shimmer{to{left:150%}}
+.splash-text{font-family:'Bebas Neue',sans-serif;font-size:86px;font-weight:900;display:flex;align-items:center;justify-content:center;width:100%;opacity:0;transform:scale(.85);animation:zoomFade 1s .3s cubic-bezier(.22,1,.36,1) forwards;letter-spacing:-2px;}
+.splash-win{color:#0D0D0D;}
+.splash-ai{color:#FFF;}
+@keyframes zoomFade{to{opacity:1;transform:scale(1)}}
+.splash-bottom{display:flex;flex-direction:column;align-items:center;width:100%;gap:5px;}
+.splash-line{width:0;height:1.5px;background:rgba(0,0,0,.2);animation:expandLine .7s .8s ease forwards;}
+@keyframes expandLine{to{width:320px}}
+.splash-tag{font-size:10px;letter-spacing:5px;color:rgba(0,0,0,.4);text-transform:uppercase;text-align:center;opacity:0;animation:fadeUpS .8s 1s ease forwards;}
+@keyframes fadeUpS{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.splash-dots{margin-top:40px;display:flex;gap:8px;align-items:center;opacity:0;animation:fadeUpS .5s 1.5s ease forwards;}
+.splash-dot{width:7px;height:7px;border-radius:50%;background:#E8182C;animation:dotPulse 1.2s infinite;}
+.splash-dot:nth-child(2){animation-delay:.2s;}
+.splash-dot:nth-child(3){animation-delay:.4s;}
+@keyframes dotPulse{0%,100%{opacity:.3;transform:scale(.8)}50%{opacity:1;transform:scale(1.2)}}
 
-  .mise-row{display:flex;gap:8px;margin-bottom:1.5rem;flex-wrap:wrap;}
-  .mise-chip{padding:6px 16px;border:1px solid var(--black-4);border-radius:20px;background:var(--black-3);color:var(--gray);font-size:13px;cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif;}
-  .mise-chip.active{border-color:var(--red);color:var(--white);background:rgba(232,24,44,0.08);}
-  .generate-btn{width:100%;padding:14px;border-radius:4px;background:var(--red);color:var(--white);border:none;font-size:15px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .2s;display:flex;align-items:center;justify-content:center;gap:8px;}
-  .generate-btn:hover{background:var(--red-light);}
+/* ===== NAV ===== */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 6%;height:64px;background:rgba(10,10,10,.97);border-bottom:1px solid rgba(232,24,44,.12);}
+.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:3px;color:var(--white);text-decoration:none;}
+.nav-logo span{color:var(--red);}
+.nav-center{display:flex;gap:0;align-items:center;}
+.nav-link{color:var(--gray-light);text-decoration:none;font-size:13px;font-weight:500;letter-spacing:.04em;padding:8px 18px;border-radius:4px;transition:all .2s;position:relative;}
+.nav-link:hover{color:var(--white);}
+.nav-link.active{color:var(--white);}
+.nav-link::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:0;height:2px;background:var(--red);transition:width .2s;border-radius:2px;}
+.nav-link:hover::after,.nav-link.active::after{width:60%;}
+.nav-right{display:flex;gap:10px;align-items:center;}
+.nav-login{color:var(--gray-light);text-decoration:none;font-size:13px;font-weight:500;padding:7px 16px;border:1px solid rgba(255,255,255,.12);border-radius:4px;transition:all .2s;}
+.nav-login:hover{border-color:rgba(255,255,255,.3);color:var(--white);}
+.nav-cta{background:var(--red);color:var(--white);text-decoration:none;font-size:13px;font-weight:600;padding:8px 20px;border-radius:4px;transition:background .2s;letter-spacing:.03em;}
+.nav-cta:hover{background:var(--red-light);}
 
-  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:2px;margin-top:3rem;border:1px solid var(--black-4);}
-  .step{background:var(--black-2);padding:2.5rem 2rem;position:relative;overflow:hidden;transition:background .2s;}
-  .step:hover{background:var(--black-3);}
-  .step::before{content:attr(data-num);font-family:'Bebas Neue',sans-serif;font-size:6rem;color:rgba(232,24,44,0.05);position:absolute;top:-1rem;right:1rem;line-height:1;}
-  .step-icon{width:42px;height:42px;background:rgba(232,24,44,0.1);border:1px solid rgba(232,24,44,0.2);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:1.25rem;}
-  .step h3{font-size:17px;font-weight:600;margin-bottom:.5rem;}.step p{font-size:14px;color:var(--gray);line-height:1.6;}
-  .pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.5rem;margin-top:3rem;max-width:700px;}
-  .price-card{background:var(--black-2);border:1px solid var(--black-4);border-radius:4px;padding:2.5rem 2rem;}
-  .price-card.popular{border-color:var(--red);position:relative;}
-  .popular-tag{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--red);color:white;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 16px;border-radius:2px;white-space:nowrap;}
-  .price-name{font-size:13px;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:.1em;margin-bottom:1rem;}
-  .price-amount{font-family:'Bebas Neue',sans-serif;font-size:52px;letter-spacing:1px;line-height:1;margin-bottom:.25rem;}
-  .price-amount sup{font-family:'DM Sans',sans-serif;font-size:22px;vertical-align:super;}
-  .price-period{font-size:13px;color:var(--gray);margin-bottom:2rem;}
-  .price-features{list-style:none;display:flex;flex-direction:column;gap:.75rem;margin-bottom:2rem;}
-  .price-features li{font-size:14px;display:flex;align-items:center;gap:8px;}
-  .check{color:var(--red);font-weight:700;}
-  .price-btn{display:block;width:100%;text-align:center;padding:12px;border-radius:4px;font-size:14px;font-weight:600;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;transition:all .2s;text-decoration:none;}
-  .price-btn-outline{border:1px solid rgba(255,255,255,0.2);color:var(--white);background:transparent;}
-  .price-btn-outline:hover{border-color:var(--white);}
-  .price-btn-red{background:var(--red);color:white;}.price-btn-red:hover{background:var(--red-light);}
-  .cta-band{background:var(--red);padding:4rem 6%;text-align:center;}
-  .cta-band h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,5vw,4rem);letter-spacing:2px;margin-bottom:1rem;}
-  .cta-band p{color:rgba(255,255,255,0.8);font-size:17px;margin-bottom:2rem;}
-  .btn-white{background:white;color:var(--red);padding:14px 36px;border-radius:4px;font-size:15px;font-weight:700;text-decoration:none;display:inline-block;transition:transform .15s;}
-  .btn-white:hover{transform:translateY(-2px);}
-  .disclaimer-bar{background:var(--black-2);border-top:1px solid var(--black-4);padding:1.25rem 6%;text-align:center;font-size:12px;color:var(--gray);line-height:1.8;}
-  footer{background:var(--black);border-top:1px solid var(--black-4);padding:2.5rem 6%;}
-  .footer-inner{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;}
-  .footer-logo{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;}.footer-logo span{color:var(--red);}
-  .footer-links{display:flex;gap:1.5rem;}
-  .footer-links a{font-size:13px;color:var(--gray);text-decoration:none;transition:color .2s;}
-  .footer-links a:hover{color:var(--white);}
-  .footer-copy{font-size:12px;color:var(--gray);width:100%;text-align:center;margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--black-4);}
-  @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-  @media(max-width:768px){.nav-links{display:none}.input-row{grid-template-columns:1fr}}
+/* ===== HERO ===== */
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:8rem 6% 5rem;position:relative;overflow:hidden;}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 60% 60% at 80% 50%,rgba(232,24,44,.1) 0%,transparent 70%);}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(232,24,44,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(232,24,44,.03) 1px,transparent 1px);background-size:60px 60px;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(232,24,44,.1);border:1px solid rgba(232,24,44,.3);border-radius:2px;padding:6px 14px;font-size:11px;font-weight:600;letter-spacing:.12em;color:var(--red-light);text-transform:uppercase;margin-bottom:1.5rem;width:fit-content;position:relative;z-index:1;animation:fadeUp .6s ease both;}
+.live-dot{width:6px;height:6px;background:var(--red);border-radius:50%;animation:livePulse 1.5s infinite;}
+@keyframes livePulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.4)}}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(4rem,10vw,9rem);line-height:.92;letter-spacing:2px;position:relative;z-index:1;animation:fadeUp .7s .1s ease both;}
+.hero h1 .outline{-webkit-text-stroke:2px var(--white);color:transparent;}
+.hero h1 .red{color:var(--red);}
+.hero-sub{font-size:18px;color:var(--gray-light);font-weight:300;max-width:520px;margin-top:1.5rem;position:relative;z-index:1;animation:fadeUp .7s .2s ease both;}
+.hero-actions{display:flex;gap:1rem;margin-top:2.5rem;flex-wrap:wrap;position:relative;z-index:1;animation:fadeUp .7s .3s ease both;}
+.btn-primary{background:var(--red);color:var(--white);padding:14px 32px;border-radius:4px;font-size:15px;font-weight:600;text-decoration:none;transition:background .2s,transform .1s;display:inline-flex;align-items:center;gap:8px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.btn-primary:hover{background:var(--red-light);transform:translateY(-1px);}
+.btn-secondary{background:transparent;color:var(--white);padding:14px 32px;border-radius:4px;border:1px solid rgba(255,255,255,.2);font-size:15px;font-weight:500;text-decoration:none;transition:border-color .2s;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.btn-secondary:hover{border-color:var(--white);}
+.hero-note{font-size:12px;color:var(--gray);margin-top:1rem;position:relative;z-index:1;animation:fadeUp .7s .4s ease both;}
+
+/* ===== SECTIONS ===== */
+section{padding:6rem 6%;}
+.section-label{font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--red);margin-bottom:.75rem;}
+.section-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,5vw,4.5rem);letter-spacing:1px;line-height:1;margin-bottom:1.25rem;}
+.section-sub{color:var(--gray-light);max-width:520px;font-size:16px;}
+.divider{height:1px;background:linear-gradient(90deg,transparent,rgba(232,24,44,.3),transparent);margin:0 6%;}
+
+/* ===== MATCHS ===== */
+.matches-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px;margin-top:2rem;}
+.match-card{background:var(--black-2);border:1px solid var(--black-4);border-radius:6px;padding:1.25rem;cursor:pointer;transition:border-color .2s,transform .15s;position:relative;}
+.match-card:hover{border-color:rgba(232,24,44,.4);transform:translateY(-2px);}
+.match-hint{position:absolute;bottom:.75rem;right:1rem;font-size:11px;color:var(--red);font-weight:600;opacity:0;transition:opacity .2s;}
+.match-card:hover .match-hint{opacity:1;}
+.match-league{font-size:11px;color:var(--gray);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.75rem;display:flex;align-items:center;gap:6px;}
+.league-dot{width:5px;height:5px;background:var(--red);border-radius:50%;}
+.match-teams{display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem;}
+.match-team{font-weight:600;font-size:15px;}
+.match-vs{font-size:11px;color:var(--gray);padding:3px 8px;border:1px solid var(--black-4);border-radius:2px;}
+.match-time{font-size:12px;color:var(--gray);margin-bottom:.75rem;}
+.prob-bars{display:flex;gap:3px;margin-bottom:4px;}
+.prob-bar{height:3px;border-radius:2px;}
+.prob-w{background:var(--red);}
+.prob-d{background:var(--gray);}
+.prob-l{background:var(--black-4);}
+.prob-labels{display:flex;justify-content:space-between;}
+.prob-label{font-size:10px;color:var(--gray);}
+
+/* ===== PRONO ===== */
+#prono{background:var(--black-2);border-top:1px solid var(--black-4);border-bottom:1px solid var(--black-4);}
+.prono-inner{max-width:720px;}
+.sport-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1.5rem;}
+.sport-tab{padding:8px 16px;border:1px solid var(--black-4);border-radius:20px;background:var(--black-3);color:var(--gray-light);font-size:13px;cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif;}
+.sport-tab.active{border-color:var(--red);color:var(--white);background:rgba(232,24,44,.1);font-weight:600;}
+.mode-toggle{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--black-4);border-radius:4px;overflow:hidden;margin-bottom:8px;}
+.mode-btn{padding:11px;background:var(--black-3);color:var(--gray);font-size:13px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px;}
+.mode-btn:first-child{border-right:1px solid var(--black-4);}
+.mode-btn.active{background:var(--black-4);color:var(--white);font-weight:600;}
+.mode-desc{font-size:12px;color:var(--gray);margin-bottom:1.5rem;}
+.input-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+.input-group label{display:block;font-size:11px;color:var(--gray);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em;}
+.input-group input{width:100%;background:var(--black-3);border:1px solid var(--black-4);color:var(--white);padding:10px 14px;border-radius:4px;font-size:14px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s;}
+.input-group input:focus{border-color:var(--red);}
+.full{grid-column:1/-1;}
+.history-block{background:var(--black-3);border:1px solid var(--black-4);border-radius:6px;padding:1.5rem;margin-bottom:1.5rem;}
+.history-title{font-size:14px;font-weight:600;color:var(--white);margin-bottom:1.25rem;display:flex;align-items:center;gap:8px;}
+.hist-sublabel{font-size:11px;color:var(--gray);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.6rem;}
+.hist-chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1.25rem;}
+.hist-chip{padding:7px 16px;border:1px solid var(--black-4);border-radius:20px;background:var(--black-4);color:var(--gray);font-size:13px;cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif;}
+.hist-chip.active{border-color:var(--red);color:var(--white);background:rgba(232,24,44,.12);font-weight:600;}
+.toggle-row{display:flex;align-items:center;gap:12px;cursor:pointer;user-select:none;}
+.toggle-sw{width:38px;height:22px;background:var(--black-4);border-radius:11px;position:relative;transition:background .2s;flex-shrink:0;}
+.toggle-sw.on{background:var(--red);}
+.toggle-knob{width:16px;height:16px;background:white;border-radius:50%;position:absolute;top:3px;left:3px;transition:left .2s;}
+.toggle-sw.on .toggle-knob{left:19px;}
+.toggle-label{font-size:13px;color:var(--gray-light);}
+.mise-row{display:flex;gap:8px;margin-bottom:1.5rem;flex-wrap:wrap;}
+.mise-chip{padding:6px 16px;border:1px solid var(--black-4);border-radius:20px;background:var(--black-3);color:var(--gray);font-size:13px;cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif;}
+.mise-chip.active{border-color:var(--red);color:var(--white);background:rgba(232,24,44,.08);}
+.generate-btn{width:100%;padding:14px;border-radius:4px;background:var(--red);color:var(--white);border:none;font-size:15px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .2s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.generate-btn:hover{background:var(--red-light);}
+.prono-note{font-size:12px;color:var(--gray);margin-top:10px;text-align:center;}
+
+/* ===== STEPS ===== */
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:2px;margin-top:3rem;border:1px solid var(--black-4);}
+.step{background:var(--black-2);padding:2.5rem 2rem;position:relative;overflow:hidden;transition:background .2s;}
+.step:hover{background:var(--black-3);}
+.step::before{content:attr(data-num);font-family:'Bebas Neue',sans-serif;font-size:6rem;color:rgba(232,24,44,.05);position:absolute;top:-1rem;right:1rem;line-height:1;}
+.step-icon{width:42px;height:42px;background:rgba(232,24,44,.1);border:1px solid rgba(232,24,44,.2);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:1.25rem;}
+.step h3{font-size:17px;font-weight:600;margin-bottom:.5rem;}
+.step p{font-size:14px;color:var(--gray);line-height:1.6;}
+
+/* ===== ABONNEMENT ===== */
+#abonnement{position:relative;}
+.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.5rem;margin-top:3rem;max-width:900px;}
+.price-card{background:var(--black-2);border:1px solid var(--black-4);border-radius:6px;padding:2.5rem 2rem;transition:transform .2s;position:relative;}
+.price-card:hover{transform:translateY(-3px);}
+.price-card.popular{border-color:var(--red);}
+.popular-tag{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--red);color:white;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 16px;border-radius:2px;white-space:nowrap;}
+.price-name{font-size:11px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.15em;margin-bottom:1rem;}
+.price-amount{font-family:'Bebas Neue',sans-serif;font-size:56px;letter-spacing:1px;line-height:1;margin-bottom:.25rem;}
+.price-amount sup{font-family:'DM Sans',sans-serif;font-size:22px;vertical-align:super;}
+.price-amount .cents{font-size:32px;}
+.price-period{font-size:13px;color:var(--gray);margin-bottom:2rem;}
+.price-features{list-style:none;display:flex;flex-direction:column;gap:.75rem;margin-bottom:2rem;}
+.price-features li{font-size:14px;display:flex;align-items:center;gap:8px;}
+.check{color:var(--red);font-weight:700;}
+.price-btn{display:block;width:100%;text-align:center;padding:12px;border-radius:4px;font-size:14px;font-weight:600;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;transition:all .2s;text-decoration:none;}
+.price-btn-outline{border:1px solid rgba(255,255,255,.2)!important;color:var(--white);background:transparent;}
+.price-btn-outline:hover{border-color:var(--white)!important;}
+.price-btn-red{background:var(--red);color:white;}
+.price-btn-red:hover{background:var(--red-light);}
+.price-highlight{font-size:12px;color:var(--red);font-weight:600;margin-bottom:1rem;display:flex;align-items:center;gap:6px;}
+
+/* ===== AVIS ===== */
+#avis{background:var(--black-2);border-top:1px solid var(--black-4);border-bottom:1px solid var(--black-4);}
+.avis-form{max-width:600px;margin-top:2.5rem;}
+.avis-form textarea{width:100%;background:var(--black-3);border:1px solid var(--black-4);color:var(--white);padding:14px;border-radius:4px;font-size:14px;font-family:'DM Sans',sans-serif;outline:none;resize:vertical;min-height:100px;transition:border-color .2s;margin-bottom:12px;}
+.avis-form textarea:focus{border-color:var(--red);}
+.avis-form input{width:100%;background:var(--black-3);border:1px solid var(--black-4);color:var(--white);padding:10px 14px;border-radius:4px;font-size:14px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s;margin-bottom:12px;}
+.avis-form input:focus{border-color:var(--red);}
+.reward-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(232,24,44,.08);border:1px solid rgba(232,24,44,.2);border-radius:4px;padding:10px 16px;font-size:13px;color:var(--gray-light);margin-bottom:1.5rem;}
+.reward-badge strong{color:var(--red);}
+
+/* ===== CTA ===== */
+.cta-band{background:var(--red);padding:4rem 6%;text-align:center;}
+.cta-band h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,5vw,4rem);letter-spacing:2px;margin-bottom:1rem;}
+.cta-band p{color:rgba(255,255,255,.8);font-size:17px;margin-bottom:2rem;}
+.btn-white{background:white;color:var(--red);padding:14px 36px;border-radius:4px;font-size:15px;font-weight:700;text-decoration:none;display:inline-block;transition:transform .15s;}
+.btn-white:hover{transform:translateY(-2px);}
+
+/* ===== DISCLAIMER ===== */
+.disclaimer-bar{background:var(--black-2);border-top:1px solid var(--black-4);padding:1.25rem 6%;text-align:center;font-size:12px;color:var(--gray);line-height:1.8;}
+
+/* ===== FOOTER ===== */
+footer{background:var(--black);border-top:1px solid var(--black-4);padding:3rem 6% 2rem;}
+.footer-top{display:grid;grid-template-columns:1fr 1fr 1fr;gap:3rem;margin-bottom:2rem;}
+.footer-logo{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:2px;margin-bottom:.75rem;}
+.footer-logo span{color:var(--red);}
+.footer-desc{font-size:13px;color:var(--gray);line-height:1.7;}
+.footer-col h4{font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--gray-light);margin-bottom:1rem;}
+.footer-col a{display:block;font-size:13px;color:var(--gray);text-decoration:none;margin-bottom:.5rem;transition:color .2s;}
+.footer-col a:hover{color:var(--white);}
+.footer-bottom{display:flex;justify-content:space-between;align-items:center;padding-top:1.5rem;border-top:1px solid var(--black-4);font-size:12px;color:var(--gray);}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:768px){.nav-center{display:none}.input-row{grid-template-columns:1fr}.footer-top{grid-template-columns:1fr}.footer-bottom{flex-direction:column;gap:.5rem;text-align:center}}
 </style>
 </head>
 <body>
 
+<!-- SPLASH -->
+<div id="splash">
+  <div class="splash-logo-box">
+    <div class="splash-shimmer"></div>
+    <div class="splash-text"><span class="splash-win">WIN</span><span class="splash-ai">AI</span></div>
+    <div class="splash-bottom">
+      <div class="splash-line"></div>
+      <div class="splash-tag">Pronostics · Intelligence Artificielle</div>
+    </div>
+  </div>
+  <div class="splash-dots">
+    <div class="splash-dot"></div>
+    <div class="splash-dot"></div>
+    <div class="splash-dot"></div>
+  </div>
+</div>
+
+<!-- NAV -->
 <nav>
-  <div class="nav-logo">WIN<span>AI</span></div>
-  <div class="nav-links">
-    <a href="#matchs">Matchs du jour</a>
-    <a href="#prono">Pronostics</a>
-    <a href="#comment">Comment ça marche</a>
-    <a href="#tarifs">Tarifs</a>
-    <a href="#prono" class="nav-cta">Analyser un match</a>
+  <a href="#" class="nav-logo">WIN<span>AI</span></a>
+  <div class="nav-center">
+    <a href="#matchs" class="nav-link">Matchs du jour</a>
+    <a href="#prono" class="nav-link">Pronostics</a>
+    <a href="#comment" class="nav-link">Comment ça marche</a>
+    <a href="#abonnement" class="nav-link">Abonnement</a>
+    <a href="#avis" class="nav-link">Avis</a>
+  </div>
+  <div class="nav-right">
+    <a href="#" class="nav-login">Connexion</a>
+    <a href="#abonnement" class="nav-cta">Commencer</a>
   </div>
 </nav>
 
+<!-- HERO -->
 <section class="hero">
-  <div class="hero-bg"></div><div class="hero-grid"></div>
-  <div class="hero-tag"><div class="live-dot"></div> IA · Pronostics en temps réel</div>
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-badge"><div class="live-dot"></div> IA · Pronostics en temps réel</div>
   <h1>PARIE<br>PLUS <span class="red">SMART</span><br><span class="outline">GAGNE PLUS</span></h1>
-  <p class="hero-sub">WinAI analyse chaque match — forme, historique des derniers matchs, stats — et te donne un pronostic clair en quelques secondes.</p>
+  <p class="hero-sub">WinAI analyse chaque match — forme, historique, stats — et te donne un pronostic clair et argumenté en quelques secondes.</p>
   <div class="hero-actions">
     <a href="#prono" class="btn-primary">⚡ Analyser un match</a>
     <a href="#matchs" class="btn-secondary">Matchs du jour</a>
   </div>
+  <p class="hero-note">✓ 1er pronostic gratuit · Sans inscription · Sans carte bancaire</p>
 </section>
 
 <div class="divider"></div>
 
+<!-- MATCHS -->
 <section id="matchs">
   <div class="section-label">Live & À venir</div>
   <div class="section-title">MATCHS DU JOUR</div>
@@ -156,12 +261,12 @@
 
 <div class="divider"></div>
 
+<!-- PRONO -->
 <section id="prono">
   <div class="prono-inner">
     <div class="section-label">Générateur</div>
     <div class="section-title">TON PRONOSTIC IA</div>
     <p class="section-sub" style="margin-bottom:2rem;">Configure ton analyse et l'IA fait le reste.</p>
-
     <div class="sport-tabs">
       <button class="sport-tab active" onclick="setSport(this,'Football')">⚽ Football</button>
       <button class="sport-tab" onclick="setSport(this,'Basketball')">🏀 Basketball</button>
@@ -169,20 +274,17 @@
       <button class="sport-tab" onclick="setSport(this,'Rugby')">🏉 Rugby</button>
       <button class="sport-tab" onclick="setSport(this,'MMA')">🥊 MMA</button>
     </div>
-
     <div class="mode-toggle">
       <button class="mode-btn active" id="btn-court" onclick="setMode('court')">⚡ Réponse courte</button>
       <button class="mode-btn" id="btn-detail" onclick="setMode('detail')">📊 Analyse complète</button>
     </div>
     <p class="mode-desc" id="modeDesc">Verdict rapide : pronostic, cote conseillée et confiance /10 en 5 lignes.</p>
-
     <div class="input-row">
       <div class="input-group"><label>Équipe / Joueur 1</label><input type="text" id="team1" placeholder="Ex: PSG, Djokovic..."></div>
       <div class="input-group"><label>Équipe / Joueur 2</label><input type="text" id="team2" placeholder="Ex: Real Madrid, Alcaraz..."></div>
       <div class="input-group full"><label>Compétition (optionnel)</label><input type="text" id="competition" placeholder="Ex: Ligue 1, Champions League..."></div>
       <div class="input-group full"><label>Infos supplémentaires (optionnel)</label><input type="text" id="extra" placeholder="Ex: joueur blessé, match retour..."></div>
     </div>
-
     <div class="history-block">
       <div class="history-title">📅 Historique des derniers matchs</div>
       <div class="hist-sublabel">Nombre de matchs à analyser par équipe</div>
@@ -198,71 +300,103 @@
         <span class="toggle-label" id="detailLabel">Activer le détail match par match (score, adversaire, résultat V/N/D)</span>
       </div>
     </div>
-
     <div class="hist-sublabel" style="margin-bottom:8px;">Mise envisagée</div>
     <div class="mise-row">
       <button class="mise-chip active" onclick="setMise(this,'petite (5-10€)')">Petite</button>
       <button class="mise-chip" onclick="setMise(this,'moyenne (20-50€)')">Moyenne</button>
       <button class="mise-chip" onclick="setMise(this,'grosse (50€+)')">Grosse</button>
     </div>
-
     <button class="generate-btn" onclick="generate()">⚡ Analyser ce match</button>
+    <p class="prono-note">⚠️ Outil d'aide à la décision uniquement — pas une garantie de gains</p>
   </div>
 </section>
 
 <div class="divider"></div>
 
+<!-- COMMENT -->
 <section id="comment">
   <div class="section-label">Processus</div>
   <div class="section-title">EN 3 ÉTAPES</div>
   <div class="steps">
     <div class="step" data-num="01"><div class="step-icon">⚽</div><h3>Choisis ton match</h3><p>Clique sur un match du jour ou entre les équipes manuellement. Football, basket, tennis, rugby, MMA.</p></div>
-    <div class="step" data-num="02"><div class="step-icon">📅</div><h3>Configure l'historique</h3><p>Choisis combien de matchs analyser : 5, 10, 20, 30 ou toute la saison. Avec ou sans détail match par match.</p></div>
+    <div class="step" data-num="02"><div class="step-icon">📅</div><h3>Configure l'analyse</h3><p>Choisis combien de matchs analyser dans l'historique — 5, 10, 20, 30 ou toute la saison.</p></div>
     <div class="step" data-num="03"><div class="step-icon">🎯</div><h3>Reçois ton pronostic</h3><p>Historique, forme, confrontations directes, pronostic principal + alternatif, confiance /10.</p></div>
   </div>
 </section>
 
 <div class="divider"></div>
 
-<section id="tarifs">
-  <div class="section-label">Tarifs</div>
-  <div class="section-title">SIMPLE &<br>ABORDABLE</div>
+<!-- ABONNEMENT -->
+<section id="abonnement">
+  <div class="section-label">Abonnement</div>
+  <div class="section-title">CHOISIS TON<br>NIVEAU</div>
+  <p class="section-sub">Commence gratuitement. Passe au niveau supérieur quand tu es prêt.</p>
   <div class="pricing-grid">
     <div class="price-card">
       <div class="price-name">Gratuit</div>
       <div class="price-amount"><sup>€</sup>0</div>
       <div class="price-period">pour toujours</div>
       <ul class="price-features">
-        <li><span class="check">✓</span> 3 pronostics par jour</li>
+        <li><span class="check">✓</span> 3 pronostics / mois</li>
         <li><span class="check">✓</span> Football uniquement</li>
-        <li><span class="check">✓</span> Historique 5 derniers matchs</li>
-        <li><span style="color:#444">✗</span> <span style="color:#666">Analyse complète</span></li>
-        <li><span style="color:#444">✗</span> <span style="color:#666">Historique 10, 20, 30 matchs</span></li>
-        <li><span style="color:#444">✗</span> <span style="color:#666">Détail match par match</span></li>
+        <li><span class="check">✓</span> Historique 5 matchs</li>
+        <li><span class="check">✓</span> 1er prono sans inscription</li>
+        <li><span style="color:#333">✗</span> <span style="color:#555">Analyse complète</span></li>
+        <li><span style="color:#333">✗</span> <span style="color:#555">Tous les sports</span></li>
       </ul>
       <button class="price-btn price-btn-outline" onclick="document.getElementById('prono').scrollIntoView({behavior:'smooth'})">Commencer gratuitement</button>
     </div>
     <div class="price-card popular">
-      <div class="popular-tag">⚡ Le plus populaire</div>
-      <div class="price-name">Pro</div>
-      <div class="price-amount"><sup>€</sup>7</div>
+      <div class="popular-tag">🔥 Le plus populaire</div>
+      <div class="price-name">Starter</div>
+      <div class="price-amount"><sup>€</sup>6<span class="cents">.99</span></div>
       <div class="price-period">par mois · sans engagement</div>
       <ul class="price-features">
-        <li><span class="check">✓</span> Pronostics illimités</li>
-        <li><span class="check">✓</span> 5 sports couverts</li>
+        <li><span class="check">✓</span> 10 pronostics / mois</li>
+        <li><span class="check">✓</span> Tous les sports</li>
         <li><span class="check">✓</span> Analyse courte & complète</li>
-        <li><span class="check">✓</span> Historique jusqu'à toute la saison</li>
+        <li><span class="check">✓</span> Historique jusqu'à 20 matchs</li>
+        <li><span class="check">✓</span> Paris alternatifs</li>
+        <li><span style="color:#333">✗</span> <span style="color:#555">Historique toute la saison</span></li>
+      </ul>
+      <button class="price-btn price-btn-red">Démarrer pour 6.99€/mois</button>
+    </div>
+    <div class="price-card">
+      <div class="price-name">Expert</div>
+      <div class="price-amount"><sup>€</sup>14<span class="cents">.99</span></div>
+      <div class="price-period">par mois · sans engagement</div>
+      <div class="price-highlight">⭐ 5 analyses par jour</div>
+      <ul class="price-features">
+        <li><span class="check">✓</span> 5 pronostics / jour</li>
+        <li><span class="check">✓</span> Tous les sports</li>
+        <li><span class="check">✓</span> Analyse complète avancée</li>
+        <li><span class="check">✓</span> Historique toute la saison</li>
         <li><span class="check">✓</span> Détail match par match</li>
         <li><span class="check">✓</span> Paris alternatifs avancés</li>
       </ul>
-      <button class="price-btn price-btn-red">Démarrer pour 7€/mois</button>
+      <button class="price-btn price-btn-outline">Devenir Expert</button>
     </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- AVIS -->
+<section id="avis">
+  <div class="section-label">Communauté</div>
+  <div class="section-title">TON AVIS<br>COMPTE</div>
+  <p class="section-sub">Tu as une idée pour améliorer WinAI ? Partage-la. Les meilleures suggestions sont récompensées.</p>
+  <div class="reward-badge">🎁 <strong>Récompense :</strong> Si ton idée est intégrée au site → 1 mois d'abonnement offert + badge Contributeur WinAI</div>
+  <div class="avis-form">
+    <input type="text" placeholder="Ton prénom (optionnel)">
+    <textarea placeholder="Ton avis ou ton idée d'amélioration..."></textarea>
+    <button class="btn-primary" style="width:100%;justify-content:center;">Envoyer mon avis ↗</button>
   </div>
 </section>
 
 <div class="cta-band">
   <h2>PRÊT À PARIER<br>PLUS INTELLIGEMMENT ?</h2>
-  <p>Analyse n'importe quel match avec l'historique complet en quelques secondes.</p>
+  <p>Ton 1er pronostic est gratuit — sans inscription, sans carte bancaire.</p>
   <a href="#prono" class="btn-white">Essayer WinAI gratuitement →</a>
 </div>
 
@@ -273,14 +407,37 @@
 </div>
 
 <footer>
-  <div class="footer-inner">
-    <div class="footer-logo">WIN<span>AI</span></div>
-    <div class="footer-links"><a href="#">Mentions légales</a><a href="#">Confidentialité</a><a href="#">Contact</a></div>
+  <div class="footer-top">
+    <div>
+      <div class="footer-logo">WIN<span>AI</span></div>
+      <p class="footer-desc">L'assistant IA pour parier plus intelligemment. Analyse, pronostics et historiques en quelques secondes.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Navigation</h4>
+      <a href="#matchs">Matchs du jour</a>
+      <a href="#prono">Pronostics</a>
+      <a href="#abonnement">Abonnement</a>
+      <a href="#avis">Avis & Suggestions</a>
+    </div>
+    <div class="footer-col">
+      <h4>Légal</h4>
+      <a href="#">Mentions légales</a>
+      <a href="#">Politique de confidentialité</a>
+      <a href="#">CGU</a>
+      <a href="mailto:contact@winai.pro">contact@winai.pro</a>
+    </div>
   </div>
-  <p class="footer-copy">© 2026 WinAI — Outil d'aide à la décision. WinAI n'est pas un bookmaker et ne prend pas de paris.</p>
+  <div class="footer-bottom">
+    <span>© 2026 WinAI — Outil d'aide à la décision. WinAI n'est pas un bookmaker.</span>
+    <span>winai.pro</span>
+  </div>
 </footer>
 
 <script>
+// SPLASH
+setTimeout(()=>{document.getElementById('splash').classList.add('hidden');},3200);
+
+// MATCHS
 const matches=[
   {home:'Paris FC',away:'PSG',league:'Ligue 1',time:'21:00',probW:19.6,probD:20.3,probL:60.1},
   {home:'Lille',away:'Auxerre',league:'Ligue 1',time:'21:00',probW:70.2,probD:18.3,probL:11.5},
@@ -288,8 +445,6 @@ const matches=[
   {home:'OM',away:'Rennes',league:'Ligue 1',time:'21:00',probW:47.2,probD:24.9,probL:27.9},
   {home:'OL',away:'Lens',league:'Ligue 1',time:'21:00',probW:56.2,probD:22.3,probL:21.5},
   {home:'Brest',away:'Angers',league:'Ligue 1',time:'21:00',probW:52.5,probD:25.4,probL:22.1},
-  {home:'Nantes',away:'Toulouse',league:'Ligue 1',time:'21:00',probW:36.8,probD:26.9,probL:36.3},
-  {home:'Lorient',away:'Le Havre',league:'Ligue 1',time:'21:00',probW:36.4,probD:27.2,probL:36.4},
   {home:'Man United',away:'Nottm Forest',league:'Premier League',time:'13:30',probW:59.3,probD:21.8,probL:18.9},
   {home:'Brentford',away:'Crystal Palace',league:'Premier League',time:'16:00',probW:57.5,probD:22.4,probL:20.1},
   {home:'Newcastle',away:'West Ham',league:'Premier League',time:'18:30',probW:44,probD:25.1,probL:30.9},
@@ -323,17 +478,12 @@ const modeDescs={
   court:'Verdict rapide : pronostic, cote conseillée et confiance /10 en 5 lignes.',
   detail:'Analyse approfondie : historique détaillé, forme, confrontations directes, pronostic + pari alternatif, confiance /10.'
 };
+
 function setSport(b,s){document.querySelectorAll('.sport-tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');sport=s;}
 function setMode(m){mode=m;document.getElementById('btn-court').classList.toggle('active',m==='court');document.getElementById('btn-detail').classList.toggle('active',m==='detail');document.getElementById('modeDesc').textContent=modeDescs[m];}
 function setMise(b,m){document.querySelectorAll('.mise-chip').forEach(x=>x.classList.remove('active'));b.classList.add('active');mise=m;}
 function setHist(b,n){document.querySelectorAll('.hist-chip').forEach(x=>x.classList.remove('active'));b.classList.add('active');histCount=n;}
-function toggleDetail(){
-  histDetail=!histDetail;
-  document.getElementById('detailToggle').classList.toggle('on',histDetail);
-  document.getElementById('detailLabel').textContent=histDetail
-    ?'Détail activé — score, adversaire et résultat (V/N/D) pour chaque match'
-    :'Activer le détail match par match (score, adversaire, résultat V/N/D)';
-}
+function toggleDetail(){histDetail=!histDetail;document.getElementById('detailToggle').classList.toggle('on',histDetail);document.getElementById('detailLabel').textContent=histDetail?'Détail activé — score, adversaire et résultat (V/N/D) pour chaque match':'Activer le détail match par match (score, adversaire, résultat V/N/D)';}
 
 function generate(){
   const t1=document.getElementById('team1').value.trim();
@@ -341,12 +491,8 @@ function generate(){
   const comp=document.getElementById('competition').value.trim();
   const extra=document.getElementById('extra').value.trim();
   if(!t1||!t2){document.getElementById('team1').focus();return;}
-
   const histLabel=histCount===0?'toute la saison en cours':`les ${histCount} derniers matchs`;
-  const detailInstr=histDetail
-    ?`Pour chaque match de l'historique, donne : date approximative, adversaire, score final, résultat (V/N/D), compétition.`
-    :`Résume la forme globale : série en cours (ex: VNVVN), buts marqués/encaissés en moyenne, % de victoires.`;
-
+  const detailInstr=histDetail?`Pour chaque match de l'historique, donne : date approximative, adversaire, score final, résultat (V/N/D), compétition.`:`Résume la forme globale : série en cours, buts marqués/encaissés en moyenne, % de victoires.`;
   let msg='';
   if(mode==='court'){
     msg=`Pronostic court — ${sport} : ${t1} vs ${t2}`;
@@ -357,11 +503,10 @@ function generate(){
     msg=`Analyse complète — ${sport} : ${t1} vs ${t2}`;
     if(comp) msg+=` (${comp})`;
     if(extra) msg+=`. Infos : ${extra}`;
-    msg+=`. Mise : ${mise}.\n\nStructure ta réponse ainsi :\n\n**1. HISTORIQUE (${histLabel} par équipe)**\n${detailInstr}\n\n**2. FORME & STATS**\nSérie en cours, buts marqués/encaissés, forces et faiblesses actuelles.\n\n**3. CONFRONTATIONS DIRECTES**\nDerniers face-à-face entre ces deux équipes : résultats, tendances.\n\n**4. PRONOSTIC PRINCIPAL**\nVerdict clair avec justification solide et cote conseillée.\n\n**5. PARI ALTERNATIF**\nUn pari secondaire : buteur probable, nombre de buts, mi-temps, clean sheet...\n\n**6. CONFIANCE & RISQUES**\nNiveau de confiance /10 + les 2-3 facteurs de risque principaux.`;
+    msg+=`. Mise : ${mise}.\n\nStructure ta réponse ainsi :\n\n**1. HISTORIQUE (${histLabel} par équipe)**\n${detailInstr}\n\n**2. FORME & STATS**\nSérie en cours, buts marqués/encaissés, forces et faiblesses actuelles.\n\n**3. CONFRONTATIONS DIRECTES**\nDerniers face-à-face entre ces deux équipes.\n\n**4. PRONOSTIC PRINCIPAL**\nVerdict clair avec justification et cote conseillée.\n\n**5. PARI ALTERNATIF**\nUn pari secondaire : buteur probable, nombre de buts, mi-temps...\n\n**6. CONFIANCE & RISQUES**\nNiveau de confiance /10 + les 2-3 facteurs de risque principaux.`;
   }
-
   if(typeof sendPrompt==='function') sendPrompt(msg);
-  else { window.scrollTo({top:0,behavior:'smooth'}); }
+  else window.scrollTo({top:0,behavior:'smooth'});
 }
 
 renderMatches();
