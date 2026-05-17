@@ -778,18 +778,6 @@ function renderAll(){
   }).join('');
 }
 
-  document.getElementById('matchGrid').innerHTML=matches.map((m,i)=>
-    `<div class="match-card" id="mc${i}" onclick="selectMatch(${i})">
-      <div class="mc-league">${m.league}</div>
-      <div class="mc-teams"><div class="mc-team">${m.home}</div><div class="mc-vs">VS</div><div class="mc-team">${m.away}</div></div>
-      <div class="mc-time">🕐 ${m.time}</div>
-      <div class="mc-bars"><div class="mc-bar mc-w" style="flex:${m.w}"></div><div class="mc-bar mc-d" style="flex:${m.d}"></div><div class="mc-bar mc-l" style="flex:${m.l}"></div></div>
-      <div class="mc-probs"><span class="mc-prob">${m.home.split(' ')[0]} ${m.w}%</span><span class="mc-prob">Nul ${m.d}%</span><span class="mc-prob">${m.away.split(' ')[0]} ${m.l}%</span></div>
-      <div class="mc-cta">Analyser →</div>
-    </div>`
-  ).join('');
-}
-
 function selectAndScroll(i){
   selectMatch(i);
   document.getElementById('prono').scrollIntoView({behavior:'smooth'});
