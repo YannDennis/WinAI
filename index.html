@@ -1243,7 +1243,7 @@ function showResult(text) {
   const box = getOrCreateResultBox();
 
   // Extraire confiance
-  const confMatch = text.match(/Confiance\s*:\s*(\d+)\/10/i);
+  const confMatch = text.match(/(\d+)\/10/);
   const conf = confMatch ? confMatch[1] : '—';
 
   // Extraire conclusion
@@ -1252,11 +1252,11 @@ function showResult(text) {
 
   // Extraire MISE
   const miseMatch = text.match(/🎯 MISE\s*:\s*(.+?)(?:\n|$)/);
-  const mise = miseMatch ? miseMatch[1].trim() : '';
+ const mise = miseMatch ? miseMatch[1].trim().replace(/\*\*/g, '') : '';
 
   // Extraire SÉCURISÉ
   const secMatch = text.match(/🔀 SÉCURISÉ\s*:\s*(.+?)(?:\n|$)/);
-  const sec = secMatch ? secMatch[1].trim() : '';
+  const sec = secMatch ? secMatch[1].trim().replace(/\*\*/g, '') : '';
 
   // Nettoyer le texte principal
   const clean = text
