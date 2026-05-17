@@ -30,9 +30,21 @@ module.exports = async function(req, res) {
     fetchUrl(`https://api.the-odds-api.com/v4/sports/soccer_england_premier_league/odds/?apiKey=${ODDS_KEY}&regions=eu&markets=h2h&bookmakers=winamax,betclic,unibet&oddsFormat=decimal`),
   ]);
 
-  const allMatches = [ligue1, pl, ucl, laliga, seriea]
-    .filter(d => d && d.result)
-    .flatMap(d => d.result);
+ const now = new Date();
+
+const allMatches = [ligue1, pl, ucl, laliga, seriea]
+  .filter(d => d && d.result)
+  .flatMap(d => d.result)
+  .filter(m => {
+    // Exclure les matchs terminés
+    const status = m.event_status;
+    if (['FT', 'AET', 'PEN', 'ABD', 'CANC', 'AWD', 'WO'].includes(status)) return false;
+    // Exclure les matchs dont la date est passée de plus de 3h
+    const matchDate = new Date(m.event_date);
+    const diffHours = (now - matchDate) / (1000 * 60 * 60);
+    if (diffHours > 3) return false;
+    return true;
+  });
 
   const allOdds = [...(Array.isArray(odds_ligue1) ? odds_ligue1 : []), ...(Array.isArray(odds_pl) ? odds_pl : [])];
 
