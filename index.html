@@ -1243,41 +1243,34 @@ function showResult(text) {
   const box = getOrCreateResultBox();
 
   const formatted = text
-    // Titres ##
-    .replace(/^### (.+)$/gm, '<div style="font-family:var(--font-cond);font-size:10px;font-weight:800;color:var(--red);letter-spacing:.16em;text-transform:uppercase;margin:1.2rem 0 .5rem;display:flex;align-items:center;gap:8px;">$1<div style="flex:1;height:1px;background:rgba(232,24,44,.15);"></div></div>')
-    .replace(/^## (.+)$/gm, '<div style="font-family:var(--font-display);font-size:16px;letter-spacing:1px;color:var(--white);margin:1.5rem 0 .75rem;">$1</div>')
-    .replace(/^# (.+)$/gm, '<div style="font-family:var(--font-display);font-size:20px;letter-spacing:1px;color:var(--white);margin-bottom:1rem;">$1</div>')
-    // Tableaux markdown
+    .replace(/^### (.+)$/gm, '<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:11px;font-weight:800;color:#E8182C;letter-spacing:.16em;text-transform:uppercase;margin:1.2rem 0 .5rem;display:flex;align-items:center;gap:8px;">$1<div style="flex:1;height:1px;background:rgba(232,24,44,.15);"></div></div>')
+    .replace(/^## (.+)$/gm, '<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:20px;font-weight:800;letter-spacing:.04em;color:#F0EEE8;margin:1.5rem 0 .75rem;">$1</div>')
+    .replace(/^# (.+)$/gm, '<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:24px;font-weight:800;letter-spacing:.04em;color:#F0EEE8;margin-bottom:1rem;">$1</div>')
     .replace(/^\|(.+)\|$/gm, (row) => {
       if (row.match(/^\|[-| ]+\|$/)) return '';
       const cells = row.split('|').filter(c => c.trim() !== '');
       return '<div style="display:flex;gap:1px;margin:1px 0;">' +
-        cells.map(c => `<div style="flex:1;padding:5px 8px;background:var(--black-4);font-family:var(--font-cond);font-size:11px;color:var(--gray-3);letter-spacing:.02em;">${c.trim()}</div>`).join('') +
+        cells.map(c => `<div style="flex:1;padding:6px 10px;background:#1E1E1E;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:600;color:#AAA;letter-spacing:.02em;">${c.trim()}</div>`).join('') +
         '</div>';
     })
-    // Gras
-    .replace(/\*\*(.*?)\*\*/g, '<strong style="color:var(--white);">$1</strong>')
-    // Italique
-    .replace(/\*(.*?)\*/g, '<em style="color:var(--gray-3);">$1</em>')
-    // Lignes spéciales pronostic
-    .replace(/(🎯 MISE\s*:.*?)(?=<br>|$)/g, '<div style="background:rgba(232,24,44,.08);border:1px solid rgba(232,24,44,.2);border-radius:4px;padding:12px 14px;margin:.75rem 0;font-family:var(--font-cond);font-size:14px;font-weight:700;color:var(--white);letter-spacing:.04em;">$1</div>')
-    .replace(/(🔀 SÉCURISÉ\s*:.*?)(?=<br>|$)/g, '<div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:4px;padding:12px 14px;margin:.75rem 0;font-family:var(--font-cond);font-size:13px;color:var(--gray-3);letter-spacing:.04em;">$1</div>')
-    .replace(/(📊 Confiance\s*:.*?)(?=<br>|$)/g, '<div style="display:inline-flex;align-items:center;gap:8px;background:var(--black-4);border-radius:4px;padding:8px 14px;margin:.75rem 0;font-family:var(--font-display);font-size:14px;color:var(--red-light);">$1</div>')
-    .replace(/(⚠️.*?)(?=<br>|$)/g, '<div style="font-family:var(--font-cond);font-size:10px;color:#333;letter-spacing:.04em;margin-top:1rem;padding-top:.75rem;border-top:1px solid rgba(255,255,255,.04);">$1</div>')
-    // Séparateurs ---
+    .replace(/\*\*(.*?)\*\*/g, '<strong style="font-family:\'Barlow Condensed\',sans-serif;font-weight:800;color:#F0EEE8;letter-spacing:.04em;">$1</strong>')
+    .replace(/\*(.*?)\*/g, '<em style="color:#777;">$1</em>')
+    .replace(/(🎯 MISE\s*:.*?)(?=<br>|$)/g, '<div style="background:rgba(232,24,44,.08);border:1px solid rgba(232,24,44,.25);border-radius:4px;padding:12px 14px;margin:.75rem 0;font-family:\'Barlow Condensed\',sans-serif;font-size:15px;font-weight:700;color:#F0EEE8;letter-spacing:.04em;">$1</div>')
+    .replace(/(🔀 SÉCURISÉ\s*:.*?)(?=<br>|$)/g, '<div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:4px;padding:11px 14px;margin:.75rem 0;font-family:\'Barlow Condensed\',sans-serif;font-size:14px;font-weight:600;color:#AAA;letter-spacing:.04em;">$1</div>')
+    .replace(/(📊 Confiance\s*:.*?)(?=<br>|$)/g, '<div style="display:inline-flex;align-items:center;gap:8px;background:#1E1E1E;border-radius:4px;padding:8px 14px;margin:.75rem 0;font-family:\'Barlow Condensed\',sans-serif;font-size:15px;font-weight:700;color:#E8182C;letter-spacing:.06em;">$1</div>')
+    .replace(/(⚠️.*?)(?=<br>|$)/g, '<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:11px;font-weight:600;color:#333;letter-spacing:.04em;margin-top:1rem;padding-top:.75rem;border-top:1px solid rgba(255,255,255,.04);">$1</div>')
     .replace(/^---$/gm, '<div style="height:1px;background:rgba(255,255,255,.05);margin:1rem 0;"></div>')
-    // Sauts de ligne
     .replace(/\n/g, '<br>');
 
   box.innerHTML = `
     <div style="background:rgba(232,24,44,.06);padding:10px 1rem;border-bottom:1px solid rgba(255,255,255,.04);display:flex;align-items:center;justify-content:space-between;">
       <div style="display:flex;align-items:center;gap:8px;">
         <div style="width:6px;height:6px;background:#4CAF50;border-radius:50%;"></div>
-        <span style="font-family:var(--font-cond);font-size:11px;font-weight:800;color:var(--red);letter-spacing:.12em;text-transform:uppercase;">⚡ Pronostic IA — ${selHome} vs ${selAway}</span>
+        <span style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:800;color:#E8182C;letter-spacing:.12em;text-transform:uppercase;">⚡ Pronostic IA — ${selHome} vs ${selAway}</span>
       </div>
-      <button onclick="resetProno()" style="font-family:var(--font-cond);font-size:10px;font-weight:700;color:#444;background:none;border:none;cursor:pointer;letter-spacing:.06em;text-transform:uppercase;" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='#444'">Nouveau →</button>
+      <button onclick="resetProno()" style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;color:#444;background:none;border:none;cursor:pointer;letter-spacing:.06em;text-transform:uppercase;" onmouseover="this.style.color='#E8182C'" onmouseout="this.style.color='#444'">Nouveau →</button>
     </div>
-    <div style="padding:1.25rem 1rem;font-family:var(--font-body);font-size:13px;color:var(--gray-3);line-height:1.9;">
+    <div style="padding:1.25rem 1rem;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:500;color:#AAA;line-height:1.9;">
       ${formatted}
     </div>`;
   box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
