@@ -929,7 +929,7 @@ function renderAll(){
           ${m.homeLogo?`<img src="${m.homeLogo}" alt="${m.home}">`:`<div style="width:38px;height:38px;background:#1A1A1A;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;color:#555;">${m.home.substring(0,3).toUpperCase()}</div>`}
           <div class="mc-team-name">${m.home.length>12?m.home.substring(0,12)+'…':m.home}</div>
         </div>
-        <div style="display:flex;flex-direction:column;align-items:center;gap:3px;">${scoreOrVs}<div class="mc-time">🕐 ${m.time}</div></div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:3px;">${scoreOrVs}<div class="mc-time">🗓 ${m.date} · 🕐 ${m.time}</div></div>
         <div class="mc-team">
           ${m.awayLogo?`<img src="${m.awayLogo}" alt="${m.away}">`:`<div style="width:38px;height:38px;background:#1A1A1A;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;color:#555;">${m.away.substring(0,3).toUpperCase()}</div>`}
           <div class="mc-team-name">${m.away.length>12?m.away.substring(0,12)+'…':m.away}</div>
