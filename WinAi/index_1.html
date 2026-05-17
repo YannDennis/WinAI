@@ -675,17 +675,22 @@ async function fetchMatches(){
 
     if(data.football&&data.football.result){
       data.football.result.forEach(f=>{
-        const d=new Date(f.event_date+'T'+f.event_time+':00');
-        const dateStr=d.toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'});
-        const timeStr=f.event_time||'TBD';
+      const today2=new Date();today2.setHours(0,0,0,0);
+        const tomorrow2=new Date(today2);tomorrow2.setDate(tomorrow2.getDate()+1);
+        const matchDate=new Date(f.event_date);matchDate.setHours(0,0,0,0);
+        let dayLabel='Cette semaine';
+        if(matchDate.getTime()===today2.getTime()) dayLabel='Aujourd\'hui';
+        else if(matchDate.getTime()===tomorrow2.getTime()) dayLabel='Demain';
         matches.push({
           home:f.event_home_team,
           away:f.event_away_team,
           homeLogo:f.home_team_logo||'https://media.api-sports.io/football/teams/85.png',
           awayLogo:f.away_team_logo||'https://media.api-sports.io/football/teams/42.png',
           league:f.league_name,
-          date:dateStr,
-          time:timeStr,
+          date:new Date(f.event_date).toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'}),
+          dayLabel,
+          time:f.event_time||'TBD',
+          event_date:f.event_date,
           status:f.event_status,
           homeGoals:f.event_final_result?f.event_final_result.split(' - ')[0]:null,
           awayGoals:f.event_final_result?f.event_final_result.split(' - ')[1]:null,
@@ -729,40 +734,84 @@ function filterSport(btn,s){
 function renderAll(){
   const filtered=currentFilter==='Tous'?matches:matches.filter(m=>m.sport===currentFilter);
   if(filtered.length===0){
-    document.getElementById('allMatchesGrid').innerHTML=`<div style="padding:3rem;text-align:center;font-family:var(--font-mono);font-size:11px;color:#444;letter-spacing:.08em;grid-column:1/-1;">Aucun match aujourd'hui dans cette catégorie</div>`;
+    document.getElementById('allMatchesGrid').innerHTML=`<div style="padding:3rem;text-align:center;font-family:var(--font-mono);font-size:11px;color:#444;letter-spacing:.08em;grid-column:1/-1;">Aucun match disponible</div>`;
     return;
   }
-  document.getElementById('allMatchesGrid').innerHTML=filtered.map((m,i)=>{
+
+  // Grouper par jour
+  const today=new Date();today.setHours(0,0,0,0);
+  const tomorrow=new Date(today);tomorrow.setDate(tomorrow.getDate()+1);
+
+  function getDayLabel(m){
+    if(!m.event_date) return m.date||'Cette semaine';
+    const d=new Date(m.event_date);d.setHours(0,0,0,0);
+    if(d.getTime()===today.getTime()) return 'Aujourd\'hui';
+    if(d.getTime()===tomorrow.getTime()) return 'Demain';
+    return m.date||'Cette semaine';
+  }
+
+  const groups={};
+  filtered.forEach((m,i)=>{
     const idx=matches.indexOf(m);
-    const isLive=m.status==='1H'||m.status==='2H'||m.status==='HT';
-    const score=isLive&&m.homeGoals!==null?`<span style="font-family:var(--font-display);font-size:18px;color:var(--red)">${m.homeGoals} - ${m.awayGoals}</span>`:'';
-    const liveBadge=isLive?`<span style="font-family:var(--font-mono);font-size:8px;color:#E8182C;letter-spacing:.1em;background:rgba(232,24,44,.1);padding:2px 8px;border-radius:2px;">🔴 LIVE</span>`:'';
-    return`<div class="all-match-card" onclick="selectAndScroll(${idx})">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;">
-        <div class="amc-league">${m.league}</div>
-        ${liveBadge}
+    const label=m.dayLabel||getDayLabel(m);
+    if(!groups[label]) groups[label]=[];
+    groups[label].push({m,idx});
+  });
+
+  const order=['Aujourd\'hui','Demain','Cette semaine'];
+  const sortedKeys=Object.keys(groups).sort((a,b)=>{
+    const ai=order.indexOf(a);const bi=order.indexOf(b);
+    if(ai===-1&&bi===-1) return 0;
+    if(ai===-1) return 1;
+    if(bi===-1) return -1;
+    return ai-bi;
+  });
+
+  document.getElementById('allMatchesGrid').innerHTML=sortedKeys.map(day=>{
+    const items=groups[day];
+    const cards=items.map(({m,idx})=>{
+      const isLive=m.status==='1H'||m.status==='2H'||m.status==='HT'||m.status==='Live';
+      const score=isLive&&m.homeGoals!==null?`<span style="font-family:var(--font-display);font-size:18px;color:var(--red)">${m.homeGoals} - ${m.awayGoals}</span>`:'';
+      const liveBadge=isLive?`<span style="font-family:var(--font-mono);font-size:8px;color:#E8182C;background:rgba(232,24,44,.1);padding:2px 8px;border-radius:2px;">🔴 LIVE</span>`:'';
+      return`<div class="all-match-card" onclick="selectAndScroll(${idx})">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;">
+          <div class="amc-league">${m.league}</div>
+          ${liveBadge}
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;">
+            <img src="${m.homeLogo}" style="width:44px;height:44px;object-fit:contain;filter:drop-shadow(0 2px 8px rgba(0,0,0,.5));" alt="${m.home}">
+            <div class="amc-team">${m.home.length>12?m.home.substring(0,12)+'...':m.home}</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:0 8px;">
+            ${score||`<div class="amc-vs">VS</div>`}
+            <div class="amc-time">🕐 ${m.time}</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;">
+            <img src="${m.awayLogo}" style="width:44px;height:44px;object-fit:contain;filter:drop-shadow(0 2px 8px rgba(0,0,0,.5));" alt="${m.away}">
+            <div class="amc-team">${m.away.length>12?m.away.substring(0,12)+'...':m.away}</div>
+          </div>
+        </div>
+        <div class="amc-bars"><div class="amc-bar amc-w" style="flex:${m.w}"></div><div class="amc-bar amc-d" style="flex:${m.d}"></div><div class="amc-bar amc-l" style="flex:${m.l}"></div></div>
+        <div class="amc-probs"><span class="amc-prob">${m.home.split(' ')[0]} ${m.w}%</span><span class="amc-prob">Nul ${m.d}%</span><span class="amc-prob">${m.away.split(' ')[0]} ${m.l}%</span></div>
+        <div class="amc-hint">Analyser →</div>
+      </div>`;
+    }).join('');
+
+    return`<div style="grid-column:1/-1;">
+      <div style="font-family:var(--font-display);font-size:28px;letter-spacing:2px;color:var(--white);margin:2rem 0 1rem;display:flex;align-items:center;gap:12px;">
+        ${day==='Aujourd\'hui'?'<span style="width:8px;height:8px;background:var(--red);border-radius:50%;display:inline-block;animation:livePulse 1.5s infinite"></span>':''}
+        ${day}
+        <span style="font-family:var(--font-mono);font-size:11px;color:var(--gray);letter-spacing:.08em;font-weight:400;">${items.length} match${items.length>1?'s':''}</span>
       </div>
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;">
-        <div style="display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;">
-          <img src="${m.homeLogo}" style="width:44px;height:44px;object-fit:contain;filter:drop-shadow(0 2px 8px rgba(0,0,0,.5));" alt="${m.home}">
-          <div class="amc-team">${m.home.length>10?m.home.substring(0,10)+'...':m.home}</div>
-        </div>
-        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:0 8px;">
-          ${score||`<div class="amc-vs">VS</div>`}
-          <div class="amc-time">📅 ${m.date} · 🕐 ${m.time}</div>
-        </div>
-        <div style="display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;">
-          <img src="${m.awayLogo}" style="width:44px;height:44px;object-fit:contain;filter:drop-shadow(0 2px 8px rgba(0,0,0,.5));" alt="${m.away}">
-          <div class="amc-team">${m.away.length>10?m.away.substring(0,10)+'...':m.away}</div>
-        </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1px;background:rgba(255,255,255,.04);border-radius:4px;overflow:hidden;">
+        ${cards}
       </div>
-      <div class="amc-bars"><div class="amc-bar amc-w" style="flex:${m.w}"></div><div class="amc-bar amc-d" style="flex:${m.d}"></div><div class="amc-bar amc-l" style="flex:${m.l}"></div></div>
-      <div class="amc-probs"><span class="amc-prob">${m.home.split(' ')[0]} ${m.w}%</span><span class="amc-prob">Nul ${m.d}%</span><span class="amc-prob">${m.away.split(' ')[0]} ${m.l}%</span></div>
-      <div class="amc-hint">Analyser →</div>
     </div>`;
   }).join('');
 
-  document.getElementById('matchGrid').innerHTML=filtered.slice(0,6).map((m,i)=>{
+  // Petit grid pour le workflow
+  document.getElementById('matchGrid').innerHTML=filtered.filter(m=>m.dayLabel==='Aujourd\'hui'||getDayLabel(m)==='Aujourd\'hui').slice(0,6).map((m,i)=>{
     const idx=matches.indexOf(m);
     return`<div class="match-card" id="mc${idx}" onclick="selectMatch(${idx})">
       <div class="mc-league">${m.league}</div>
@@ -781,7 +830,7 @@ function renderAll(){
         </div>
       </div>
       <div class="mc-bars"><div class="mc-bar mc-w" style="flex:${m.w}"></div><div class="mc-bar mc-d" style="flex:${m.d}"></div><div class="mc-bar mc-l" style="flex:${m.l}"></div></div>
-      <div class="mc-probs"><span class="mc-prob">${m.home.split(' ')[0]} ${m.w}%</span><span class="mc-prob">Nul</span><span class="mc-prob">${m.away.split(' ')[0]} ${m.l}%</span></div>
+      <div class="mc-probs"><span class="amc-prob">${m.home.split(' ')[0]} ${m.w}%</span><span class="amc-prob">Nul</span><span class="amc-prob">${m.away.split(' ')[0]} ${m.l}%</span></div>
       <div class="mc-cta">Analyser →</div>
     </div>`;
   }).join('');
