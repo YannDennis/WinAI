@@ -657,47 +657,39 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,.04);paddin
   },2800);
 })();
 
-// MATCHS — se lance après, sans bloquer quoi que ce soit
 setTimeout(function(){ fetchMatches(); },100);
 
 const observer=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:.1,rootMargin:'0px 0px -50px 0px'});
 document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
-
 
 const LEAGUES=[39,61,135,78,140,2,3];
 let matches=[];
 let currentFilter='Tous';
 
 async function fetchMatches(){
-  const today=new Date().toISOString().split('T')[0];
-  document.getElementById('allMatchesGrid').innerHTML=`<div style="padding:3rem;text-align:center;font-family:var(--font-mono);font-size:11px;color:#444;letter-spacing:.08em;grid-column:1/-1;">Chargement des matchs...</div>`;
   try{
-    const res=await fetch(`https://v3.football.api-sports.io/fixtures?date=${today}&timezone=Europe/Paris`,{
-      method:'GET',
-      headers:{'x-apisports-key':API_KEY,'x-rapidapi-host':'v3.football.api-sports.io'}
-    });
-    if(!res.ok) throw new Error('API error '+res.status);
+    const res=await fetch('/api/matches');
+    if(!res.ok) throw new Error('HTTP '+res.status);
     const data=await res.json();
     const fixtures=(data.response||[]);
-    matches=fixtures
-      .filter(f=>LEAGUES.includes(f.league.id))
-      .map(f=>({
-        home:f.teams.home.name,
-        away:f.teams.away.name,
-        homeLogo:f.teams.home.logo,
-        awayLogo:f.teams.away.logo,
-        league:f.league.name,
-        time:new Date(f.fixture.date).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}),
-        status:f.fixture.status.short,
-        homeGoals:f.goals.home,
-        awayGoals:f.goals.away,
-        sport:'Football',
-        w:50,d:25,l:25,
-      }));
-    if(matches.length===0) throw new Error('Aucun match');
+    const filtered=fixtures.filter(f=>LEAGUES.includes(f.league.id));
+    if(filtered.length===0) throw new Error('Aucun match');
+    matches=filtered.map(f=>({
+      home:f.teams.home.name,
+      away:f.teams.away.name,
+      homeLogo:f.teams.home.logo,
+      awayLogo:f.teams.away.logo,
+      league:f.league.name,
+      time:new Date(f.fixture.date).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}),
+      status:f.fixture.status.short,
+      homeGoals:f.goals.home,
+      awayGoals:f.goals.away,
+      sport:'Football',
+      w:50,d:25,l:25,
+    }));
     renderAll();
   }catch(e){
-    console.error('API Football error:',e);
+    console.error('Erreur API:',e);
     useFallback();
   }
 }
@@ -705,11 +697,17 @@ async function fetchMatches(){
 function useFallback(){
   matches=[
     {home:'Paris FC',away:'PSG',league:'Ligue 1',time:'21:00',status:'NS',homeGoals:null,awayGoals:null,homeLogo:'https://media.api-sports.io/football/teams/569.png',awayLogo:'https://media.api-sports.io/football/teams/85.png',sport:'Football',w:20,d:20,l:60},
+    {home:'Lille',away:'Auxerre',league:'Ligue 1',time:'21:00',status:'NS',homeGoals:null,awayGoals:null,homeLogo:'https://media.api-sports.io/football/teams/79.png',awayLogo:'https://media.api-sports.io/football/teams/778.png',sport:'Football',w:70,d:18,l:12},
     {home:'OM',away:'Rennes',league:'Ligue 1',time:'21:00',status:'NS',homeGoals:null,awayGoals:null,homeLogo:'https://media.api-sports.io/football/teams/81.png',awayLogo:'https://media.api-sports.io/football/teams/94.png',sport:'Football',w:47,d:25,l:28},
     {home:'OL',away:'Lens',league:'Ligue 1',time:'21:00',status:'NS',homeGoals:null,awayGoals:null,homeLogo:'https://media.api-sports.io/football/teams/80.png',awayLogo:'https://media.api-sports.io/football/teams/116.png',sport:'Football',w:56,d:22,l:22},
     {home:'Man United',away:'Nottm Forest',league:'Premier League',time:'13:30',status:'NS',homeGoals:null,awayGoals:null,homeLogo:'https://media.api-sports.io/football/teams/33.png',awayLogo:'https://media.api-sports.io/football/teams/65.png',sport:'Football',w:59,d:22,l:19},
     {home:'Brentford',away:'Crystal Palace',league:'Premier League',time:'16:00',status:'NS',homeGoals:null,awayGoals:null,homeLogo:'https://media.api-sports.io/football/teams/55.png',awayLogo:'https://media.api-sports.io/football/teams/52.png',sport:'Football',w:58,d:22,l:20},
     {home:'Newcastle',away:'West Ham',league:'Premier League',time:'18:30',status:'NS',homeGoals:null,awayGoals:null,homeLogo:'https://media.api-sports.io/football/teams/34.png',awayLogo:'https://media.api-sports.io/football/teams/48.png',sport:'Football',w:44,d:25,l:31},
+    {home:'Arsenal',away:'Burnley',league:'Premier League',time:'Lun 21:00',status:'NS',homeGoals:null,awayGoals:null,homeLogo:'https://media.api-sports.io/football/teams/42.png',awayLogo:'https://media.api-sports.io/football/teams/44.png',sport:'Football',w:90,d:7,l:3},
+    {home:'Lakers',away:'Warriors',league:'NBA',time:'02:30',status:'NS',homeGoals:null,awayGoals:null,homeLogo:'https://media.api-sports.io/basketball/teams/145.png',awayLogo:'https://media.api-sports.io/basketball/teams/139.png',sport:'Basketball',w:55,d:0,l:45},
+    {home:'Djokovic',away:'Alcaraz',league:'Roland Garros',time:'14:00',status:'NS',homeGoals:null,awayGoals:null,homeLogo:'https://flagcdn.com/w40/rs.png',awayLogo:'https://flagcdn.com/w40/es.png',sport:'Tennis',w:52,d:0,l:48},
+    {home:'Stade Français',away:'Toulouse',league:'Top 14',time:'20:45',status:'NS',homeGoals:null,awayGoals:null,homeLogo:'https://media.api-sports.io/rugby/teams/104.png',awayLogo:'https://media.api-sports.io/rugby/teams/109.png',sport:'Rugby',w:38,d:12,l:50},
+    {home:'Pereira',away:'Adesanya',league:'UFC 315',time:'05:00',status:'NS',homeGoals:null,awayGoals:null,homeLogo:'https://flagcdn.com/w40/br.png',awayLogo:'https://flagcdn.com/w40/nz.png',sport:'MMA',w:58,d:0,l:42},
   ];
   renderAll();
 }
