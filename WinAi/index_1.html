@@ -198,7 +198,8 @@ section{padding:7rem 5%;position:relative;z-index:1;}
 .sport-filters{display:flex;gap:8px;flex-wrap:wrap;margin-top:2rem;}
 .sport-filter{display:flex;align-items:center;gap:8px;padding:8px 16px;border:1px solid rgba(255,255,255,.06);border-radius:2px;background:transparent;color:#555;font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .2s;}
 .sport-filter:hover{border-color:rgba(255,255,255,.15);color:var(--gray-3);}
-.sport-filter.active{border-color:var(--red);color:var(--white);background:rgba(232,24,44,.08);}
+.sport-filter.soon{opacity:.4;cursor:default;position:relative;}
+.sport-filter.soon::after{content:'Bientôt';position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-size:8px;color:var(--red);letter-spacing:.06em;white-space:nowrap;font-family:var(--font-mono);}
 .sport-filter-icon{font-size:16px;line-height:1;}
 .all-matches{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1px;margin-top:1.5rem;background:rgba(255,255,255,.04);border-radius:4px;overflow:hidden;}
 .all-match-card{background:var(--black-2);padding:1.25rem;cursor:pointer;transition:background .2s;position:relative;overflow:hidden;}
@@ -394,10 +395,10 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,.04);paddin
   <div class="sport-filters">
     <button class="sport-filter active" onclick="filterSport(this,'Tous')"><span class="sport-filter-icon">🏆</span> Tous</button>
     <button class="sport-filter" onclick="filterSport(this,'Football')"><span class="sport-filter-icon">⚽</span> Football</button>
-    <button class="sport-filter" onclick="filterSport(this,'Basketball')"><span class="sport-filter-icon">🏀</span> Basketball</button>
-    <button class="sport-filter" onclick="filterSport(this,'Tennis')"><span class="sport-filter-icon">🎾</span> Tennis</button>
-    <button class="sport-filter" onclick="filterSport(this,'Rugby')"><span class="sport-filter-icon">🏉</span> Rugby</button>
-    <button class="sport-filter" onclick="filterSport(this,'MMA')"><span class="sport-filter-icon">🥊</span> MMA</button>
+    <button class="sport-filter soon" onclick="showSoon()"><span class="sport-filter-icon">🏀</span> Basketball</button>
+    <button class="sport-filter soon" onclick="showSoon()"><span class="sport-filter-icon">🎾</span> Tennis</button>
+    <button class="sport-filter soon" onclick="showSoon()"><span class="sport-filter-icon">🏉</span> Rugby</button>
+    <button class="sport-filter soon" onclick="showSoon()"><span class="sport-filter-icon">🥊</span> MMA</button>
   </div>
   <div class="all-matches" id="allMatchesGrid"></div>
 </section>
@@ -670,21 +671,31 @@ async function fetchMatches(){
     const res=await fetch('/api/matches');
     if(!res.ok) throw new Error('HTTP '+res.status);
     const data=await res.json();
-    const events=(data.events||[]);
-    if(events.length===0) throw new Error('Aucun match');
-    matches=events.map(f=>({
-      home:f.strHomeTeam,
-      away:f.strAwayTeam,
-      homeLogo:f.strHomeTeamBadge||'https://media.api-sports.io/football/teams/85.png',
-      awayLogo:f.strAwayTeamBadge||'https://media.api-sports.io/football/teams/42.png',
-      league:f.strLeague,
-      time:f.strTime?f.strTime.substring(0,5):'TBD',
-      status:f.strStatus,
-      homeGoals:f.intHomeScore,
-      awayGoals:f.intAwayScore,
-      sport:'Football',
-      w:50,d:25,l:25,
-    }));
+    matches=[];
+
+    if(data.football&&data.football.result){
+      data.football.result.forEach(f=>{
+        const d=new Date(f.event_date+'T'+f.event_time+':00');
+        const dateStr=d.toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'});
+        const timeStr=f.event_time||'TBD';
+        matches.push({
+          home:f.event_home_team,
+          away:f.event_away_team,
+          homeLogo:f.home_team_logo||'https://media.api-sports.io/football/teams/85.png',
+          awayLogo:f.away_team_logo||'https://media.api-sports.io/football/teams/42.png',
+          league:f.league_name,
+          date:dateStr,
+          time:timeStr,
+          status:f.event_status,
+          homeGoals:f.event_final_result?f.event_final_result.split(' - ')[0]:null,
+          awayGoals:f.event_final_result?f.event_final_result.split(' - ')[1]:null,
+          sport:'Football',
+          w:50,d:25,l:25,
+        });
+      });
+    }
+
+    if(matches.length===0) throw new Error('Aucun match');
     renderAll();
   }catch(e){
     console.error('Erreur API:',e);
@@ -692,20 +703,18 @@ async function fetchMatches(){
   }
 }
 
+function showSoon(){
+  document.getElementById('allMatchesGrid').innerHTML=`<div style="padding:3rem;text-align:center;font-family:var(--font-mono);font-size:11px;color:#444;letter-spacing:.08em;grid-column:1/-1;">🚀 Bientôt disponible — on travaille dessus !</div>`;
+}
+
 function useFallback(){
   matches=[
-    {home:'Paris FC',away:'PSG',league:'Ligue 1',time:'21:00',status:'NS',homeGoals:null,awayGoals:null,homeLogo:'https://media.api-sports.io/football/teams/569.png',awayLogo:'https://media.api-sports.io/football/teams/85.png',sport:'Football',w:20,d:20,l:60},
-    {home:'Lille',away:'Auxerre',league:'Ligue 1',time:'21:00',status:'NS',homeGoals:null,awayGoals:null,homeLogo:'https://media.api-sports.io/football/teams/79.png',awayLogo:'https://media.api-sports.io/football/teams/778.png',sport:'Football',w:70,d:18,l:12},
-    {home:'OM',away:'Rennes',league:'Ligue 1',time:'21:00',status:'NS',homeGoals:null,awayGoals:null,homeLogo:'https://media.api-sports.io/football/teams/81.png',awayLogo:'https://media.api-sports.io/football/teams/94.png',sport:'Football',w:47,d:25,l:28},
-    {home:'OL',away:'Lens',league:'Ligue 1',time:'21:00',status:'NS',homeGoals:null,awayGoals:null,homeLogo:'https://media.api-sports.io/football/teams/80.png',awayLogo:'https://media.api-sports.io/football/teams/116.png',sport:'Football',w:56,d:22,l:22},
-    {home:'Man United',away:'Nottm Forest',league:'Premier League',time:'13:30',status:'NS',homeGoals:null,awayGoals:null,homeLogo:'https://media.api-sports.io/football/teams/33.png',awayLogo:'https://media.api-sports.io/football/teams/65.png',sport:'Football',w:59,d:22,l:19},
-    {home:'Brentford',away:'Crystal Palace',league:'Premier League',time:'16:00',status:'NS',homeGoals:null,awayGoals:null,homeLogo:'https://media.api-sports.io/football/teams/55.png',awayLogo:'https://media.api-sports.io/football/teams/52.png',sport:'Football',w:58,d:22,l:20},
-    {home:'Newcastle',away:'West Ham',league:'Premier League',time:'18:30',status:'NS',homeGoals:null,awayGoals:null,homeLogo:'https://media.api-sports.io/football/teams/34.png',awayLogo:'https://media.api-sports.io/football/teams/48.png',sport:'Football',w:44,d:25,l:31},
-    {home:'Arsenal',away:'Burnley',league:'Premier League',time:'Lun 21:00',status:'NS',homeGoals:null,awayGoals:null,homeLogo:'https://media.api-sports.io/football/teams/42.png',awayLogo:'https://media.api-sports.io/football/teams/44.png',sport:'Football',w:90,d:7,l:3},
-    {home:'Lakers',away:'Warriors',league:'NBA',time:'02:30',status:'NS',homeGoals:null,awayGoals:null,homeLogo:'https://media.api-sports.io/basketball/teams/145.png',awayLogo:'https://media.api-sports.io/basketball/teams/139.png',sport:'Basketball',w:55,d:0,l:45},
-    {home:'Djokovic',away:'Alcaraz',league:'Roland Garros',time:'14:00',status:'NS',homeGoals:null,awayGoals:null,homeLogo:'https://flagcdn.com/w40/rs.png',awayLogo:'https://flagcdn.com/w40/es.png',sport:'Tennis',w:52,d:0,l:48},
-    {home:'Stade Français',away:'Toulouse',league:'Top 14',time:'20:45',status:'NS',homeGoals:null,awayGoals:null,homeLogo:'https://media.api-sports.io/rugby/teams/104.png',awayLogo:'https://media.api-sports.io/rugby/teams/109.png',sport:'Rugby',w:38,d:12,l:50},
-    {home:'Pereira',away:'Adesanya',league:'UFC 315',time:'05:00',status:'NS',homeGoals:null,awayGoals:null,homeLogo:'https://flagcdn.com/w40/br.png',awayLogo:'https://flagcdn.com/w40/nz.png',sport:'MMA',w:58,d:0,l:42},
+    {home:'Paris FC',away:'PSG',league:'Ligue 1',date:'Dim 17 mai',time:'21:00',status:'NS',homeGoals:null,awayGoals:null,homeLogo:'https://media.api-sports.io/football/teams/569.png',awayLogo:'https://media.api-sports.io/football/teams/85.png',sport:'Football',w:20,d:20,l:60},
+    {home:'Lille',away:'Auxerre',league:'Ligue 1',date:'Dim 17 mai',time:'21:00',status:'NS',homeGoals:null,awayGoals:null,homeLogo:'https://media.api-sports.io/football/teams/79.png',awayLogo:'https://media.api-sports.io/football/teams/778.png',sport:'Football',w:70,d:18,l:12},
+    {home:'OM',away:'Rennes',league:'Ligue 1',date:'Dim 17 mai',time:'21:00',status:'NS',homeGoals:null,awayGoals:null,homeLogo:'https://media.api-sports.io/football/teams/81.png',awayLogo:'https://media.api-sports.io/football/teams/94.png',sport:'Football',w:47,d:25,l:28},
+    {home:'OL',away:'Lens',league:'Ligue 1',date:'Dim 17 mai',time:'21:00',status:'NS',homeGoals:null,awayGoals:null,homeLogo:'https://media.api-sports.io/football/teams/80.png',awayLogo:'https://media.api-sports.io/football/teams/116.png',sport:'Football',w:56,d:22,l:22},
+    {home:'Man United',away:'Nottm Forest',league:'Premier League',date:'Dim 17 mai',time:'13:30',status:'NS',homeGoals:null,awayGoals:null,homeLogo:'https://media.api-sports.io/football/teams/33.png',awayLogo:'https://media.api-sports.io/football/teams/65.png',sport:'Football',w:59,d:22,l:19},
+    {home:'Arsenal',away:'Burnley',league:'Premier League',date:'Lun 18 mai',time:'21:00',status:'NS',homeGoals:null,awayGoals:null,homeLogo:'https://media.api-sports.io/football/teams/42.png',awayLogo:'https://media.api-sports.io/football/teams/44.png',sport:'Football',w:90,d:7,l:3},
   ];
   renderAll();
 }
@@ -740,7 +749,7 @@ function renderAll(){
         </div>
         <div style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:0 8px;">
           ${score||`<div class="amc-vs">VS</div>`}
-          <div class="amc-time">🕐 ${m.time}</div>
+          <div class="amc-time">📅 ${m.date} · 🕐 ${m.time}</div>
         </div>
         <div style="display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;">
           <img src="${m.awayLogo}" style="width:44px;height:44px;object-fit:contain;filter:drop-shadow(0 2px 8px rgba(0,0,0,.5));" alt="${m.away}">
