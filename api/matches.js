@@ -35,14 +35,9 @@ module.exports = async function(req, res) {
 const allMatches = [ligue1, pl, ucl, laliga, seriea]
   .filter(d => d && d.result)
   .flatMap(d => d.result)
-  .filter(m => {
-    // Exclure les matchs terminés
+ .filter(m => {
     const status = m.event_status;
-    if (['FT', 'AET', 'PEN', 'ABD', 'CANC', 'AWD', 'WO'].includes(status)) return false;
-    // Exclure les matchs dont la date est passée de plus de 3h
-    const matchDate = new Date(m.event_date);
-    const diffHours = (now - matchDate) / (1000 * 60 * 60);
-    if (diffHours > 3) return false;
+    if (['FT', 'AET', 'PEN', 'ABD', 'CANC'].includes(status)) return false;
     return true;
   });
 
