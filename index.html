@@ -1172,23 +1172,105 @@ function updateGain(v,odd){
   document.getElementById('gainVal').textContent=n>0?`~€${Math.round(n*bestOdd)}`:'~€0';
 }
 
-function launch(){
-  const miseVal=document.getElementById('miseInput').value.trim();
-  if(!miseVal){document.getElementById('miseInput').focus();return;}
-  const histLabel=hist===0?'toute la saison':`les ${hist} derniers matchs`;
-  const detailInstr=detail?`Pour chaque match, donne : date, adversaire, score, résultat V/N/D.`:`Résume la forme globale en 2 lignes : série en cours, buts marqués/encaissés, % victoires.`;
-  let msg='';
-  if(mode==='court'){
-    msg=`Pronostic court — Football : ${selHome} vs ${selAway} (${selLeague}). Mise : ${miseVal}€.\nBase-toi sur ${histLabel}. ${detailInstr}\n\nDonne exactement :\n🎯 MISE : [pari conseillé] @ [cote] → sur ${miseVal}€ misés = [gain potentiel calculé]\n🔀 SÉCURISÉ : [pari alternatif] @ [cote] → [justification en 1 ligne]\n📊 Confiance : [X]/10\n\n⚠️ Outil d'aide à la décision uniquement.`;
+async function launch() {
+  const miseVal = document.getElementById('miseInput').value.trim();
+  if (!miseVal) { document.getElementById('miseInput').focus(); return; }
+
+  const histLabel = hist === 0 ? 'toute la saison' : `les ${hist} derniers matchs`;
+  const detailInstr = detail
+    ? `Pour chaque match, donne : date, adversaire, score, résultat V/N/D.`
+    : `Résume la forme globale en 2 lignes : série en cours, buts marqués/encaissés, % victoires.`;
+
+  let prompt = '';
+  if (mode === 'court') {
+    prompt = `Pronostic court — Football : ${selHome} vs ${selAway} (${selLeague}). Mise : ${miseVal}€.\nBase-toi sur ${histLabel}. ${detailInstr}\n\nDonne exactement :\n🎯 MISE : [pari conseillé] @ [cote] → sur ${miseVal}€ misés = [gain potentiel calculé]\n🔀 SÉCURISÉ : [pari alternatif] @ [cote] → [justification en 1 ligne]\n📊 Confiance : [X]/10\n\n⚠️ Outil d'aide à la décision uniquement.`;
   } else {
-    msg=`Analyse complète — Football : ${selHome} vs ${selAway} (${selLeague}). Mise : ${miseVal}€.\n\n**1. HISTORIQUE (${histLabel} par équipe)**\n${detailInstr}\n\n**2. FORME & STATS**\nSérie, buts marqués/encaissés, forces et faiblesses.\n\n**3. CONFRONTATIONS DIRECTES**\nDerniers face-à-face.\n\n**4. PRONOSTIC PRINCIPAL**\n🎯 MISE : [pari conseillé] @ [cote] → sur ${miseVal}€ misés = [gain potentiel calculé]\n\n**5. PARI ALTERNATIF**\n🔀 SÉCURISÉ : [pari alternatif] @ [cote] → [justification courte]\n\n**6. CONFIANCE & RISQUES**\n📊 Confiance : [X]/10 + facteurs de risque.\n\n⚠️ Outil d'aide à la décision uniquement.`;
+    prompt = `Analyse complète — Football : ${selHome} vs ${selAway} (${selLeague}). Mise : ${miseVal}€.\n\n**1. HISTORIQUE (${histLabel} par équipe)**\n${detailInstr}\n\n**2. FORME & STATS**\nSérie, buts marqués/encaissés, forces et faiblesses.\n\n**3. CONFRONTATIONS DIRECTES**\nDerniers face-à-face.\n\n**4. PRONOSTIC PRINCIPAL**\n🎯 MISE : [pari conseillé] @ [cote] → sur ${miseVal}€ misés = [gain potentiel calculé]\n\n**5. PARI ALTERNATIF**\n🔀 SÉCURISÉ : [pari alternatif] @ [cote] → [justification courte]\n\n**6. CONFIANCE & RISQUES**\n📊 Confiance : [X]/10 + facteurs de risque.\n\n⚠️ Outil d'aide à la décision uniquement.`;
   }
+
   document.getElementById('si2').classList.remove('active');
   document.getElementById('si2').classList.add('done');
   document.getElementById('si3').classList.add('active');
-  if(typeof sendPrompt==='function') sendPrompt(msg);
+
+  showResultLoading();
+
+  try {
+    const res = await fetch('/api/pronostic', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok || data.error) {
+      showResultError(data.error || 'Erreur inconnue.');
+      return;
+    }
+
+    showResult(data.result);
+
+  } catch (err) {
+    showResultError('Impossible de joindre le serveur. Réessaie.');
+  }
 }
 
+function getOrCreateResultBox() {
+  let box = document.getElementById('pronoResultBox');
+  if (!box) {
+    box = document.createElement('div');
+    box.id = 'pronoResultBox';
+    box.style.cssText = `margin-top:1.5rem;background:var(--black-3);border:1px solid rgba(255,255,255,.06);border-radius:8px;overflow:hidden;`;
+    document.getElementById('panel2').appendChild(box);
+  }
+  return box;
+}
+
+function showResultLoading() {
+  const box = getOrCreateResultBox();
+  box.innerHTML = `
+    <div style="background:rgba(232,24,44,.06);padding:10px 1rem;border-bottom:1px solid rgba(255,255,255,.04);display:flex;align-items:center;gap:8px;">
+      <div style="width:6px;height:6px;background:var(--red);border-radius:50%;animation:livePulse 1s infinite;"></div>
+      <span style="font-family:var(--font-cond);font-size:11px;font-weight:800;color:var(--red);letter-spacing:.12em;text-transform:uppercase;">Analyse en cours...</span>
+    </div>
+    <div style="padding:1.5rem;display:flex;justify-content:center;gap:8px;">
+      <div class="s-dot"></div><div class="s-dot"></div><div class="s-dot"></div>
+    </div>`;
+  box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function showResult(text) {
+  const box = getOrCreateResultBox();
+  const formatted = text
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\n/g, '<br>');
+  box.innerHTML = `
+    <div style="background:rgba(232,24,44,.06);padding:10px 1rem;border-bottom:1px solid rgba(255,255,255,.04);display:flex;align-items:center;justify-content:space-between;">
+      <span style="font-family:var(--font-cond);font-size:11px;font-weight:800;color:var(--red);letter-spacing:.12em;text-transform:uppercase;">⚡ Pronostic IA</span>
+      <button onclick="resetProno()" style="font-family:var(--font-cond);font-size:10px;font-weight:700;color:#444;background:none;border:none;cursor:pointer;letter-spacing:.06em;text-transform:uppercase;" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='#444'">Nouveau →</button>
+    </div>
+    <div style="padding:1.25rem 1rem;font-family:var(--font-body);font-size:14px;color:var(--gray-3);line-height:1.9;">${formatted}</div>`;
+  box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function showResultError(msg) {
+  const box = getOrCreateResultBox();
+  box.innerHTML = `
+    <div style="padding:1.5rem;text-align:center;">
+      <div style="font-family:var(--font-cond);font-size:13px;font-weight:700;color:var(--red);letter-spacing:.04em;margin-bottom:.5rem;">❌ ${msg}</div>
+      <button onclick="launch()" style="font-family:var(--font-cond);font-size:11px;font-weight:700;color:var(--gray);background:none;border:1px solid rgba(255,255,255,.08);padding:8px 16px;border-radius:2px;cursor:pointer;letter-spacing:.08em;text-transform:uppercase;">Réessayer</button>
+    </div>`;
+}
+
+function resetProno() {
+  const box = document.getElementById('pronoResultBox');
+  if (box) box.remove();
+  goStep1();
+  document.getElementById('si2').classList.remove('active','done');
+  document.getElementById('si3').classList.remove('active');
+  document.getElementById('si1').classList.add('active');
+  document.getElementById('si1').classList.remove('done');
+}
 function startTypewriter(team,cote,gain){
   const el=document.getElementById('heroLine1');
   if(!el) return;
