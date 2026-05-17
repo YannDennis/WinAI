@@ -407,40 +407,91 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,.04);paddin
   <div class="hero-bg-circle"></div>
   <div class="hero-bg-grid"></div>
   <div class="hero-left">
-    <div class="hero-eyebrow"><div class="eyebrow-dot"></div><span class="eyebrow-text">IA · Pronostics + Cotes en temps réel</span></div>
+    <div class="hero-eyebrow"><div class="eyebrow-dot"></div><span class="eyebrow-text">IA · Analyse en temps réel</span></div>
     <h1 class="hero-title">
       <span class="line-1">PARIE</span>
       <span class="line-2">PLUS SMART</span>
       <span class="line-3">GAGNE PLUS</span>
     </h1>
-    <p class="hero-desc">WinAI analyse chaque match et affiche les meilleures cotes de Winamax, Betclic et Unibet — pour que tu places le bon pari au bon endroit.</p>
+    <p class="hero-desc">WinAI analyse chaque match — forme, historique, confrontations — et te donne le pari exact à placer.</p>
     <div class="hero-actions">
       <a href="#prono" class="btn-red">⚡ Analyser un match</a>
       <a href="#matchs" class="btn-ghost">Matchs du jour</a>
     </div>
-    <p class="hero-note"><span>✓</span> 1er pronostic gratuit · Sans inscription · Sans carte bancaire</p>
+    <div style="display:flex;gap:1.5rem;margin-top:1.5rem;opacity:0;animation:fadeUp .6s .7s ease both;">
+      <div style="display:flex;flex-direction:column;gap:2px;">
+        <div style="font-family:var(--font-display);font-size:22px;color:var(--white);">100+</div>
+        <div style="font-family:var(--font-cond);font-size:9px;font-weight:700;color:#444;letter-spacing:.1em;text-transform:uppercase;">Matchs / semaine</div>
+      </div>
+      <div style="width:1px;background:rgba(255,255,255,.06);"></div>
+      <div style="display:flex;flex-direction:column;gap:2px;">
+        <div style="font-family:var(--font-display);font-size:22px;color:var(--white);">5</div>
+        <div style="font-family:var(--font-cond);font-size:9px;font-weight:700;color:#444;letter-spacing:.1em;text-transform:uppercase;">Ligues majeures</div>
+      </div>
+      <div style="width:1px;background:rgba(255,255,255,.06);"></div>
+      <div style="display:flex;flex-direction:column;gap:2px;">
+        <div style="font-family:var(--font-display);font-size:22px;color:var(--white);">IA</div>
+        <div style="font-family:var(--font-cond);font-size:9px;font-weight:700;color:#444;letter-spacing:.1em;text-transform:uppercase;">Claude · Anthropic</div>
+      </div>
+    </div>
   </div>
   <div class="hero-right">
     <div class="hero-card">
       <div class="hero-card-header">
         <div class="hch-dots"><div class="hch-dot"></div><div class="hch-dot"></div><div class="hch-dot"></div></div>
-        <div class="hch-title">Analyse en cours...</div>
+        <div class="hch-title" style="display:flex;align-items:center;gap:5px;"><span style="width:5px;height:5px;background:#E8182C;border-radius:50%;display:inline-block;animation:livePulse 1s infinite;"></span>Analyse en cours...</div>
       </div>
       <div class="hero-card-match">
-        <div class="hcm-league"><span style="width:4px;height:4px;background:var(--red);border-radius:50%;display:inline-block"></span><span id="heroLeague">Champions League · Finale</span></div>
-        <div class="hcm-teams">
-          <div class="hcm-team" id="heroHomeName">PSG</div>
-          <div class="hcm-vs">VS</div>
-          <div class="hcm-team" id="heroAwayName">Arsenal</div>
+        <div class="hcm-league"><span id="heroLeague">Champions League · Match du jour</span></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:.75rem 0;">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;">
+            <img id="heroHomeLogo" src="https://media.api-sports.io/football/teams/85.png" style="width:48px;height:48px;object-fit:contain;filter:drop-shadow(0 2px 8px rgba(0,0,0,.6));" alt="home">
+            <div style="font-family:var(--font-display);font-size:15px;color:var(--white);letter-spacing:.5px;" id="heroHomeName">PSG</div>
+            <div style="display:flex;gap:2px;" id="heroHomeForm">
+              <div style="width:15px;height:15px;border-radius:1px;background:#2E7D32;display:flex;align-items:center;justify-content:center;font-family:var(--font-cond);font-size:8px;font-weight:800;color:#fff;">V</div>
+              <div style="width:15px;height:15px;border-radius:1px;background:#2E7D32;display:flex;align-items:center;justify-content:center;font-family:var(--font-cond);font-size:8px;font-weight:800;color:#fff;">V</div>
+              <div style="width:15px;height:15px;border-radius:1px;background:#555;display:flex;align-items:center;justify-content:center;font-family:var(--font-cond);font-size:8px;font-weight:800;color:#fff;">N</div>
+              <div style="width:15px;height:15px;border-radius:1px;background:#2E7D32;display:flex;align-items:center;justify-content:center;font-family:var(--font-cond);font-size:8px;font-weight:800;color:#fff;">V</div>
+              <div style="width:15px;height:15px;border-radius:1px;background:#2E7D32;display:flex;align-items:center;justify-content:center;font-family:var(--font-cond);font-size:8px;font-weight:800;color:#fff;">V</div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:0 8px;">
+            <div class="hcm-vs">VS</div>
+            <div class="hcm-time" id="heroTime">21:00</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;">
+            <img id="heroAwayLogo" src="https://media.api-sports.io/football/teams/42.png" style="width:48px;height:48px;object-fit:contain;filter:drop-shadow(0 2px 8px rgba(0,0,0,.6));" alt="away">
+            <div style="font-family:var(--font-display);font-size:15px;color:var(--white);letter-spacing:.5px;" id="heroAwayName">Arsenal</div>
+            <div style="display:flex;gap:2px;" id="heroAwayForm">
+              <div style="width:15px;height:15px;border-radius:1px;background:#2E7D32;display:flex;align-items:center;justify-content:center;font-family:var(--font-cond);font-size:8px;font-weight:800;color:#fff;">V</div>
+              <div style="width:15px;height:15px;border-radius:1px;background:#2E7D32;display:flex;align-items:center;justify-content:center;font-family:var(--font-cond);font-size:8px;font-weight:800;color:#fff;">V</div>
+              <div style="width:15px;height:15px;border-radius:1px;background:#2E7D32;display:flex;align-items:center;justify-content:center;font-family:var(--font-cond);font-size:8px;font-weight:800;color:#fff;">V</div>
+              <div style="width:15px;height:15px;border-radius:1px;background:#B71C1C;display:flex;align-items:center;justify-content:center;font-family:var(--font-cond);font-size:8px;font-weight:800;color:#fff;">D</div>
+              <div style="width:15px;height:15px;border-radius:1px;background:#2E7D32;display:flex;align-items:center;justify-content:center;font-family:var(--font-cond);font-size:8px;font-weight:800;color:#fff;">V</div>
+            </div>
+          </div>
         </div>
-        <div class="hcm-time" id="heroTime">18:00 · Budapest</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;border-top:1px solid rgba(255,255,255,.04);padding-top:.75rem;">
+          <div style="background:var(--black-4);border-radius:3px;padding:7px;text-align:center;">
+            <div style="font-family:var(--font-cond);font-size:8px;font-weight:700;color:#444;letter-spacing:.06em;text-transform:uppercase;margin-bottom:3px;" id="heroOL1">PSG</div>
+            <div style="font-family:var(--font-display);font-size:17px;color:var(--white);" id="heroOV1">2.10</div>
+          </div>
+          <div style="background:var(--black-4);border-radius:3px;padding:7px;text-align:center;">
+            <div style="font-family:var(--font-cond);font-size:8px;font-weight:700;color:#444;letter-spacing:.06em;text-transform:uppercase;margin-bottom:3px;">Nul</div>
+            <div style="font-family:var(--font-display);font-size:17px;color:var(--white);" id="heroOV2">3.40</div>
+          </div>
+          <div style="background:var(--black-4);border-radius:3px;padding:7px;text-align:center;">
+            <div style="font-family:var(--font-cond);font-size:8px;font-weight:700;color:#444;letter-spacing:.06em;text-transform:uppercase;margin-bottom:3px;" id="heroOL3">Arsenal</div>
+            <div style="font-family:var(--font-display);font-size:17px;color:var(--white);" id="heroOV3">3.20</div>
+          </div>
+        </div>
       </div>
       <div class="hero-card-result">
-        <div class="hcr-row"><span class="hcr-label">Mise</span><span class="hcr-value" id="heroLine1">Victoire PSG @ 2.10 → +42€</span></div>
-        <div class="hcr-row"><span class="hcr-label">Sécurisé</span><span class="hcr-alt" id="heroLine2">Moins 2.5 buts @ 2.10</span></div>
+        <div class="hcr-row"><span class="hcr-label">🎯 Mise</span><span class="hcr-value" id="heroLine1"></span></div>
+        <div class="hcr-row"><span class="hcr-label">🔀 Sécurisé</span><span class="hcr-alt" id="heroLine2">Moins 2.5 buts @ 2.10</span></div>
         <div class="conf-row">
-          <div class="conf-label">Confiance <span>7/10</span></div>
-          <div class="conf-track"><div class="conf-fill"></div></div>
+          <div class="conf-label">Confiance <span id="heroConf">—</span></div>
+          <div class="conf-track"><div class="conf-fill" id="heroConfFill" style="width:0"></div></div>
         </div>
       </div>
     </div>
@@ -962,14 +1013,33 @@ function updateHero(filtered){
   if(!best) return;
   const set=(id,val)=>{const el=document.getElementById(id);if(el) el.textContent=val;};
   const setSrc=(id,src)=>{const el=document.getElementById(id);if(el&&src) el.src=src;};
+  set('heroLeague',best.league+' · Match du jour');
   set('heroHomeName',best.home);
   set('heroAwayName',best.away);
-  set('heroLeague',best.league+' · Match du jour');
-  set('heroTime','🕐 '+best.time);
+  set('heroTime',best.time);
+  set('heroOL1',best.home.split(' ')[0]);
+  set('heroOL3',best.away.split(' ')[0]);
   setSrc('heroHomeLogo',best.homeLogo);
   setSrc('heroAwayLogo',best.awayLogo);
   const margin=0.90;
   const coteH=best.w>0?(1/(best.w/100)*margin).toFixed(2):'2.10';
+  const coteD=best.d>0?(1/(best.d/100)*margin).toFixed(2):'3.40';
+  const coteA=best.l>0?(1/(best.l/100)*margin).toFixed(2):'3.20';
+  set('heroOV1',coteH);
+  set('heroOV2',coteD);
+  set('heroOV3',coteA);
+  // Forme aléatoire simulée
+  const forms=['V','V','V','N','D'];
+  function randForm(){
+    const shuffled=[...forms].sort(()=>Math.random()-.5);
+    const colors={'V':'#2E7D32','N':'#555','D':'#B71C1C'};
+    return shuffled.map(r=>`<div style="width:15px;height:15px;border-radius:1px;background:${colors[r]};display:flex;align-items:center;justify-content:center;font-family:var(--font-cond);font-size:8px;font-weight:800;color:#fff;">${r}</div>`).join('');
+  }
+  const hf=document.getElementById('heroHomeForm');
+  const af=document.getElementById('heroAwayForm');
+  if(hf) hf.innerHTML=randForm();
+  if(af) af.innerHTML=randForm();
+  set('heroLine2',`SÉCURISÉ : +2.5 buts @ ${coteD} — match à enjeux`);
   const gain=Math.round(20*parseFloat(coteH));
   startTypewriter(best.home,coteH,gain);
 }
@@ -1122,10 +1192,19 @@ function launch(){
 function startTypewriter(team,cote,gain){
   const el=document.getElementById('heroLine1');
   if(!el) return;
-  const text=`Victoire ${team} @ ${cote} → sur 20€ = +${gain}€`;
+  const text=`MISE : Victoire ${team} @ ${cote} → sur 20€ = +${gain}€`;
   let i=0;el.textContent='';
   function type(){
-    if(i<text.length){el.textContent=text.substring(0,i+1);i++;setTimeout(type,40);}
+    if(i<text.length){el.textContent=text.substring(0,i+1);i++;setTimeout(type,35);}
+    else{
+      setTimeout(()=>{
+        const conf=document.getElementById('heroConf');
+        const fill=document.getElementById('heroConfFill');
+        if(conf) conf.textContent='7/10';
+        if(fill) fill.style.transition='width 1.5s ease';
+        if(fill) fill.style.width='70%';
+      },300);
+    }
   }
   setTimeout(type,1500);
 }
