@@ -2,7 +2,9 @@ const https = require('https');
 
 module.exports = async function(req, res) {
   const API_KEY = process.env.ALL_SPORTS_KEY;
-  const today = new Date().toISOString().split('T')[0];
+  const today = new Date();
+  const from = today.toISOString().split('T')[0];
+  const to = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
 
   function fetchUrl(url) {
     return new Promise((resolve) => {
@@ -17,12 +19,19 @@ module.exports = async function(req, res) {
     });
   }
 
-  const [football, basketball, tennis] = await Promise.all([
-    fetchUrl(`https://apiv2.allsportsapi.com/football/?met=Fixtures&APIkey=${API_KEY}&from=${today}&to=${today}`),
-    fetchUrl(`https://apiv2.allsportsapi.com/basketball/?met=Fixtures&APIkey=${API_KEY}&from=${today}&to=${today}`),
-    fetchUrl(`https://apiv2.allsportsapi.com/tennis/?met=Fixtures&APIkey=${API_KEY}&from=${today}&to=${today}`),
+  const [ligue1, pl, ucl, laliga, bundesliga, seriea] = await Promise.all([
+    fetchUrl(`https://apiv2.allsportsapi.com/football/?met=Fixtures&APIkey=${API_KEY}&from=${from}&to=${to}&leagueId=168`),
+    fetchUrl(`https://apiv2.allsportsapi.com/football/?met=Fixtures&APIkey=${API_KEY}&from=${from}&to=${to}&leagueId=152`),
+    fetchUrl(`https://apiv2.allsportsapi.com/football/?met=Fixtures&APIkey=${API_KEY}&from=${from}&to=${to}&leagueId=175`),
+    fetchUrl(`https://apiv2.allsportsapi.com/football/?met=Fixtures&APIkey=${API_KEY}&from=${from}&to=${to}&leagueId=302`),
+    fetchUrl(`https://apiv2.allsportsapi.com/football/?met=Fixtures&APIkey=${API_KEY}&from=${from}&to=${to}&leagueId=175`),
+    fetchUrl(`https://apiv2.allsportsapi.com/football/?met=Fixtures&APIkey=${API_KEY}&from=${from}&to=${to}&leagueId=207`),
   ]);
 
+  const all = [ligue1, pl, ucl, laliga, bundesliga, seriea]
+    .filter(d => d && d.result)
+    .flatMap(d => d.result);
+
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.json({ football, basketball, tennis });
+  res.json({ football: { result: all } });
 };
