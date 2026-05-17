@@ -645,25 +645,20 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,.04);paddin
 </footer>
 
 <script>
-// SPLASH — fix définitif
+// SPLASH — se lance en premier, totalement indépendant
 (function(){
-  function hideSplash(){
-    var s=document.getElementById('splash');
-    if(!s) return;
+  var s=document.getElementById('splash');
+  if(!s) return;
+  setTimeout(function(){
     s.style.transition='opacity 0.8s ease';
     s.style.opacity='0';
     s.style.pointerEvents='none';
-    setTimeout(function(){
-      s.style.display='none';
-      s.style.zIndex='-1';
-    },900);
-  }
-  if(document.readyState==='loading'){
-    document.addEventListener('DOMContentLoaded',function(){setTimeout(hideSplash,3000);});
-  } else {
-    setTimeout(hideSplash,3000);
-  }
+    setTimeout(function(){ s.style.display='none'; },900);
+  },2800);
 })();
+
+// MATCHS — se lance après, sans bloquer quoi que ce soit
+setTimeout(function(){ fetchMatches(); },100);
 
 const observer=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:.1,rootMargin:'0px 0px -50px 0px'});
 document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
@@ -890,7 +885,6 @@ function launch(){
 }
 
 
-fetchMatches();
 </script>
 </body>
 </html>
