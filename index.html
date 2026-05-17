@@ -649,8 +649,12 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,.04);paddin
 // SPLASH — indépendant de tout le reste
 setTimeout(()=>{
   const s=document.getElementById('splash');
-  if(s){s.style.opacity='0';s.style.visibility='hidden';}
-},3400);
+  if(s){
+    s.style.transition='opacity .8s ease';
+    s.style.opacity='0';
+    setTimeout(()=>{s.style.display='none';},900);
+  }
+},3200);
 
 const observer=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:.1,rootMargin:'0px 0px -50px 0px'});
 document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
