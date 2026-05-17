@@ -1,15 +1,6 @@
 exports.handler = async function(event, context) {
-  const today = new Date().toISOString().split('T')[0];
-  const API_KEY = process.env.API_FOOTBALL_KEY;
-  
   try {
-    const res = await fetch(`https://v3.football.api-sports.io/fixtures?date=${today}&timezone=Europe/Paris`, {
-      method: 'GET',
-      headers: {
-        'x-apisports-key': API_KEY,
-        'x-rapidapi-host': 'v3.football.api-sports.io'
-      }
-    });
+    const res = await fetch('https://www.thesportsdb.com/api/v1/json/3/eventsdaynow.php?sport=Soccer');
     const data = await res.json();
     return {
       statusCode: 200,
