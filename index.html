@@ -540,13 +540,31 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,.04);paddin
         <div class="sel-footer"><button class="sel-change" onclick="goStep1()">← Changer de match</button></div>
       </div>
 
-      <!-- COTES BOOKMAKERS -->
+      <!-- LIENS BOOKMAKERS -->
       <div class="bookmakers-box" id="bookmakersBox">
         <div class="bk-header">
-          <span class="bk-title">Cotes en direct</span>
-          <span class="bk-live"><div class="bk-dot"></div> Winamax · Betclic · Unibet</span>
+          <span class="bk-title">Comparer les cotes</span>
+          <span class="bk-live"><div class="bk-dot"></div> Bookmakers officiels</span>
         </div>
-        <div id="bkContent"><div class="bk-loading">Chargement des cotes...</div></div>
+        <div id="bkContent">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:1rem;">
+            <a id="linkWinamax" href="https://www.winamax.fr/paris-sportifs/sports" target="_blank" style="background:#1A1A1A;border:1px solid rgba(255,255,255,.06);border-radius:4px;padding:12px;text-align:center;text-decoration:none;transition:border-color .2s;display:block;">
+              <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:800;color:#FF6B00;letter-spacing:.04em;margin-bottom:4px;">WINAMAX</div>
+              <div style="font-family:'Barlow',sans-serif;font-size:9px;color:#555;letter-spacing:.06em;">Voir les cotes →</div>
+            </a>
+            <a id="linkBetclic" href="https://www.betclic.fr/football" target="_blank" style="background:#1A1A1A;border:1px solid rgba(255,255,255,.06);border-radius:4px;padding:12px;text-align:center;text-decoration:none;transition:border-color .2s;display:block;">
+              <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:800;color:#00A651;letter-spacing:.04em;margin-bottom:4px;">BETCLIC</div>
+              <div style="font-family:'Barlow',sans-serif;font-size:9px;color:#555;letter-spacing:.06em;">Voir les cotes →</div>
+            </a>
+            <a id="linkUnibet" href="https://www.unibet.fr/paris-sportifs" target="_blank" style="background:#1A1A1A;border:1px solid rgba(255,255,255,.06);border-radius:4px;padding:12px;text-align:center;text-decoration:none;transition:border-color .2s;display:block;">
+              <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:800;color:#000;letter-spacing:.04em;margin-bottom:4px;background:#FFD700;border-radius:2px;padding:2px 6px;display:inline-block;">UNIBET</div>
+              <div style="font-family:'Barlow',sans-serif;font-size:9px;color:#555;letter-spacing:.06em;margin-top:4px;">Voir les cotes →</div>
+            </a>
+          </div>
+          <div style="padding:0 1rem 1rem;font-family:'Barlow',sans-serif;font-size:10px;color:#333;text-align:center;letter-spacing:.04em;">
+            Les cotes sont mises à jour en temps réel sur chaque plateforme
+          </div>
+        </div>
       </div>
 
       <div class="config-row" style="margin-top:1.5rem;">
@@ -958,62 +976,10 @@ function selectMatch(i){
 }
 
 function renderBookmakers(m){
-  const bkContent=document.getElementById('bkContent');
-  const matchOdds=oddsData.find(o=>
-    o.home_team&&m.home&&(o.home_team.toLowerCase().includes(m.home.toLowerCase().split(' ')[0])||m.home.toLowerCase().includes(o.home_team.toLowerCase().split(' ')[0]))
-  );
-
-  if(!matchOdds||!matchOdds.bookmakers||matchOdds.bookmakers.length===0){
-    bkContent.innerHTML=`<div class="bk-loading">Cotes non disponibles pour ce match</div>`;
-    return;
-  }
-
-  const bkNames=['winamax','betclic','unibet'];
-  const bkDisplay={'winamax':'Winamax','betclic':'Betclic','unibet':'Unibet'};
-  let bestHome=0,bestDraw=0,bestAway=0,bestHomeBk='',bestDrawBk='',bestAwayBk='';
-  let rows='';
-
-  bkNames.forEach(bkKey=>{
-    const bk=matchOdds.bookmakers.find(b=>b.key===bkKey);
-    if(!bk) return;
-    const h2h=bk.markets.find(mk=>mk.key==='h2h');
-    if(!h2h) return;
-    const home=h2h.outcomes.find(o=>o.name===matchOdds.home_team);
-    const draw=h2h.outcomes.find(o=>o.name==='Draw');
-    const away=h2h.outcomes.find(o=>o.name===matchOdds.away_team);
-    const hv=home?home.price.toFixed(2):'—';
-    const dv=draw?draw.price.toFixed(2):'—';
-    const av=away?away.price.toFixed(2):'—';
-    if(home&&home.price>bestHome){bestHome=home.price;bestHomeBk=bkKey;}
-    if(draw&&draw.price>bestDraw){bestDraw=draw.price;bestDrawBk=bkKey;}
-    if(away&&away.price>bestAway){bestAway=away.price;bestAwayBk=bkKey;}
-    rows+=`<div class="bk-row">
-      <div class="bk-name">${bkDisplay[bkKey]}</div>
-      <div class="bk-col"><div class="bk-odd ${bkKey===bestHomeBk?'best':''}">${hv}</div></div>
-      <div class="bk-col"><div class="bk-odd ${bkKey===bestDrawBk?'best':''}">${dv}</div></div>
-      <div class="bk-col"><div class="bk-odd ${bkKey===bestAwayBk?'best':''}">${av}</div></div>
-    </div>`;
-  });
-
-  if(!rows){
-    bkContent.innerHTML=`<div class="bk-loading">Cotes non disponibles pour ce match</div>`;
-    return;
-  }
-
-  const headerRow=`<div class="bk-row" style="background:rgba(255,255,255,.02);">
-    <div class="bk-name" style="color:#333;font-size:9px;">Bookmaker</div>
-    <div class="bk-col"><div class="bk-odd-label">${m.home.split(' ')[0]}</div></div>
-    <div class="bk-col"><div class="bk-odd-label">Nul</div></div>
-    <div class="bk-col"><div class="bk-odd-label">${m.away.split(' ')[0]}</div></div>
-  </div>`;
-
-  const bestRow=bestHome>0?`<div class="bk-best-row">
-    <span class="bk-best-label">✓ Meilleure cote domicile</span>
-    <span class="bk-best-val">${bestHome.toFixed(2)} — ${bkDisplay[bestHomeBk]}</span>
-  </div>`:'';
-
-  bkContent.innerHTML=headerRow+rows+bestRow;
-  updateGain(document.getElementById('miseInput').value,bestHome);
+  const query=encodeURIComponent(m.home+' '+m.away);
+  document.getElementById('linkWinamax').href=`https://www.winamax.fr/paris-sportifs/sports/1/football`;
+  document.getElementById('linkBetclic').href=`https://www.betclic.fr/football`;
+  document.getElementById('linkUnibet').href=`https://www.unibet.fr/paris-sportifs/football`;
 }
 
 function goStep2(){
