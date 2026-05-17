@@ -670,21 +670,64 @@ async function fetchMatches(){
     const res=await fetch('/api/matches');
     if(!res.ok) throw new Error('HTTP '+res.status);
     const data=await res.json();
-    const events=(data.events||[]);
-    if(events.length===0) throw new Error('Aucun match');
-    matches=events.map(f=>({
-      home:f.strHomeTeam,
-      away:f.strAwayTeam,
-      homeLogo:f.strHomeTeamBadge||'https://media.api-sports.io/football/teams/85.png',
-      awayLogo:f.strAwayTeamBadge||'https://media.api-sports.io/football/teams/42.png',
-      league:f.strLeague,
-      time:f.strTime?f.strTime.substring(0,5):'TBD',
-      status:f.strStatus,
-      homeGoals:f.intHomeScore,
-      awayGoals:f.intAwayScore,
-      sport:'Football',
-      w:50,d:25,l:25,
-    }));
+    matches=[];
+
+    // FOOTBALL
+    if(data.football&&data.football.result){
+      data.football.result.forEach(f=>{
+        matches.push({
+          home:f.event_home_team,
+          away:f.event_away_team,
+          homeLogo:f.home_team_logo||'https://media.api-sports.io/football/teams/85.png',
+          awayLogo:f.away_team_logo||'https://media.api-sports.io/football/teams/42.png',
+          league:f.league_name,
+          time:f.event_time||'TBD',
+          status:f.event_status,
+          homeGoals:f.event_final_result?f.event_final_result.split(' - ')[0]:null,
+          awayGoals:f.event_final_result?f.event_final_result.split(' - ')[1]:null,
+          sport:'Football',
+          w:50,d:25,l:25,
+        });
+      });
+    }
+
+    // BASKETBALL
+    if(data.basketball&&data.basketball.result){
+      data.basketball.result.forEach(f=>{
+        matches.push({
+          home:f.event_home_team,
+          away:f.event_away_team,
+          homeLogo:f.home_team_logo||'https://media.api-sports.io/basketball/teams/145.png',
+          awayLogo:f.away_team_logo||'https://media.api-sports.io/basketball/teams/139.png',
+          league:f.league_name,
+          time:f.event_time||'TBD',
+          status:f.event_status,
+          homeGoals:null,awayGoals:null,
+          sport:'Basketball',
+          w:50,d:0,l:50,
+        });
+      });
+    }
+
+    // TENNIS
+    if(data.tennis&&data.tennis.result){
+      data.tennis.result.forEach(f=>{
+        matches.push({
+          home:f.event_home_team,
+          away:f.event_away_team,
+          homeLogo:f.home_team_logo||'https://flagcdn.com/w40/fr.png',
+          awayLogo:f.away_team_logo||'https://flagcdn.com/w40/es.png',
+          league:f.league_name,
+          time:f.event_time||'TBD',
+          status:f.event_status,
+          homeGoals:null,awayGoals:null,
+          sport:'Tennis',
+          w:50,d:0,l:50,
+        });
+      });
+    }
+
+    if(matches.length===0) throw new Error('Aucun match');
     renderAll();
   }catch(e){
     console.error('Erreur API:',e);
