@@ -26,8 +26,7 @@ body{background:var(--black);color:var(--white);font-family:var(--font-body);fon
 body::before{content:'';position:fixed;inset:0;z-index:0;opacity:.03;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");background-size:200px;}
 
 /* SPLASH */
-#splash{position:fixed;inset:0;z-index:9999;background:var(--black);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 1s ease,visibility 1s ease;}
-#splash.hidden{opacity:0;visibility:hidden;pointer-events:none;}
+#splash{position:fixed;inset:0;z-index:9999;background:var(--black);display:flex;flex-direction:column;align-items:center;justify-content:center;}
 .splash-box{width:460px;height:180px;background:var(--red);border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;animation:splashGlow 2.5s .5s ease forwards;}
 @keyframes splashGlow{0%{box-shadow:0 0 0 rgba(232,24,44,0)}50%{box-shadow:0 0 80px rgba(232,24,44,.7),0 0 160px rgba(232,24,44,.2)}100%{box-shadow:0 0 40px rgba(232,24,44,.4)}}
 .splash-shimmer{position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.18),transparent);animation:splashShim 1.5s 1.2s ease forwards;}
@@ -646,15 +645,25 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,.04);paddin
 </footer>
 
 <script>
-// SPLASH — indépendant de tout le reste
-setTimeout(()=>{
-  const s=document.getElementById('splash');
-  if(s){
-    s.style.transition='opacity .8s ease';
+// SPLASH — fix définitif
+(function(){
+  function hideSplash(){
+    var s=document.getElementById('splash');
+    if(!s) return;
+    s.style.transition='opacity 0.8s ease';
     s.style.opacity='0';
-    setTimeout(()=>{s.style.display='none';},900);
+    s.style.pointerEvents='none';
+    setTimeout(function(){
+      s.style.display='none';
+      s.style.zIndex='-1';
+    },900);
   }
-},3200);
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',function(){setTimeout(hideSplash,3000);});
+  } else {
+    setTimeout(hideSplash,3000);
+  }
+})();
 
 const observer=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:.1,rootMargin:'0px 0px -50px 0px'});
 document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
