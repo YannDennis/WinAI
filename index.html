@@ -290,7 +290,7 @@ section{padding:7rem 5%;position:relative;z-index:1;}
 .steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;margin-top:3rem;background:rgba(255,255,255,.04);}
 .step{background:var(--black-2);padding:2.5rem 2rem;position:relative;overflow:hidden;transition:background .2s;}
 .step:hover{background:var(--black-3);}
-.step-num{font-family:var(--font-display);font-size:80px;color:rgba(232,24,44,.06);line-height:1;margin-bottom:1.5rem;}
+.step-big-num{font-family:var(--font-display);font-size:80px;color:rgba(232,24,44,.06);line-height:1;margin-bottom:1.5rem;}
 .step-icon{font-size:28px;margin-bottom:1rem;}
 .step h3{font-family:var(--font-display);font-size:22px;letter-spacing:1px;margin-bottom:.75rem;}
 .step p{font-size:14px;color:var(--gray-3);line-height:1.7;}
@@ -427,17 +427,17 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,.04);paddin
         <div class="hch-title">Analyse en cours...</div>
       </div>
       <div class="hero-card-match">
-        <div class="hcm-league"><span style="width:4px;height:4px;background:var(--red);border-radius:50%;display:inline-block"></span>Champions League · Finale</div>
+        <div class="hcm-league"><span style="width:4px;height:4px;background:var(--red);border-radius:50%;display:inline-block"></span><span id="heroLeague">Champions League · Finale</span></div>
         <div class="hcm-teams">
-          <div class="hcm-team">PSG</div>
+          <div class="hcm-team" id="heroHomeName">PSG</div>
           <div class="hcm-vs">VS</div>
-          <div class="hcm-team">Arsenal</div>
+          <div class="hcm-team" id="heroAwayName">Arsenal</div>
         </div>
-        <div class="hcm-time">18:00 · Budapest</div>
+        <div class="hcm-time" id="heroTime">18:00 · Budapest</div>
       </div>
       <div class="hero-card-result">
-        <div class="hcr-row"><span class="hcr-label">Mise</span><span class="hcr-value">Victoire PSG @ 2.10 → +42€</span></div>
-        <div class="hcr-row"><span class="hcr-label">Sécurisé</span><span class="hcr-alt">Moins 2.5 buts @ 2.10</span></div>
+        <div class="hcr-row"><span class="hcr-label">Mise</span><span class="hcr-value" id="heroLine1">Victoire PSG @ 2.10 → +42€</span></div>
+        <div class="hcr-row"><span class="hcr-label">Sécurisé</span><span class="hcr-alt" id="heroLine2">Moins 2.5 buts @ 2.10</span></div>
         <div class="conf-row">
           <div class="conf-label">Confiance <span>7/10</span></div>
           <div class="conf-track"><div class="conf-fill"></div></div>
@@ -543,8 +543,8 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,.04);paddin
       <!-- LIENS BOOKMAKERS -->
       <div class="bookmakers-box" id="bookmakersBox">
         <div class="bk-header">
-          <span class="bk-title">Comparer les cotes</span>
-          <span class="bk-live"><div class="bk-dot"></div> Bookmakers officiels</span>
+          <span class="bk-title">Cotes estimées</span>
+          <span class="bk-live"><div class="bk-dot"></div> Mis à jour par match</span>
         </div>
         <div id="bkContent">
           <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:1rem;">
@@ -562,7 +562,7 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,.04);paddin
             </a>
           </div>
           <div style="padding:0 1rem 1rem;font-family:'Barlow',sans-serif;font-size:10px;color:#333;text-align:center;letter-spacing:.04em;">
-            Les cotes sont mises à jour en temps réel sur chaque plateforme
+            Cotes estimées · Vérifie sur le bookmaker avant de miser
           </div>
         </div>
       </div>
@@ -632,19 +632,19 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,.04);paddin
   <div class="s-title reveal">EN 3 ÉTAPES</div>
   <div class="steps-grid">
     <div class="step reveal">
-      <div class="step-num">01</div>
+      <div class="step-big-num">01</div>
       <div class="step-icon">⚽</div>
       <h3>Choisis ton match</h3>
       <p>Un clic sur le match du jour — tout se remplit automatiquement. Ou saisis manuellement n'importe quel match.</p>
     </div>
     <div class="step reveal">
-      <div class="step-num">02</div>
+      <div class="step-big-num">02</div>
       <div class="step-icon">📊</div>
       <h3>Configure en 2 clics</h3>
       <p>Consulte les cotes Winamax, Betclic et Unibet en direct. Choisis ton type d'analyse et ta mise.</p>
     </div>
     <div class="step reveal">
-      <div class="step-num">03</div>
+      <div class="step-big-num">03</div>
       <div class="step-icon">🎯</div>
       <h3>Reçois le pari exact</h3>
       <p>Pronostic clair, meilleure cote conseillée, gain potentiel calculé. Tu sais exactement quoi faire.</p>
@@ -855,82 +855,125 @@ function renderAll(){
     document.getElementById('allMatchesGrid').innerHTML=`<div style="padding:3rem;text-align:center;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:#444;letter-spacing:.1em;text-transform:uppercase;">Aucun match disponible</div>`;
     return;
   }
-  const groups={};
+  const dayGroups={};
   filtered.forEach(m=>{
-    const label=getDayLabel(m);
-    if(!groups[label]) groups[label]=[];
-    groups[label].push(m);
+    const day=getDayLabel(m);
+    if(!dayGroups[day]) dayGroups[day]=[];
+    dayGroups[day].push(m);
   });
-  const order=['Aujourd\'hui','Demain','Cette semaine'];
-  const sortedKeys=Object.keys(groups).sort((a,b)=>{
-    const ai=order.indexOf(a),bi=order.indexOf(b);
+  const dayOrder=["Aujourd'hui",'Demain','Cette semaine'];
+  const sortedDays=Object.keys(dayGroups).sort((a,b)=>{
+    const ai=dayOrder.indexOf(a),bi=dayOrder.indexOf(b);
     if(ai===-1&&bi===-1) return 0;if(ai===-1) return 1;if(bi===-1) return -1;return ai-bi;
   });
-  document.getElementById('allMatchesGrid').innerHTML=sortedKeys.map(day=>{
-    const items=groups[day];
-    const isToday=day==='Aujourd\'hui';
-    const cards=items.map(m=>{
-      const idx=matches.indexOf(m);
-      const isLive=m.status==='1H'||m.status==='2H'||m.status==='HT'||m.status==='Live';
-      const scoreOrVs=isLive&&m.homeGoals!==null?`<div class="mc-score">${m.homeGoals}-${m.awayGoals}</div>`:`<div class="mc-vs">VS</div>`;
-      const liveBadge=isLive?`<span class="mc-live">🔴 LIVE</span>`:'';
-      return`<div class="match-card" onclick="selectAndScroll(${idx})">
-        <div class="mc-league">${m.league}${liveBadge}</div>
-        <div class="mc-teams">
-          <div class="mc-team">
-            ${m.homeLogo?`<img src="${m.homeLogo}" alt="${m.home}">`:`<div style="width:38px;height:38px;background:#1A1A1A;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;color:#555;">${m.home.substring(0,3).toUpperCase()}</div>`}
-            <div class="mc-team-name">${m.home.length>10?m.home.substring(0,10)+'…':m.home}</div>
-          </div>
-          <div style="display:flex;flex-direction:column;align-items:center;gap:3px;">
-            ${scoreOrVs}
-            <div class="mc-time">🕐 ${m.time}</div>
-          </div>
-          <div class="mc-team">
-            ${m.awayLogo?`<img src="${m.awayLogo}" alt="${m.away}">`:`<div style="width:38px;height:38px;background:#1A1A1A;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;color:#555;">${m.away.substring(0,3).toUpperCase()}</div>`}
-            <div class="mc-team-name">${m.away.length>10?m.away.substring(0,10)+'…':m.away}</div>
-          </div>
+  function makeCard(m){
+    const idx=matches.indexOf(m);
+    const isLive=m.status==='1H'||m.status==='2H'||m.status==='HT'||m.status==='Live';
+    const scoreOrVs=isLive&&m.homeGoals!==null?`<div class="mc-score">${m.homeGoals}-${m.awayGoals}</div>`:`<div class="mc-vs">VS</div>`;
+    const liveBadge=isLive?`<span class="mc-live">🔴 LIVE</span>`:'';
+    return`<div class="match-card" onclick="selectAndScroll(${idx})">
+      <div class="mc-league">${m.league}${liveBadge}</div>
+      <div class="mc-teams">
+        <div class="mc-team">
+          ${m.homeLogo?`<img src="${m.homeLogo}" alt="${m.home}">`:`<div style="width:38px;height:38px;background:#1A1A1A;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;color:#555;">${m.home.substring(0,3).toUpperCase()}</div>`}
+          <div class="mc-team-name">${m.home.length>12?m.home.substring(0,12)+'…':m.home}</div>
         </div>
-        <div class="mc-bars"><div class="mc-bar mc-w" style="flex:${m.w}"></div><div class="mc-bar mc-d" style="flex:${m.d}"></div><div class="mc-bar mc-l" style="flex:${m.l}"></div></div>
-        <div class="mc-probs"><span class="mc-prob">${m.home.split(' ')[0]} ${m.w}%</span><span class="mc-prob">Nul ${m.d}%</span><span class="mc-prob">${m.away.split(' ')[0]} ${m.l}%</span></div>
-        <div class="mc-cta">Analyser →</div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:3px;">${scoreOrVs}<div class="mc-time">🕐 ${m.time}</div></div>
+        <div class="mc-team">
+          ${m.awayLogo?`<img src="${m.awayLogo}" alt="${m.away}">`:`<div style="width:38px;height:38px;background:#1A1A1A;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;color:#555;">${m.away.substring(0,3).toUpperCase()}</div>`}
+          <div class="mc-team-name">${m.away.length>12?m.away.substring(0,12)+'…':m.away}</div>
+        </div>
+      </div>
+      <div class="mc-bars"><div class="mc-bar mc-w" style="flex:${m.w}"></div><div class="mc-bar mc-d" style="flex:${m.d}"></div><div class="mc-bar mc-l" style="flex:${m.l}"></div></div>
+      <div class="mc-probs"><span class="mc-prob">${m.home.split(' ')[0]} ${m.w}%</span><span class="mc-prob">Nul ${m.d}%</span><span class="mc-prob">${m.away.split(' ')[0]} ${m.l}%</span></div>
+      <div class="mc-cta">Analyser →</div>
+    </div>`;
+  }
+  document.getElementById('allMatchesGrid').innerHTML=sortedDays.map(day=>{
+    const dayItems=dayGroups[day];
+    const isToday=day==="Aujourd'hui";
+    const leagueGroups={};
+    dayItems.forEach(m=>{if(!leagueGroups[m.league]) leagueGroups[m.league]=[];leagueGroups[m.league].push(m);});
+    const leaguePriority=['Champions','Europa','Ligue 1','Premier','Liga','Serie A','Bundesliga'];
+    const sortedLeagues=Object.keys(leagueGroups).sort((a,b)=>{
+      const ai=leaguePriority.findIndex(l=>a.includes(l)||l.includes(a));
+      const bi=leaguePriority.findIndex(l=>b.includes(l)||l.includes(b));
+      if(ai===-1&&bi===-1) return 0;if(ai===-1) return 1;if(bi===-1) return -1;return ai-bi;
+    });
+    const leagueHTML=sortedLeagues.map(league=>{
+      const lItems=leagueGroups[league];
+      const featured=lItems.slice(0,3);
+      const rest=lItems.slice(3);
+      const uid=day.replace(/[^a-z0-9]/gi,'_')+league.replace(/[^a-z0-9]/gi,'_');
+      const restHTML=rest.length>0?`<div id="more_${uid}" style="display:none;grid-column:1/-1;"><div class="matches-grid">${rest.map(makeCard).join('')}</div></div><div style="grid-column:1/-1;"><button onclick="toggleMore('more_${uid}',this)" style="width:100%;padding:.6rem;background:transparent;border:1px solid rgba(255,255,255,.05);border-radius:2px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;color:#444;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .2s;margin-top:6px;">+ ${rest.length} autre${rest.length>1?'s':''} match${rest.length>1?'s':''} →</button></div>`:'';
+      return`<div style="margin-bottom:1.5rem;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:.75rem;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:800;color:#E8182C;letter-spacing:.16em;text-transform:uppercase;">${league}</div>
+          <div style="flex:1;height:1px;background:rgba(232,24,44,.1);"></div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;color:#333;font-weight:700;">${lItems.length} match${lItems.length>1?'s':''}</div>
+        </div>
+        <div class="matches-grid">${featured.map(makeCard).join('')}${restHTML}</div>
       </div>`;
     }).join('');
     return`<div class="day-section">
-      <div class="day-header">
-        ${isToday?'<div class="day-live-dot"></div>':''}
-        ${day}
-        <span class="day-count">${items.length} match${items.length>1?'s':''}</span>
-      </div>
-      <div class="matches-grid">${cards}</div>
+      <div class="day-header">${isToday?'<div class="day-live-dot"></div>':''}${day}<span class="day-count">${dayItems.length} match${dayItems.length>1?'s':''}</span></div>
+      ${leagueHTML}
     </div>`;
   }).join('');
 
-  // Workflow grid — matchs du jour uniquement
-  const todayMatches=filtered.filter(m=>getDayLabel(m)==='Aujourd\'hui').slice(0,6);
-  const allMatches2=todayMatches.length>0?todayMatches:filtered.slice(0,6);
-  document.getElementById('matchGrid').innerHTML=allMatches2.map((m,i)=>{
+  // Hero dynamique
+  updateHero(filtered);
+
+  // Workflow grid
+  const todayM=filtered.filter(m=>getDayLabel(m)==="Aujourd'hui").slice(0,6);
+  const wfMatches=todayM.length>0?todayM:filtered.slice(0,6);
+  document.getElementById('matchGrid').innerHTML=wfMatches.map(m=>{
     const idx=matches.indexOf(m);
     return`<div class="wf-card" id="wfc${idx}" onclick="selectMatch(${idx})">
       <div class="wf-league">${m.league}</div>
       <div class="wf-teams">
-        <div class="wf-team">
-          ${m.homeLogo?`<img src="${m.homeLogo}" alt="${m.home}">`:`<div style="width:30px;height:30px;background:#1A1A1A;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;color:#555;">${m.home.substring(0,3).toUpperCase()}</div>`}
-          <div class="wf-team-name">${m.home.split(' ')[0]}</div>
-        </div>
-        <div style="display:flex;flex-direction:column;align-items:center;gap:3px;">
-          <div class="wf-vs">VS</div>
-          <div class="wf-time">${m.time}</div>
-        </div>
-        <div class="wf-team">
-          ${m.awayLogo?`<img src="${m.awayLogo}" alt="${m.away}">`:`<div style="width:30px;height:30px;background:#1A1A1A;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;color:#555;">${m.away.substring(0,3).toUpperCase()}</div>`}
-          <div class="wf-team-name">${m.away.split(' ')[0]}</div>
-        </div>
+        <div class="wf-team">${m.homeLogo?`<img src="${m.homeLogo}" alt="${m.home}" style="width:30px;height:30px;object-fit:contain;">`:`<div style="width:30px;height:30px;background:#1A1A1A;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;color:#555;">${m.home.substring(0,3).toUpperCase()}</div>`}<div class="wf-team-name">${m.home.split(' ')[0]}</div></div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:3px;"><div class="wf-vs">VS</div><div class="wf-time">${m.time}</div></div>
+        <div class="wf-team">${m.awayLogo?`<img src="${m.awayLogo}" alt="${m.away}" style="width:30px;height:30px;object-fit:contain;">`:`<div style="width:30px;height:30px;background:#1A1A1A;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;color:#555;">${m.away.substring(0,3).toUpperCase()}</div>`}<div class="wf-team-name">${m.away.split(' ')[0]}</div></div>
       </div>
       <div class="wf-bars"><div class="wf-bar wf-w" style="flex:${m.w}"></div><div class="wf-bar wf-d" style="flex:${m.d}"></div><div class="wf-bar wf-l" style="flex:${m.l}"></div></div>
       <div class="wf-cta">Analyser →</div>
     </div>`;
   }).join('');
 }
+
+function toggleMore(id,btn){
+  const el=document.getElementById(id);
+  const open=el.style.display!=='none';
+  el.style.display=open?'none':'block';
+  const count=btn.textContent.match(/\d+/);
+  btn.textContent=open?(count?`+ ${count[0]} autre${count[0]>1?'s':''} match${count[0]>1?'s':''} →`:'Voir plus →'):'Masquer ↑';
+}
+
+function updateHero(filtered){
+  const today=filtered.filter(m=>getDayLabel(m)==="Aujourd'hui");
+  if(!today.length) return;
+  const priority=['Champions','Europa','Ligue 1','Premier','Liga','Serie A','Bundesliga'];
+  const best=today.slice().sort((a,b)=>{
+    const ai=priority.findIndex(p=>a.league.includes(p));
+    const bi=priority.findIndex(p=>b.league.includes(p));
+    if(ai===-1&&bi===-1) return 0;if(ai===-1) return 1;if(bi===-1) return -1;return ai-bi;
+  })[0];
+  if(!best) return;
+  const set=(id,val)=>{const el=document.getElementById(id);if(el) el.textContent=val;};
+  const setSrc=(id,src)=>{const el=document.getElementById(id);if(el&&src) el.src=src;};
+  set('heroHomeName',best.home);
+  set('heroAwayName',best.away);
+  set('heroLeague',best.league+' · Match du jour');
+  set('heroTime','🕐 '+best.time);
+  setSrc('heroHomeLogo',best.homeLogo);
+  setSrc('heroAwayLogo',best.awayLogo);
+  const margin=0.90;
+  const coteH=best.w>0?(1/(best.w/100)*margin).toFixed(2):'2.10';
+  const gain=Math.round(20*parseFloat(coteH));
+  startTypewriter(best.home,coteH,gain);
+}
+
 
 function selectAndScroll(i){selectMatch(i);document.getElementById('prono').scrollIntoView({behavior:'smooth'});}
 
@@ -976,10 +1019,26 @@ function selectMatch(i){
 }
 
 function renderBookmakers(m){
-  const query=encodeURIComponent(m.home+' '+m.away);
-  document.getElementById('linkWinamax').href=`https://www.winamax.fr/paris-sportifs/sports/1/football`;
-  document.getElementById('linkBetclic').href=`https://www.betclic.fr/football`;
-  document.getElementById('linkUnibet').href=`https://www.unibet.fr/paris-sportifs/football`;
+  const margin=0.90;
+  const coteH=m.w>0?(1/(m.w/100)*margin).toFixed(2):'—';
+  const coteD=m.d>0?(1/(m.d/100)*margin).toFixed(2):'—';
+  const coteA=m.l>0?(1/(m.l/100)*margin).toFixed(2):'—';
+  document.getElementById('linkWinamax').href='https://www.winamax.fr/paris-sportifs/sports/1/football';
+  document.getElementById('linkBetclic').href='https://www.betclic.fr/football-s1';
+  document.getElementById('linkUnibet').href='https://www.unibet.fr/paris-sportifs/football';
+  document.getElementById('ol1').textContent=m.home.split(' ')[0]+' gagne';
+  document.getElementById('ol3').textContent=m.away.split(' ')[0]+' gagne';
+  document.getElementById('ov1').textContent=coteH;
+  document.getElementById('ov2').textContent=coteD;
+  document.getElementById('ov3').textContent=coteA;
+  document.getElementById('op1').textContent=m.w+'%';
+  document.getElementById('op2').textContent=m.d+'%';
+  document.getElementById('op3').textContent=m.l+'%';
+  document.getElementById('pbH').style.flex=m.w;
+  document.getElementById('pbD').style.flex=m.d;
+  document.getElementById('pbA').style.flex=m.l;
+  bestOdd=parseFloat(coteH)||2.0;
+  updateGain(document.getElementById('miseInput').value);
 }
 
 function goStep2(){
@@ -1058,6 +1117,17 @@ function launch(){
   document.getElementById('si2').classList.add('done');
   document.getElementById('si3').classList.add('active');
   if(typeof sendPrompt==='function') sendPrompt(msg);
+}
+
+function startTypewriter(team,cote,gain){
+  const el=document.getElementById('heroLine1');
+  if(!el) return;
+  const text=`Victoire ${team} @ ${cote} → sur 20€ = +${gain}€`;
+  let i=0;el.textContent='';
+  function type(){
+    if(i<text.length){el.textContent=text.substring(0,i+1);i++;setTimeout(type,40);}
+  }
+  setTimeout(type,1500);
 }
 
 setTimeout(function(){fetchMatches();},100);
