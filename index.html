@@ -1211,5 +1211,10 @@ function startTypewriter(team,cote,gain){
 
 setTimeout(function(){fetchMatches();},100);
 </script>
+  <script src="/auth.js"></script>
+<script>
+  WinAuth.updateNavAuth();
+  WinAuth.onAuthChange(() => WinAuth.updateNavAuth());
+</script>
 </body>
 </html>
