@@ -5,3 +5,8 @@
   from = "/api/matches"
   to = "/.netlify/functions/matches"
   status = 200
+
+[[redirects]]
+  from = "/api/pronostic"
+  to = "/.netlify/functions/pronostic"
+  status = 200
