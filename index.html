@@ -845,6 +845,8 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,.04);paddin
 <script>
 // SPLASH
 (function(){
+// SPLASH
+(function(){
   var s=document.getElementById('splash');
   setTimeout(function(){
     s.style.transition='opacity .8s ease';
@@ -918,24 +920,7 @@ function filterSport(btn,s){
 
 function getDayLabel(m){return m.dayLabel||'Cette semaine';}
 
-function renderAll(){
-  const filtered=currentFilter==='Tous'?matches:matches.filter(m=>m.sport===currentFilter);
-  if(filtered.length===0){
-    document.getElementById('allMatchesGrid').innerHTML=`<div style="padding:3rem;text-align:center;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:#444;letter-spacing:.1em;text-transform:uppercase;">Aucun match disponible</div>`;
-    return;
-  }
-  const dayGroups={};
-  filtered.forEach(m=>{
-    const day=getDayLabel(m);
-    if(!dayGroups[day]) dayGroups[day]=[];
-    dayGroups[day].push(m);
-  });
-  const dayOrder=["Aujourd'hui",'Demain','Cette semaine'];
-  const sortedDays=Object.keys(dayGroups).sort((a,b)=>{
-    const ai=dayOrder.indexOf(a),bi=dayOrder.indexOf(b);
-    if(ai===-1&&bi===-1) return 0;if(ai===-1) return 1;if(bi===-1) return -1;return ai-bi;
-  });
-  function makeCard(m){
+function makeCard(m){
   const idx=matches.indexOf(m);
   const isLive=m.status==='1H'||m.status==='2H'||m.status==='HT'||m.status==='Live';
   const liveBadge=isLive?`<span class="mc-live">🔴 LIVE</span>`:'';
@@ -969,6 +954,25 @@ function renderAll(){
     </div>
   </div>`;
 }
+
+function renderAll(){
+  const filtered=currentFilter==='Tous'?matches:matches.filter(m=>m.sport===currentFilter);
+  if(filtered.length===0){
+    document.getElementById('allMatchesGrid').innerHTML=`<div style="padding:3rem;text-align:center;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:#444;letter-spacing:.1em;text-transform:uppercase;">Aucun match disponible</div>`;
+    return;
+  }
+  const dayGroups={};
+  filtered.forEach(m=>{
+    const day=getDayLabel(m);
+    if(!dayGroups[day]) dayGroups[day]=[];
+    dayGroups[day].push(m);
+  });
+  const dayOrder=["Aujourd'hui",'Demain','Cette semaine'];
+  const sortedDays=Object.keys(dayGroups).sort((a,b)=>{
+    const ai=dayOrder.indexOf(a),bi=dayOrder.indexOf(b);
+    if(ai===-1&&bi===-1) return 0;if(ai===-1) return 1;if(bi===-1) return -1;return ai-bi;
+  });
+
   document.getElementById('allMatchesGrid').innerHTML=sortedDays.map(day=>{
     const dayItems=dayGroups[day];
     const isToday=day==="Aujourd'hui";
@@ -1001,10 +1005,8 @@ function renderAll(){
     </div>`;
   }).join('');
 
-  // Hero dynamique
   updateHero(filtered);
 
-  // Workflow grid
   const todayM=filtered.filter(m=>getDayLabel(m)==="Aujourd'hui").slice(0,6);
   const wfMatches=todayM.length>0?todayM:filtered.slice(0,6);
   document.getElementById('matchGrid').innerHTML=wfMatches.map(m=>{
@@ -1020,6 +1022,7 @@ function renderAll(){
       <div class="wf-cta">Analyser →</div>
     </div>`;
   }).join('');
+}
 
 function toggleMore(id,btn){
   const el=document.getElementById(id);
@@ -1056,7 +1059,6 @@ function updateHero(filtered){
   set('heroOV1',coteH);
   set('heroOV2',coteD);
   set('heroOV3',coteA);
-  // Forme aléatoire simulée
   const forms=['V','V','V','N','D'];
   function randForm(){
     const shuffled=[...forms].sort(()=>Math.random()-.5);
@@ -1072,7 +1074,6 @@ function updateHero(filtered){
   startTypewriter(best.home,coteH,gain);
 }
 
-
 function selectAndScroll(i){selectMatch(i);document.getElementById('prono').scrollIntoView({behavior:'smooth'});}
 
 let selHome='',selAway='',selLeague='',selIdx=-1,mode='court',hist=10,detail=false;
@@ -1083,8 +1084,6 @@ function selectMatch(i){
   document.querySelectorAll('.wf-card').forEach(c=>c.classList.remove('selected'));
   const wfc=document.getElementById('wfc'+i);
   if(wfc) wfc.classList.add('selected');
-
-  // Remplir le banner
   document.getElementById('selLeague').textContent=m.league;
   document.getElementById('selTime').textContent=(m.dayLabel||'')+(m.time?' · 🕐 '+m.time:'');
   document.getElementById('selHome').textContent=m.home;
@@ -1102,17 +1101,12 @@ function selectMatch(i){
   document.getElementById('pbH').style.flex=m.w;
   document.getElementById('pbD').style.flex=m.d;
   document.getElementById('pbA').style.flex=m.l;
-
-  // Forme aléatoire simulée
   const forms=['V','N','D'];
   function randForm(){return Array.from({length:5},()=>forms[Math.floor(Math.random()*3)]);}
   function renderForm(arr){return arr.map(r=>`<div class="fd fd-${r.toLowerCase()}">${r}</div>`).join('');}
   document.getElementById('selHomeForm').innerHTML=renderForm(randForm());
   document.getElementById('selAwayForm').innerHTML=renderForm(randForm());
-
-  // Cotes bookmakers
   renderBookmakers(m);
-
   setTimeout(()=>goStep2(),300);
 }
 
@@ -1200,63 +1194,43 @@ function updateGain(v,odd){
   document.getElementById('gainVal').textContent=n>0?`~€${Math.round(n*bestOdd)}`:'~€0';
 }
 
-async function launch() {
-  const miseVal = document.getElementById('miseInput').value.trim();
-  if (!miseVal) { document.getElementById('miseInput').focus(); return; }
-
-  const histLabel = hist === 0 ? 'toute la saison' : `les ${hist} derniers matchs`;
-  const detailInstr = detail
-    ? `Pour chaque match, donne : date, adversaire, score, résultat V/N/D.`
-    : `Résume la forme globale en 2 lignes : série en cours, buts marqués/encaissés, % victoires.`;
-
-  let prompt = '';
-  if (mode === 'court') {
-    prompt = `Pronostic court — Football : ${selHome} vs ${selAway} (${selLeague}). Mise : ${miseVal}€.\nBase-toi sur ${histLabel}. ${detailInstr}\n\nDonne exactement :\n🎯 MISE : [pari conseillé] @ [cote] → sur ${miseVal}€ misés = [gain potentiel calculé]\n🔀 SÉCURISÉ : [pari alternatif] @ [cote] → [justification en 1 ligne]\n📊 Confiance : [X]/10\n\n⚠️ Outil d'aide à la décision uniquement.`;
-  } else {
-    prompt = `Analyse complète — Football : ${selHome} vs ${selAway} (${selLeague}). Mise : ${miseVal}€.\n\n**1. HISTORIQUE (${histLabel} par équipe)**\n${detailInstr}\n\n**2. FORME & STATS**\nSérie, buts marqués/encaissés, forces et faiblesses.\n\n**3. CONFRONTATIONS DIRECTES**\nDerniers face-à-face.\n\n**4. PRONOSTIC PRINCIPAL**\n🎯 MISE : [pari conseillé] @ [cote] → sur ${miseVal}€ misés = [gain potentiel calculé]\n\n**5. PARI ALTERNATIF**\n🔀 SÉCURISÉ : [pari alternatif] @ [cote] → [justification courte]\n\n**6. CONFIANCE & RISQUES**\n📊 Confiance : [X]/10 + facteurs de risque.\n\n⚠️ Outil d'aide à la décision uniquement.`;
+async function launch(){
+  const miseVal=document.getElementById('miseInput').value.trim();
+  if(!miseVal){document.getElementById('miseInput').focus();return;}
+  const histLabel=hist===0?'toute la saison':`les ${hist} derniers matchs`;
+  const detailInstr=detail?`Pour chaque match, donne : date, adversaire, score, résultat V/N/D.`:`Résume la forme globale en 2 lignes : série en cours, buts marqués/encaissés, % victoires.`;
+  let prompt='';
+  if(mode==='court'){
+    prompt=`Pronostic court — Football : ${selHome} vs ${selAway} (${selLeague}). Mise : ${miseVal}€.\nBase-toi sur ${histLabel}. ${detailInstr}\n\nDonne exactement :\n🎯 MISE : [pari conseillé] @ [cote] → sur ${miseVal}€ misés = [gain potentiel calculé]\n🔀 SÉCURISÉ : [pari alternatif] @ [cote] → [justification en 1 ligne]\n📊 Confiance : [X]/10\n\n⚠️ Outil d'aide à la décision uniquement.`;
+  }else{
+    prompt=`Analyse complète — Football : ${selHome} vs ${selAway} (${selLeague}). Mise : ${miseVal}€.\n\n**1. HISTORIQUE (${histLabel} par équipe)**\n${detailInstr}\n\n**2. FORME & STATS**\nSérie, buts marqués/encaissés, forces et faiblesses.\n\n**3. CONFRONTATIONS DIRECTES**\nDerniers face-à-face.\n\n**4. PRONOSTIC PRINCIPAL**\n🎯 MISE : [pari conseillé] @ [cote] → sur ${miseVal}€ misés = [gain potentiel calculé]\n\n**5. PARI ALTERNATIF**\n🔀 SÉCURISÉ : [pari alternatif] @ [cote] → [justification courte]\n\n**6. CONFIANCE & RISQUES**\n📊 Confiance : [X]/10 + facteurs de risque.\n\n⚠️ Outil d'aide à la décision uniquement.`;
   }
-
   document.getElementById('si2').classList.remove('active');
   document.getElementById('si2').classList.add('done');
   document.getElementById('si3').classList.add('active');
-
   showResultLoading();
-
-  try {
-    const res = await fetch('/api/pronostic', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt }),
-    });
-
-    const data = await res.json();
-
-    if (!res.ok || data.error) {
-      showResultError(data.error || 'Erreur inconnue.');
-      return;
-    }
-
+  try{
+    const res=await fetch('/api/pronostic',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt})});
+    const data=await res.json();
+    if(!res.ok||data.error){showResultError(data.error||'Erreur inconnue.');return;}
     showResult(data.result);
-
-  } catch (err) {
-    showResultError('Impossible de joindre le serveur. Réessaie.');
-  }
+  }catch(err){showResultError('Impossible de joindre le serveur. Réessaie.');}
 }
 
-function getOrCreateResultBox() {
-  let box = document.getElementById('pronoResultBox');
-  if (!box) {
-    box = document.createElement('div');
-    box.id = 'pronoResultBox';
-    box.style.cssText = `margin-top:1.5rem;background:var(--black-3);border:1px solid rgba(255,255,255,.06);border-radius:8px;overflow:hidden;`;
+function getOrCreateResultBox(){
+  let box=document.getElementById('pronoResultBox');
+  if(!box){
+    box=document.createElement('div');
+    box.id='pronoResultBox';
+    box.style.cssText=`margin-top:1.5rem;background:var(--black-3);border:1px solid rgba(255,255,255,.06);border-radius:8px;overflow:hidden;`;
     document.getElementById('panel2').appendChild(box);
   }
   return box;
 }
 
-function showResultLoading() {
-  const box = getOrCreateResultBox();
-  box.innerHTML = `
+function showResultLoading(){
+  const box=getOrCreateResultBox();
+  box.innerHTML=`
     <div style="background:rgba(232,24,44,.06);padding:10px 1rem;border-bottom:1px solid rgba(255,255,255,.04);display:flex;align-items:center;gap:8px;">
       <div style="width:6px;height:6px;background:var(--red);border-radius:50%;animation:livePulse 1s infinite;"></div>
       <span style="font-family:var(--font-cond);font-size:11px;font-weight:800;color:var(--red);letter-spacing:.12em;text-transform:uppercase;">Analyse en cours...</span>
@@ -1264,55 +1238,41 @@ function showResultLoading() {
     <div style="padding:1.5rem;display:flex;justify-content:center;gap:8px;">
       <div class="s-dot"></div><div class="s-dot"></div><div class="s-dot"></div>
     </div>`;
-  box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  box.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 
-function showResult(text) {
-  const box = getOrCreateResultBox();
-
-  // Extraire confiance
-  const confMatch = text.match(/(\d+)\/10/);
-  const conf = confMatch ? confMatch[1] : '—';
-
-  // Extraire conclusion
-  const conclusionMatch = text.match(/✅ CONCLUSION\s*:\s*(.+?)(?:\n|$)/);
-  const conclusion = conclusionMatch ? conclusionMatch[1].trim() : '';
-
-  // Extraire MISE
-  const miseMatch = text.match(/🎯 MISE\s*:\s*(.+?)(?:\n|$)/);
- const mise = miseMatch ? miseMatch[1].trim().replace(/\*\*/g, '') : '';
-
-  // Extraire SÉCURISÉ
-  const secMatch = text.match(/🔀 SÉCURISÉ\s*:\s*(.+?)(?:\n|$)/);
-  const sec = secMatch ? secMatch[1].trim().replace(/\*\*/g, '') : '';
-
-  // Nettoyer le texte principal
-  const clean = text
-    .replace(/^(🎯 MISE|🔀 SÉCURISÉ|📊 Confiance|✅ CONCLUSION|⚠️).*/gm, '')
-    .replace(/\*\*(.*?)\*\*/g, '<strong style="color:#F0EEE8;font-weight:800;">$1</strong>')
-    .replace(/^## (.+)$/gm, '<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:10px;font-weight:800;color:#E8182C;letter-spacing:.16em;text-transform:uppercase;margin:12px 0 8px;display:flex;align-items:center;gap:8px;">$1<div style="flex:1;height:1px;background:rgba(232,24,44,.12);"></div></div>')
-    .replace(/^# (.+)$/gm, '<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:10px;font-weight:800;color:#E8182C;letter-spacing:.16em;text-transform:uppercase;margin:12px 0 8px;display:flex;align-items:center;gap:8px;">$1<div style="flex:1;height:1px;background:rgba(232,24,44,.12);"></div></div>')
-    .replace(/^[-•]\s+(.+)$/gm, '<div style="display:flex;align-items:flex-start;gap:8px;margin:4px 0;"><div style="width:4px;height:4px;background:#E8182C;border-radius:50%;flex-shrink:0;margin-top:7px;"></div><span style="font-family:\'Barlow\',sans-serif;font-size:12px;color:#888;line-height:1.6;">$1</span></div>')
-    .replace(/^\|(.+)\|$/gm, (row) => {
-      if (row.match(/^\|[-| ]+\|$/)) return '';
-      const cells = row.split('|').filter(c => c.trim() !== '');
-      return '<div style="display:flex;gap:1px;margin:1px 0;">' +
-        cells.map(c => `<div style="flex:1;padding:5px 8px;background:#1E1E1E;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:600;color:#888;">${c.trim()}</div>`).join('') +
-        '</div>';
+function showResult(text){
+  const box=getOrCreateResultBox();
+  const confMatch=text.match(/(\d+)\/10/);
+  const conf=confMatch?confMatch[1]:'—';
+  const conclusionMatch=text.match(/✅ CONCLUSION\s*:\s*(.+?)(?:\n|$)/);
+  const conclusion=conclusionMatch?conclusionMatch[1].trim():'';
+  const miseMatch=text.match(/🎯 MISE\s*:\s*(.+?)(?:\n|$)/);
+  const mise=miseMatch?miseMatch[1].trim().replace(/\*\*/g,''):'';
+  const secMatch=text.match(/🔀 SÉCURISÉ\s*:\s*(.+?)(?:\n|$)/);
+  const sec=secMatch?secMatch[1].trim().replace(/\*\*/g,''):'';
+  const clean=text
+    .replace(/^(🎯 MISE|🔀 SÉCURISÉ|📊 Confiance|✅ CONCLUSION|⚠️).*/gm,'')
+    .replace(/\*\*(.*?)\*\*/g,'<strong style="color:#F0EEE8;font-weight:800;">$1</strong>')
+    .replace(/^## (.+)$/gm,'<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:10px;font-weight:800;color:#E8182C;letter-spacing:.16em;text-transform:uppercase;margin:12px 0 8px;display:flex;align-items:center;gap:8px;">$1<div style="flex:1;height:1px;background:rgba(232,24,44,.12);"></div></div>')
+    .replace(/^# (.+)$/gm,'<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:10px;font-weight:800;color:#E8182C;letter-spacing:.16em;text-transform:uppercase;margin:12px 0 8px;display:flex;align-items:center;gap:8px;">$1<div style="flex:1;height:1px;background:rgba(232,24,44,.12);"></div></div>')
+    .replace(/^[-•]\s+(.+)$/gm,'<div style="display:flex;align-items:flex-start;gap:8px;margin:4px 0;"><div style="width:4px;height:4px;background:#E8182C;border-radius:50%;flex-shrink:0;margin-top:7px;"></div><span style="font-family:\'Barlow\',sans-serif;font-size:12px;color:#888;line-height:1.6;">$1</span></div>')
+    .replace(/^\|(.+)\|$/gm,(row)=>{
+      if(row.match(/^\|[-| ]+\|$/)) return'';
+      const cells=row.split('|').filter(c=>c.trim()!=='');
+      return'<div style="display:flex;gap:1px;margin:1px 0;">'+cells.map(c=>`<div style="flex:1;padding:5px 8px;background:#1E1E1E;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:600;color:#888;">${c.trim()}</div>`).join('')+'</div>';
     })
-    .replace(/^---$/gm, '<div style="height:1px;background:rgba(255,255,255,.04);margin:8px 0;"></div>')
-    .replace(/\n{3,}/g, '\n\n')
-    .replace(/\n/g, '<br>');
-
-  box.innerHTML = `
+    .replace(/^---$/gm,'<div style="height:1px;background:rgba(255,255,255,.04);margin:8px 0;"></div>')
+    .replace(/\n{3,}/g,'\n\n')
+    .replace(/\n/g,'<br>');
+  box.innerHTML=`
     <div style="background:rgba(232,24,44,.06);padding:10px 16px;border-bottom:1px solid rgba(255,255,255,.04);display:flex;align-items:center;justify-content:space-between;">
       <div style="display:flex;align-items:center;gap:8px;">
         <div style="width:6px;height:6px;background:#4CAF50;border-radius:50%;"></div>
-        <span style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:800;color:#E8182C;letter-spacing:.12em;text-transform:uppercase;">⚡ Pronostic IA — ${selHome} vs ${selAway}</span>
+        <span style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:800;color:#E8182C;letter-spacing:.12em;text-transform:uppercase;">⚡ BetMind — ${selHome} vs ${selAway}</span>
       </div>
       <button onclick="resetProno()" style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;color:#444;background:none;border:none;cursor:pointer;letter-spacing:.06em;text-transform:uppercase;" onmouseover="this.style.color='#E8182C'" onmouseout="this.style.color='#444'">Nouveau →</button>
     </div>
-
     <div style="padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.04);display:flex;align-items:center;justify-content:space-between;">
       <div>
         <div style="font-family:'Russo One',sans-serif;font-size:16px;color:#F0EEE8;letter-spacing:.5px;">${selHome} vs ${selAway}</div>
@@ -1323,48 +1283,30 @@ function showResult(text) {
         <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;color:#444;letter-spacing:.1em;text-transform:uppercase;">Confiance</div>
       </div>
     </div>
-
-    <div style="padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.03);font-family:'Barlow',sans-serif;font-size:12px;color:#888;line-height:1.8;">
-      ${clean}
-    </div>
-
-    ${mise ? `<div style="margin:12px 16px 8px;background:rgba(232,24,44,.08);border:1px solid rgba(232,24,44,.25);border-radius:4px;padding:12px 14px;">
-      <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:800;color:#E8182C;letter-spacing:.16em;text-transform:uppercase;margin-bottom:4px;">🎯 Mise conseillée</div>
-      <div style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:#F0EEE8;letter-spacing:.04em;">${mise}</div>
-    </div>` : ''}
-
-    ${sec ? `<div style="margin:0 16px 8px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:4px;padding:11px 14px;">
-      <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:800;color:#555;letter-spacing:.16em;text-transform:uppercase;margin-bottom:4px;">🔀 Pari sécurisé</div>
-      <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:600;color:#AAA;letter-spacing:.04em;">${sec}</div>
-    </div>` : ''}
-
-    ${conclusion ? `<div style="margin:0 16px 12px;background:rgba(76,175,80,.08);border:1px solid rgba(76,175,80,.25);border-radius:4px;padding:12px 14px;">
-      <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:800;color:#4CAF50;letter-spacing:.16em;text-transform:uppercase;margin-bottom:4px;">✅ Conclusion</div>
-      <div style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:800;color:#4CAF50;letter-spacing:.04em;">${conclusion}</div>
-    </div>` : ''}
-
+    <div style="padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.03);font-family:'Barlow',sans-serif;font-size:12px;color:#888;line-height:1.8;">${clean}</div>
+    ${mise?`<div style="margin:12px 16px 8px;background:rgba(232,24,44,.08);border:1px solid rgba(232,24,44,.25);border-radius:4px;padding:12px 14px;"><div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:800;color:#E8182C;letter-spacing:.16em;text-transform:uppercase;margin-bottom:4px;">🎯 Mise conseillée</div><div style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:#F0EEE8;letter-spacing:.04em;">${mise}</div></div>`:''}
+    ${sec?`<div style="margin:0 16px 8px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:4px;padding:11px 14px;"><div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:800;color:#555;letter-spacing:.16em;text-transform:uppercase;margin-bottom:4px;">🔀 Pari sécurisé</div><div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:600;color:#AAA;letter-spacing:.04em;">${sec}</div></div>`:''}
+    ${conclusion?`<div style="margin:0 16px 12px;background:rgba(76,175,80,.08);border:1px solid rgba(76,175,80,.25);border-radius:4px;padding:12px 14px;"><div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:800;color:#4CAF50;letter-spacing:.16em;text-transform:uppercase;margin-bottom:4px;">✅ Conclusion</div><div style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:800;color:#4CAF50;letter-spacing:.04em;">${conclusion}</div></div>`:''}
     <div style="padding:8px 16px;font-family:'Barlow Condensed',sans-serif;font-size:10px;color:#2A2A2A;letter-spacing:.04em;text-align:center;">⚠️ Outil d'aide à la décision uniquement. Pariez de manière responsable.</div>
   `;
-  box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-}
-function showResultError(msg) {
-  const box = getOrCreateResultBox();
-  box.innerHTML = `
-    <div style="padding:1.5rem;text-align:center;">
-      <div style="font-family:var(--font-cond);font-size:13px;font-weight:700;color:var(--red);letter-spacing:.04em;margin-bottom:.5rem;">❌ ${msg}</div>
-      <button onclick="launch()" style="font-family:var(--font-cond);font-size:11px;font-weight:700;color:var(--gray);background:none;border:1px solid rgba(255,255,255,.08);padding:8px 16px;border-radius:2px;cursor:pointer;letter-spacing:.08em;text-transform:uppercase;">Réessayer</button>
-    </div>`;
+  box.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 
-function resetProno() {
-  const box = document.getElementById('pronoResultBox');
-  if (box) box.remove();
+function showResultError(msg){
+  const box=getOrCreateResultBox();
+  box.innerHTML=`<div style="padding:1.5rem;text-align:center;"><div style="font-family:var(--font-cond);font-size:13px;font-weight:700;color:var(--red);letter-spacing:.04em;margin-bottom:.5rem;">❌ ${msg}</div><button onclick="launch()" style="font-family:var(--font-cond);font-size:11px;font-weight:700;color:var(--gray);background:none;border:1px solid rgba(255,255,255,.08);padding:8px 16px;border-radius:2px;cursor:pointer;letter-spacing:.08em;text-transform:uppercase;">Réessayer</button></div>`;
+}
+
+function resetProno(){
+  const box=document.getElementById('pronoResultBox');
+  if(box) box.remove();
   goStep1();
   document.getElementById('si2').classList.remove('active','done');
   document.getElementById('si3').classList.remove('active');
   document.getElementById('si1').classList.add('active');
   document.getElementById('si1').classList.remove('done');
 }
+
 function startTypewriter(team,cote,gain){
   const el=document.getElementById('heroLine1');
   if(!el) return;
