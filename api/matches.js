@@ -44,32 +44,41 @@ module.exports = async function(req, res) {
 
   // Matcher les cotes avec les matchs
   const matchesWithOdds = allMatches.map(m => {
-    const homeName = m.event_home_team?.toLowerCase().replace(/\s+/g,'');
-    const awayName = m.event_away_team?.toLowerCase().replace(/\s+/g,'');
+  const normalize = s => s?.toLowerCase()
+    .replace(/\s+/g,'')
+    .replace(/[^a-z0-9]/g,'')
+    .replace('paris saint germain','psg')
+    .replace('psg','psg')
+    .replace('atletico','atl')
+    .replace('manchester','man')
+    .replace('internazionale','inter');
 
-    const oddsMatch = allOdds.find(o => {
-      const oHome = o.home_team?.toLowerCase().replace(/\s+/g,'');
-      const oAway = o.away_team?.toLowerCase().replace(/\s+/g,'');
-      return oHome?.includes(homeName?.slice(0,5)) || homeName?.includes(oHome?.slice(0,5)) ||
-             oAway?.includes(awayName?.slice(0,5)) || awayName?.includes(oAway?.slice(0,5));
-    });
+  const homeName = normalize(m.event_home_team);
+  const awayName = normalize(m.event_away_team);
 
-    if (oddsMatch) {
-      const bookmakers = {};
-      oddsMatch.bookmakers?.forEach(bk => {
-        const h2h = bk.markets?.find(mk => mk.key === 'h2h');
-        if (h2h) {
-          bookmakers[bk.key] = {
-            home: h2h.outcomes?.find(o => o.name === oddsMatch.home_team)?.price,
-            draw: h2h.outcomes?.find(o => o.name === 'Draw')?.price,
-            away: h2h.outcomes?.find(o => o.name === oddsMatch.away_team)?.price,
-          };
-        }
-      });
-      m.bookmakers = bookmakers;
-    }
-    return m;
+  const oddsMatch = allOdds.find(o => {
+    const oHome = normalize(o.home_team);
+    const oAway = normalize(o.away_team);
+    return (oHome?.slice(0,6) === homeName?.slice(0,6) && oAway?.slice(0,6) === awayName?.slice(0,6)) ||
+           (oHome?.slice(0,6) === awayName?.slice(0,6) && oAway?.slice(0,6) === homeName?.slice(0,6));
   });
+
+  if (oddsMatch) {
+    const bookmakers = {};
+    oddsMatch.bookmakers?.forEach(bk => {
+      const h2h = bk.markets?.find(mk => mk.key === 'h2h');
+      if (h2h) {
+        bookmakers[bk.key] = {
+          home: h2h.outcomes?.find(o => o.name === oddsMatch.home_team)?.price,
+          draw: h2h.outcomes?.find(o => o.name === 'Draw')?.price,
+          away: h2h.outcomes?.find(o => o.name === oddsMatch.away_team)?.price,
+        };
+      }
+    });
+    if(Object.keys(bookmakers).length > 0) m.bookmakers = bookmakers;
+  }
+  return m;
+});
 
   res.setHeader('Access-Control-Allow-Origin', '*');
   console.log('ODDS sample:', JSON.stringify(allOdds.slice(0,2), null, 2));
