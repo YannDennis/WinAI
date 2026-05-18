@@ -593,12 +593,12 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,.04);paddin
       <div class="config-row">
         <div class="config-label">Historique par équipe</div>
         <div class="hist-pills">
-          <div class="hist-pill" onclick="setChip(this,'hist',5)">5 matchs</div>
-          <div class="hist-pill active" onclick="setChip(this,'hist',10)">10 matchs</div>
-          <div class="hist-pill" onclick="setChip(this,'hist',20)">20 matchs</div>
-          <div class="hist-pill" onclick="setChip(this,'hist',30)">30 matchs</div>
-          <div class="hist-pill" onclick="setChip(this,'hist',0)">Saison</div>
-        </div>
+  <div class="hist-pill active" onclick="setChip(this,'hist',5)">5 matchs</div>
+  <div class="hist-pill" onclick="setChip(this,'hist',10)">10 matchs</div>
+  <div class="hist-pill" onclick="setChip(this,'hist',20)" style="position:relative;">20 matchs<span style="position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:#FF9800;color:#000;font-family:var(--font-cond);font-size:7px;font-weight:800;letter-spacing:.06em;padding:1px 6px;border-radius:2px;white-space:nowrap;">STARTER</span></div>
+  <div class="hist-pill" onclick="setChip(this,'hist',30)" style="position:relative;">30 matchs<span style="position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:#E8182C;color:#fff;font-family:var(--font-cond);font-size:7px;font-weight:800;letter-spacing:.06em;padding:1px 6px;border-radius:2px;white-space:nowrap;">EXPERT</span></div>
+  <div class="hist-pill" onclick="setChip(this,'hist',0)" style="position:relative;">Saison<span style="position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:#E8182C;color:#fff;font-family:var(--font-cond);font-size:7px;font-weight:800;letter-spacing:.06em;padding:1px 6px;border-radius:2px;white-space:nowrap;">EXPERT</span></div>
+</div>
         <div class="detail-card" id="dc" onclick="toggleDetail()">
           <div>
             <div class="detail-title">Détail match par match</div>
