@@ -1070,17 +1070,70 @@ function selectMatch(i){
 
 function renderBookmakers(m){
   const margin=0.90;
-  const coteH=m.w>0?(1/(m.w/100)*margin).toFixed(2):'—';
-  const coteD=m.d>0?(1/(m.d/100)*margin).toFixed(2):'—';
-  const coteA=m.l>0?(1/(m.l/100)*margin).toFixed(2):'—';
+  const bk=m.bookmakers||{};
+  
+  // Priorité : vraies cotes bookmakers, sinon estimation
+  const winamax=bk.winamax||{};
+  const betclic=bk.betclic||{};
+  const unibet=bk.unibet||{};
+
+  const coteH=winamax.home||betclic.home||unibet.home||(m.w>0?(1/(m.w/100)*margin).toFixed(2):null);
+  const coteD=winamax.draw||betclic.draw||unibet.draw||(m.d>0?(1/(m.d/100)*margin).toFixed(2):null);
+  const coteA=winamax.away||betclic.away||unibet.away||(m.l>0?(1/(m.l/100)*margin).toFixed(2):null);
+
+  const fmt=v=>v?parseFloat(v).toFixed(2):'—';
+  const hasReal=Object.keys(bk).length>0;
+
   document.getElementById('linkWinamax').href='https://www.winamax.fr/paris-sportifs/sports/1/football';
   document.getElementById('linkBetclic').href='https://www.betclic.fr/football-s1';
   document.getElementById('linkUnibet').href='https://www.unibet.fr/paris-sportifs/football';
-  document.getElementById('ol1').textContent=m.home.split(' ')[0]+' gagne';document.getElementById('ol3').textContent=m.away.split(' ')[0]+' gagne';
-  document.getElementById('ov1').textContent=coteH;document.getElementById('ov2').textContent=coteD;document.getElementById('ov3').textContent=coteA;
-  document.getElementById('op1').textContent=m.w+'%';document.getElementById('op2').textContent=m.d+'%';document.getElementById('op3').textContent=m.l+'%';
-  document.getElementById('pbH').style.flex=m.w;document.getElementById('pbD').style.flex=m.d;document.getElementById('pbA').style.flex=m.l;
-  bestOdd=parseFloat(coteH)||2.0;updateGain(document.getElementById('miseInput').value);
+
+  document.getElementById('ol1').textContent=m.home.split(' ')[0]+' gagne';
+  document.getElementById('ol3').textContent=m.away.split(' ')[0]+' gagne';
+
+  // Afficher les cotes avec couleur verte si réelles
+  const color=hasReal?'#4CAF50':'var(--white)';
+  document.getElementById('ov1').textContent=fmt(coteH);
+  document.getElementById('ov1').style.color=hasReal?'#4CAF50':'var(--white)';
+  document.getElementById('ov2').textContent=fmt(coteD);
+  document.getElementById('ov3').textContent=fmt(coteA);
+  document.getElementById('ov3').style.color=hasReal?'#4CAF50':'var(--white)';
+
+  document.getElementById('op1').textContent=m.w+'%';
+  document.getElementById('op2').textContent=m.d+'%';
+  document.getElementById('op3').textContent=m.l+'%';
+  document.getElementById('pbH').style.flex=m.w;
+  document.getElementById('pbD').style.flex=m.d;
+  document.getElementById('pbA').style.flex=m.l;
+
+  // Afficher cotes par bookmaker si disponibles
+  if(hasReal){
+    document.getElementById('bkContent').innerHTML=`
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:1rem;">
+        <div style="background:#1A1A1A;border:1px solid rgba(255,255,255,.06);border-radius:4px;padding:12px;text-align:center;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:800;color:#FF6B00;margin-bottom:6px;">WINAMAX</div>
+          ${winamax.home?`<div style="display:flex;justify-content:space-between;font-family:'Barlow Condensed',sans-serif;font-size:11px;margin-top:4px;"><span style="color:#555;">1</span><span style="color:#4CAF50;font-weight:800;">${parseFloat(winamax.home).toFixed(2)}</span></div>
+          <div style="display:flex;justify-content:space-between;font-family:'Barlow Condensed',sans-serif;font-size:11px;margin-top:2px;"><span style="color:#555;">X</span><span style="color:#AAA;font-weight:800;">${parseFloat(winamax.draw||0).toFixed(2)}</span></div>
+          <div style="display:flex;justify-content:space-between;font-family:'Barlow Condensed',sans-serif;font-size:11px;margin-top:2px;"><span style="color:#555;">2</span><span style="color:#AAA;font-weight:800;">${parseFloat(winamax.away||0).toFixed(2)}</span></div>`:'<div style="font-size:9px;color:#444;margin-top:4px;">Non disponible</div>'}
+        </div>
+        <div style="background:#1A1A1A;border:1px solid rgba(255,255,255,.06);border-radius:4px;padding:12px;text-align:center;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:800;color:#00A651;margin-bottom:6px;">BETCLIC</div>
+          ${betclic.home?`<div style="display:flex;justify-content:space-between;font-family:'Barlow Condensed',sans-serif;font-size:11px;margin-top:4px;"><span style="color:#555;">1</span><span style="color:#4CAF50;font-weight:800;">${parseFloat(betclic.home).toFixed(2)}</span></div>
+          <div style="display:flex;justify-content:space-between;font-family:'Barlow Condensed',sans-serif;font-size:11px;margin-top:2px;"><span style="color:#555;">X</span><span style="color:#AAA;font-weight:800;">${parseFloat(betclic.draw||0).toFixed(2)}</span></div>
+          <div style="display:flex;justify-content:space-between;font-family:'Barlow Condensed',sans-serif;font-size:11px;margin-top:2px;"><span style="color:#555;">2</span><span style="color:#AAA;font-weight:800;">${parseFloat(betclic.away||0).toFixed(2)}</span></div>`:'<div style="font-size:9px;color:#444;margin-top:4px;">Non disponible</div>'}
+        </div>
+        <div style="background:#1A1A1A;border:1px solid rgba(255,255,255,.06);border-radius:4px;padding:12px;text-align:center;">
+          <div style="font-size:12px;font-weight:800;color:#000;background:#FFD700;border-radius:2px;padding:2px 6px;display:inline-block;margin-bottom:6px;">UNIBET</div>
+          ${unibet.home?`<div style="display:flex;justify-content:space-between;font-family:'Barlow Condensed',sans-serif;font-size:11px;margin-top:4px;"><span style="color:#555;">1</span><span style="color:#4CAF50;font-weight:800;">${parseFloat(unibet.home).toFixed(2)}</span></div>
+          <div style="display:flex;justify-content:space-between;font-family:'Barlow Condensed',sans-serif;font-size:11px;margin-top:2px;"><span style="color:#555;">X</span><span style="color:#AAA;font-weight:800;">${parseFloat(unibet.draw||0).toFixed(2)}</span></div>
+          <div style="display:flex;justify-content:space-between;font-family:'Barlow Condensed',sans-serif;font-size:11px;margin-top:2px;"><span style="color:#555;">2</span><span style="color:#AAA;font-weight:800;">${parseFloat(unibet.away||0).toFixed(2)}</span></div>`:'<div style="font-size:9px;color:#444;margin-top:4px;">Non disponible</div>'}
+        </div>
+      </div>
+      <div style="padding:0 1rem 1rem;font-family:'Barlow',sans-serif;font-size:10px;color:#4CAF50;text-align:center;letter-spacing:.04em;">✅ Cotes réelles · Mises à jour en temps réel</div>`;
+  }
+
+  bestOdd=parseFloat(coteH)||2.0;
+  updateGain(document.getElementById('miseInput').value);
 }
 
 function goStep2(){document.getElementById('panel1').classList.remove('active');document.getElementById('panel2').classList.add('active');document.getElementById('si1').classList.remove('active');document.getElementById('si1').classList.add('done');document.getElementById('si2').classList.add('active');}
