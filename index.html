@@ -1080,6 +1080,7 @@ let selHome='',selAway='',selLeague='',selIdx=-1,mode='court',hist=10,detail=fal
 function selectMatch(i){
   const m=matches[i];
   selHome=m.home;selAway=m.away;selLeague=m.league;selIdx=i;
+  selHomeKey=m.homeKey||0;selAwayKey=m.awayKey||0;
   document.querySelectorAll('.wf-card').forEach(c=>c.classList.remove('selected'));
   const wfc=document.getElementById('wfc'+i);
   if(wfc) wfc.classList.add('selected');
@@ -1209,7 +1210,7 @@ async function launch(){
   document.getElementById('si3').classList.add('active');
   showResultLoading();
   try{
-    const res=await fetch('/api/pronostic',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt})});
+    const res=await fetch('/api/pronostic',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt,homeTeamKey:selHomeKey,awayTeamKey:selAwayKey,hist})});
     const data=await res.json();
     if(!res.ok||data.error){showResultError(data.error||'Erreur inconnue.');return;}
     showResult(data.result);
