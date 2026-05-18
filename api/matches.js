@@ -1,5 +1,4 @@
 const https = require('https');
-
 module.exports = async function(req, res) {
   const SPORTS_KEY = process.env.ALL_SPORTS_KEY;
   const ODDS_KEY = process.env.ODDS_API_KEY;
@@ -20,7 +19,8 @@ module.exports = async function(req, res) {
     });
   }
 
-  const [ligue1, pl, ucl, laliga, seriea, odds_ligue1, odds_pl] = await Promise.all([
+  const [ligue1, pl, ucl, laliga, seriea,
+    odds_l1, odds_pl, odds_ucl, odds_liga, odds_serie] = await Promise.all([
     fetchUrl(`https://apiv2.allsportsapi.com/football/?met=Fixtures&APIkey=${SPORTS_KEY}&from=${from}&to=${to}&leagueId=168`),
     fetchUrl(`https://apiv2.allsportsapi.com/football/?met=Fixtures&APIkey=${SPORTS_KEY}&from=${from}&to=${to}&leagueId=152`),
     fetchUrl(`https://apiv2.allsportsapi.com/football/?met=Fixtures&APIkey=${SPORTS_KEY}&from=${from}&to=${to}&leagueId=175`),
@@ -28,21 +28,49 @@ module.exports = async function(req, res) {
     fetchUrl(`https://apiv2.allsportsapi.com/football/?met=Fixtures&APIkey=${SPORTS_KEY}&from=${from}&to=${to}&leagueId=207`),
     fetchUrl(`https://api.the-odds-api.com/v4/sports/soccer_france_ligue1/odds/?apiKey=${ODDS_KEY}&regions=eu&markets=h2h&bookmakers=winamax,betclic,unibet&oddsFormat=decimal`),
     fetchUrl(`https://api.the-odds-api.com/v4/sports/soccer_england_premier_league/odds/?apiKey=${ODDS_KEY}&regions=eu&markets=h2h&bookmakers=winamax,betclic,unibet&oddsFormat=decimal`),
+    fetchUrl(`https://api.the-odds-api.com/v4/sports/soccer_uefa_champs_league/odds/?apiKey=${ODDS_KEY}&regions=eu&markets=h2h&bookmakers=winamax,betclic,unibet&oddsFormat=decimal`),
+    fetchUrl(`https://api.the-odds-api.com/v4/sports/soccer_spain_la_liga/odds/?apiKey=${ODDS_KEY}&regions=eu&markets=h2h&bookmakers=winamax,betclic,unibet&oddsFormat=decimal`),
+    fetchUrl(`https://api.the-odds-api.com/v4/sports/soccer_italy_serie_a/odds/?apiKey=${ODDS_KEY}&regions=eu&markets=h2h&bookmakers=winamax,betclic,unibet&oddsFormat=decimal`),
   ]);
 
- const now = new Date();
+  const allMatches = [ligue1, pl, ucl, laliga, seriea]
+    .filter(d => d && d.result)
+    .flatMap(d => d.result)
+    .filter(m => !['FT','AET','PEN','ABD','CANC'].includes(m.event_status));
 
-const allMatches = [ligue1, pl, ucl, laliga, seriea]
-  .filter(d => d && d.result)
-  .flatMap(d => d.result)
- .filter(m => {
-    const status = m.event_status;
-    if (['FT', 'AET', 'PEN', 'ABD', 'CANC'].includes(status)) return false;
-    return true;
+  // Fusionner toutes les cotes
+  const allOdds = [odds_l1, odds_pl, odds_ucl, odds_liga, odds_serie]
+    .flatMap(o => Array.isArray(o) ? o : []);
+
+  // Matcher les cotes avec les matchs
+  const matchesWithOdds = allMatches.map(m => {
+    const homeName = m.event_home_team?.toLowerCase().replace(/\s+/g,'');
+    const awayName = m.event_away_team?.toLowerCase().replace(/\s+/g,'');
+
+    const oddsMatch = allOdds.find(o => {
+      const oHome = o.home_team?.toLowerCase().replace(/\s+/g,'');
+      const oAway = o.away_team?.toLowerCase().replace(/\s+/g,'');
+      return oHome?.includes(homeName?.slice(0,5)) || homeName?.includes(oHome?.slice(0,5)) ||
+             oAway?.includes(awayName?.slice(0,5)) || awayName?.includes(oAway?.slice(0,5));
+    });
+
+    if (oddsMatch) {
+      const bookmakers = {};
+      oddsMatch.bookmakers?.forEach(bk => {
+        const h2h = bk.markets?.find(mk => mk.key === 'h2h');
+        if (h2h) {
+          bookmakers[bk.key] = {
+            home: h2h.outcomes?.find(o => o.name === oddsMatch.home_team)?.price,
+            draw: h2h.outcomes?.find(o => o.name === 'Draw')?.price,
+            away: h2h.outcomes?.find(o => o.name === oddsMatch.away_team)?.price,
+          };
+        }
+      });
+      m.bookmakers = bookmakers;
+    }
+    return m;
   });
 
-  const allOdds = [...(Array.isArray(odds_ligue1) ? odds_ligue1 : []), ...(Array.isArray(odds_pl) ? odds_pl : [])];
-
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.json({ football: { result: allMatches }, odds: allOdds });
+  res.json({ football: { result: matchesWithOdds }, odds: allOdds });
 };
