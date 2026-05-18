@@ -81,7 +81,8 @@ module.exports = async function(req, res) {
 });
 
   res.setHeader('Access-Control-Allow-Origin', '*');
-  console.log('ODDS sample:', JSON.stringify(allOdds.slice(0,2), null, 2));
-console.log('MATCH sample:', JSON.stringify(allMatches.slice(0,2).map(m=>({home:m.event_home_team,away:m.event_away_team,bk:m.bookmakers})), null, 2));
+console.log('Matched:', matchesWithOdds.filter(m=>m.bookmakers).length, 'sur', matchesWithOdds.length);
+console.log('Odds teams:', allOdds.map(o=>o.home_team+' vs '+o.away_team));
+console.log('Match teams:', allMatches.slice(0,5).map(m=>m.event_home_team+' vs '+m.event_away_team));
   res.json({ football: { result: matchesWithOdds }, odds: allOdds });
 };
