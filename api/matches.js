@@ -1,5 +1,4 @@
 const https = require('https');
-
 module.exports = async function(req, res) {
   const SPORTS_KEY = process.env.ALL_SPORTS_KEY;
   const today = new Date();
@@ -32,32 +31,6 @@ module.exports = async function(req, res) {
     .flatMap(d => d.result)
     .filter(m => !['FT','AET','PEN','ABD','CANC'].includes(m.event_status));
 
-  // Cotes basées sur le classement et league_round
-  function computeOdds(m) {
-    const homePos = parseInt(m.home_team_standing) || 10;
-    const awayPos = parseInt(m.away_team_standing) || 10;
-    const totalTeams = 20;
-
-    // Force relative basée sur classement (1er = fort, dernier = faible)
-    const homeStr = ((totalTeams - homePos) / totalTeams) * 100 + 8; // +8 avantage domicile
-    const awayStr = ((totalTeams - awayPos) / totalTeams) * 100;
-    const drawStr = 22;
-
-    const total = homeStr + awayStr + drawStr;
-    const pH = homeStr / total;
-    const pD = drawStr / total;
-    const pA = awayStr / total;
-
-    const margin = 1.08;
-    return {
-      home: Math.max(1.15, Math.min(8.0, parseFloat((1 / pH / margin).toFixed(2)))),
-      draw: Math.max(2.80, Math.min(5.50, parseFloat((1 / pD / margin).toFixed(2)))),
-      away: Math.max(1.15, Math.min(12.0, parseFloat((1 / pA / margin).toFixed(2)))),
-      w: Math.round(pH * 100),
-      d: Math.round(pD * 100),
-      l: Math.round(pA * 100),
-    };
-  }
-
-  const matchesWithOdds = allMatches.map(m => {
-    const odds
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.json({ football: { result: allMatches }, odds: [] });
+};
