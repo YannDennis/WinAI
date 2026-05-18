@@ -624,7 +624,84 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,.04);paddin
           </div>
         </div>
       </div>
+<!-- MARCHÉS -->
+<div class="config-row">
+  <div class="config-label">Marchés à analyser</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+    <div class="mode-card active" onclick="setChip(this,'marche','1x2')">
+      <div class="mode-icon">⚽</div>
+      <div class="mode-title">Résultat 1X2</div>
+      <div class="mode-desc">Victoire / Nul / Défaite</div>
+    </div>
+    <div class="mode-card" onclick="setChip(this,'marche','buts')" style="position:relative;">
+      <div style="position:absolute;top:8px;right:8px;background:#FF9800;color:#000;font-family:var(--font-cond);font-size:8px;font-weight:800;letter-spacing:.08em;padding:2px 7px;border-radius:2px;">STARTER</div>
+      <div class="mode-icon">📈</div>
+      <div class="mode-title">Plus/Moins buts</div>
+      <div class="mode-desc">2.5 / 3.5 buts</div>
+    </div>
+    <div class="mode-card" onclick="setChip(this,'marche','btts')" style="position:relative;">
+      <div style="position:absolute;top:8px;right:8px;background:#FF9800;color:#000;font-family:var(--font-cond);font-size:8px;font-weight:800;letter-spacing:.08em;padding:2px 7px;border-radius:2px;">STARTER</div>
+      <div class="mode-icon">🥅</div>
+      <div class="mode-title">BTTS</div>
+      <div class="mode-desc">Les deux équipes marquent</div>
+    </div>
+    <div class="mode-card" onclick="setChip(this,'marche','score')" style="position:relative;">
+      <div style="position:absolute;top:8px;right:8px;background:#E8182C;color:#fff;font-family:var(--font-cond);font-size:8px;font-weight:800;letter-spacing:.08em;padding:2px 7px;border-radius:2px;">EXPERT</div>
+      <div class="mode-icon">🎰</div>
+      <div class="mode-title">Score exact</div>
+      <div class="mode-desc">Cote élevée, risque fort</div>
+    </div>
+    <div class="mode-card" onclick="setChip(this,'marche','buteur')" style="position:relative;">
+      <div style="position:absolute;top:8px;right:8px;background:#E8182C;color:#fff;font-family:var(--font-cond);font-size:8px;font-weight:800;letter-spacing:.08em;padding:2px 7px;border-radius:2px;">EXPERT</div>
+      <div class="mode-icon">👟</div>
+      <div class="mode-title">Buteur probable</div>
+      <div class="mode-desc">Premier / Dernier buteur</div>
+    </div>
+  </div>
+</div>
 
+<!-- STYLE DE MISE -->
+<div class="config-row">
+  <div class="config-label">Style de mise</div>
+  <div class="mode-cards">
+    <div class="mode-card" onclick="setChip(this,'style','prudent')">
+      <div class="mode-icon">🛡️</div>
+      <div class="mode-title">Mode prudent</div>
+      <div class="mode-desc">Cotes basses, risque minimal</div>
+    </div>
+    <div class="mode-card" onclick="setChip(this,'style','agressif')" style="position:relative;">
+      <div style="position:absolute;top:8px;right:8px;background:#E8182C;color:#fff;font-family:var(--font-cond);font-size:8px;font-weight:800;letter-spacing:.08em;padding:2px 7px;border-radius:2px;">EXPERT</div>
+      <div class="mode-icon">🔥</div>
+      <div class="mode-title">Mode agressif</div>
+      <div class="mode-desc">Cotes risquées, gains max</div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTEXTE -->
+<div class="config-row">
+  <div class="config-label">Contexte</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+    <div class="mode-card" onclick="setChip(this,'contexte','enjeux')" style="position:relative;">
+      <div style="position:absolute;top:8px;right:8px;background:#FF9800;color:#000;font-family:var(--font-cond);font-size:8px;font-weight:800;letter-spacing:.08em;padding:2px 7px;border-radius:2px;">STARTER</div>
+      <div class="mode-icon">🏆</div>
+      <div class="mode-title">Match à enjeux</div>
+      <div class="mode-desc">Finale, relégation, titre</div>
+    </div>
+    <div class="mode-card" onclick="setChip(this,'contexte','blessures')" style="position:relative;">
+      <div style="position:absolute;top:8px;right:8px;background:#E8182C;color:#fff;font-family:var(--font-cond);font-size:8px;font-weight:800;letter-spacing:.08em;padding:2px 7px;border-radius:2px;">EXPERT</div>
+      <div class="mode-icon">🤕</div>
+      <div class="mode-title">Blessures/Absences</div>
+      <div class="mode-desc">Joueurs clés indisponibles</div>
+    </div>
+    <div class="mode-card" onclick="setChip(this,'contexte','retour')" style="position:relative;">
+      <div style="position:absolute;top:8px;right:8px;background:#E8182C;color:#fff;font-family:var(--font-cond);font-size:8px;font-weight:800;letter-spacing:.08em;padding:2px 7px;border-radius:2px;">EXPERT</div>
+      <div class="mode-icon">🔄</div>
+      <div class="mode-title">Match retour</div>
+      <div class="mode-desc">Résultat aller à considérer</div>
+    </div>
+  </div>
+</div>
       <button class="gen-btn" onclick="launch()">⚡ LANCER L'ANALYSE →</button>
       <p class="prono-note">⚠️ Outil d'aide à la décision uniquement.</p>
     </div>
