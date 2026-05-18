@@ -1076,7 +1076,6 @@ function updateHero(filtered){
 function selectAndScroll(i){selectMatch(i);document.getElementById('prono').scrollIntoView({behavior:'smooth'});}
 
 let selHome='',selAway='',selLeague='',selIdx=-1,mode='court',hist=10,detail=false;
-let selHomeKey=0,selAwayKey=0;
 
 function selectMatch(i){
   const m=matches[i];
@@ -1156,7 +1155,6 @@ function goStep2Manual(){
   if(!m1||!m2){document.getElementById('m1').focus();return;}
   selHome=m1;selAway=m2;
   selLeague=document.getElementById('mc').value.trim()||'Football';
-  selHomeKey=0;selAwayKey=0;
   document.getElementById('selLeague').textContent=selLeague;
   document.getElementById('selTime').textContent='';
   document.getElementById('selHome').textContent=m1;
@@ -1205,7 +1203,7 @@ async function launch(){
   if(mode==='court'){
     prompt=`Pronostic court — Football : ${selHome} vs ${selAway} (${selLeague}). Mise : ${miseVal}€.\nBase-toi sur ${histLabel}. ${detailInstr}\n\nDonne exactement :\n🎯 MISE : [pari conseillé] @ [cote] → sur ${miseVal}€ misés = [gain potentiel calculé]\n🔀 SÉCURISÉ : [pari alternatif] @ [cote] → [justification en 1 ligne]\n📊 Confiance : [X]/10\n\n⚠️ Outil d'aide à la décision uniquement.`;
   }else{
-    prompt=`Analyse complète — Football : ${selHome} vs ${selAway} (${selLeague}). Mise : ${miseVal}€.\n\nHistorique (${histLabel} par équipe) :\n${detailInstr}\n\nForme et stats :\nSérie, buts marqués/encaissés, forces et faiblesses.\n\nConfrontations directes :\nDerniers face-à-face.\n\nPronostic principal :\n🎯 MISE : [pari conseillé] @ [cote] → sur ${miseVal}€ misés = [gain potentiel calculé]\n\nPari alternatif :\n🔀 SÉCURISÉ : [pari alternatif] @ [cote] → [justification courte]\n\nConfiance et risques :\n📊 Confiance : [X]/10 + facteurs de risque.\n\n⚠️ Outil d'aide à la décision uniquement.`;
+    prompt=`Analyse complète — Football : ${selHome} vs ${selAway} (${selLeague}). Mise : ${miseVal}€.\n\n**1. HISTORIQUE (${histLabel} par équipe)**\n${detailInstr}\n\n**2. FORME & STATS**\nSérie, buts marqués/encaissés, forces et faiblesses.\n\n**3. CONFRONTATIONS DIRECTES**\nDerniers face-à-face.\n\n**4. PRONOSTIC PRINCIPAL**\n🎯 MISE : [pari conseillé] @ [cote] → sur ${miseVal}€ misés = [gain potentiel calculé]\n\n**5. PARI ALTERNATIF**\n🔀 SÉCURISÉ : [pari alternatif] @ [cote] → [justification courte]\n\n**6. CONFIANCE & RISQUES**\n📊 Confiance : [X]/10 + facteurs de risque.\n\n⚠️ Outil d'aide à la décision uniquement.`;
   }
   document.getElementById('si2').classList.remove('active');
   document.getElementById('si2').classList.add('done');
@@ -1243,83 +1241,6 @@ function showResultLoading(){
   box.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 
-function renderMatchTable(lines) {
-  const rows = lines.map(line => {
-    const clean = line.replace(/^[-•]\s*/, '').trim();
-    const parts = clean.split('|').map(p => p.trim());
-    if (parts.length < 5) return '';
-    const [date, lieu, adversaire, score, res] = parts;
-    const resClean = res.replace(/\*\*/g, '').trim();
-    const icon = resClean === 'V' ? '✅' : resClean === 'D' ? '❌' : '🟡';
-    const color = resClean === 'V' ? '#4CAF50' : resClean === 'D' ? '#E8182C' : '#FF9800';
-    const lieuShort = lieu.toLowerCase().includes('dom') ? 'Dom.' : 'Ext.';
-    return `<tr style="border-bottom:1px solid rgba(255,255,255,.04);">
-      <td style="padding:10px 12px;font-family:'Barlow Condensed',sans-serif;font-size:12px;color:#888;">${date}</td>
-      <td style="padding:10px 12px;font-family:'Barlow Condensed',sans-serif;font-size:12px;color:#666;">${lieuShort}</td>
-      <td style="padding:10px 12px;font-family:'Barlow Condensed',sans-serif;font-size:12px;color:#AAA;">${adversaire.replace(/^vs\s*/i,'')}</td>
-      <td style="padding:10px 12px;font-family:'Barlow Condensed',sans-serif;font-size:12px;color:#AAA;">${score}</td>
-      <td style="padding:10px 12px;font-family:'Barlow Condensed',sans-serif;font-size:12px;color:${color};font-weight:800;">${icon} ${resClean}</td>
-    </tr>`;
-  }).join('');
-  return `<table style="width:100%;border-collapse:collapse;background:var(--black-4);border-radius:4px;overflow:hidden;margin-bottom:12px;">
-    <thead><tr style="background:var(--black-5);">
-      <th style="padding:8px 12px;font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:800;color:#555;letter-spacing:.12em;text-transform:uppercase;text-align:left;">Date</th>
-      <th style="padding:8px 12px;font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:800;color:#555;letter-spacing:.12em;text-transform:uppercase;text-align:left;">Lieu</th>
-      <th style="padding:8px 12px;font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:800;color:#555;letter-spacing:.12em;text-transform:uppercase;text-align:left;">Adversaire</th>
-      <th style="padding:8px 12px;font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:800;color:#555;letter-spacing:.12em;text-transform:uppercase;text-align:left;">Score</th>
-      <th style="padding:8px 12px;font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:800;color:#555;letter-spacing:.12em;text-transform:uppercase;text-align:left;">Résultat</th>
-    </tr></thead>
-    <tbody>${rows}</tbody>
-  </table>`;
-}
-
-function parseResultToHTML(text) {
-  const lines = text.split('\n');
-  let html = '';
-  let i = 0;
-  while (i < lines.length) {
-    const line = lines[i].trim();
-    if (!line) { i++; continue; }
-    if (/^(🎯 MISE|🔀 SÉCURISÉ|📊 Confiance|✅ CONCLUSION|⚠️)/.test(line)) { i++; continue; }
-    if (/^---+$/.test(line)) {
-      html += `<div style="height:1px;background:rgba(255,255,255,.05);margin:12px 0;"></div>`;
-      i++; continue;
-    }
-    // Ligne de match : - DD/MM/YYYY | ...
-    if (/^[-•]\s*\d{2}\/\d{2}\/\d{4}\s*\|/.test(line)) {
-      let tableLines = [];
-      while (i < lines.length && /^[-•]\s*\d{2}\/\d{2}\/\d{4}\s*\|/.test(lines[i].trim())) {
-        tableLines.push(lines[i].trim());
-        i++;
-      }
-      html += renderMatchTable(tableLines);
-      continue;
-    }
-    // Bilan
-    if (/^Bilan\s+/i.test(line)) {
-      html += `<div style="background:rgba(255,255,255,.03);border-left:2px solid #E8182C;padding:8px 12px;margin:4px 0 14px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:#AAA;">${line.replace(/\*\*/g,'')}</div>`;
-      i++; continue;
-    }
-    // Titre markdown ### ou ##
-    if (/^#{1,3}\s+/.test(line)) {
-      const titleText = line.replace(/^#{1,3}\s+/,'').replace(/[🔍📊⚽🎯🔀📈]/g,'').trim();
-      html += `<div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:800;color:#E8182C;letter-spacing:.16em;text-transform:uppercase;margin:16px 0 8px;display:flex;align-items:center;gap:8px;">■ ${titleText}<div style="flex:1;height:1px;background:rgba(232,24,44,.15);"></div></div>`;
-      i++; continue;
-    }
-    // Titre texte + deux-points en fin de ligne
-    if (/^[A-ZÀ-Ÿa-zà-ÿ].{2,}\s*:\s*$/.test(line) && !line.startsWith('-')) {
-      const titleText = line.replace(/^#{1,3}\s*/,'').replace(/[🔍📊⚽🎯🔀📈]/g,'').replace(/\s*:\s*$/,'').trim();
-      html += `<div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:800;color:#E8182C;letter-spacing:.16em;text-transform:uppercase;margin:16px 0 8px;display:flex;align-items:center;gap:8px;">■ ${titleText}<div style="flex:1;height:1px;background:rgba(232,24,44,.15);"></div></div>`;
-      i++; continue;
-    }
-    // Texte normal
-    const cleaned = line.replace(/\*\*(.*?)\*\*/g,'<strong style="color:#F0EEE8;">$1</strong>');
-    html += `<p style="font-family:'Barlow',sans-serif;font-size:13px;color:#888;line-height:1.8;margin:4px 0;">${cleaned}</p>`;
-    i++;
-  }
-  return html;
-}
-
 function showResult(text){
   const box=getOrCreateResultBox();
   const confMatch=text.match(/(\d+)\/10/);
@@ -1330,8 +1251,20 @@ function showResult(text){
   const mise=miseMatch?miseMatch[1].trim().replace(/\*\*/g,''):'';
   const secMatch=text.match(/🔀 SÉCURISÉ\s*:\s*(.+?)(?:\n|$)/);
   const sec=secMatch?secMatch[1].trim().replace(/\*\*/g,''):'';
-  const bodyHTML = parseResultToHTML(text);
-
+  const clean=text
+    .replace(/^(🎯 MISE|🔀 SÉCURISÉ|📊 Confiance|✅ CONCLUSION|⚠️).*/gm,'')
+    .replace(/\*\*(.*?)\*\*/g,'<strong style="color:#F0EEE8;font-weight:800;">$1</strong>')
+    .replace(/^## (.+)$/gm,'<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:10px;font-weight:800;color:#E8182C;letter-spacing:.16em;text-transform:uppercase;margin:12px 0 8px;display:flex;align-items:center;gap:8px;">$1<div style="flex:1;height:1px;background:rgba(232,24,44,.12);"></div></div>')
+    .replace(/^# (.+)$/gm,'<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:10px;font-weight:800;color:#E8182C;letter-spacing:.16em;text-transform:uppercase;margin:12px 0 8px;display:flex;align-items:center;gap:8px;">$1<div style="flex:1;height:1px;background:rgba(232,24,44,.12);"></div></div>')
+    .replace(/^[-•]\s+(.+)$/gm,'<div style="display:flex;align-items:flex-start;gap:8px;margin:4px 0;"><div style="width:4px;height:4px;background:#E8182C;border-radius:50%;flex-shrink:0;margin-top:7px;"></div><span style="font-family:\'Barlow\',sans-serif;font-size:12px;color:#888;line-height:1.6;">$1</span></div>')
+    .replace(/^\|(.+)\|$/gm,(row)=>{
+      if(row.match(/^\|[-| ]+\|$/)) return'';
+      const cells=row.split('|').filter(c=>c.trim()!=='');
+      return'<div style="display:flex;gap:1px;margin:1px 0;">'+cells.map(c=>`<div style="flex:1;padding:5px 8px;background:#1E1E1E;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:600;color:#888;">${c.trim()}</div>`).join('')+'</div>';
+    })
+    .replace(/^---$/gm,'<div style="height:1px;background:rgba(255,255,255,.04);margin:8px 0;"></div>')
+    .replace(/\n{3,}/g,'\n\n')
+    .replace(/\n/g,'<br>');
   box.innerHTML=`
     <div style="background:rgba(232,24,44,.06);padding:10px 16px;border-bottom:1px solid rgba(255,255,255,.04);display:flex;align-items:center;justify-content:space-between;">
       <div style="display:flex;align-items:center;gap:8px;">
@@ -1350,11 +1283,11 @@ function showResult(text){
         <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;color:#444;letter-spacing:.1em;text-transform:uppercase;">Confiance</div>
       </div>
     </div>
-    <div style="padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.03);">${bodyHTML}</div>
+    <div style="padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.03);font-family:'Barlow',sans-serif;font-size:12px;color:#888;line-height:1.8;">${clean}</div>
     ${parseInt(conf)<=4?`<div style="margin:0 16px 8px;background:rgba(232,24,44,.08);border-left:3px solid #E8182C;border-radius:0 4px 4px 0;padding:10px 14px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:#E8182C;letter-spacing:.04em;">🚨 Match très incertain — mise déconseillée</div>`:''}
-    ${parseInt(conf)===5||parseInt(conf)===6?`<div style="margin:0 16px 8px;background:rgba(255,152,0,.08);border-left:3px solid #FF9800;border-radius:0 4px 4px 0;padding:10px 14px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:#FF9800;letter-spacing:.04em;">⚠️ Match serré — mise prudente conseillée</div>`:''}
-    ${mise?`<div style="margin:12px 16px 8px;background:rgba(232,24,44,.06);border-left:3px solid #E8182C;border-radius:0 4px 4px 0;padding:12px 14px;"><div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:800;color:#E8182C;letter-spacing:.16em;text-transform:uppercase;margin-bottom:6px;">🎯 Mise conseillée</div><div style="font-family:'Barlow',sans-serif;font-size:14px;font-weight:500;color:#F0EEE8;letter-spacing:.02em;line-height:1.5;">${mise}</div></div>`:''}
-    ${sec?`<div style="margin:0 16px 8px;background:rgba(255,255,255,.02);border-left:3px solid #444;border-radius:0 4px 4px 0;padding:12px 14px;"><div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:800;color:#555;letter-spacing:.16em;text-transform:uppercase;margin-bottom:6px;">🔀 Pari sécurisé</div><div style="font-family:'Barlow',sans-serif;font-size:13px;font-weight:400;color:#888;letter-spacing:.02em;line-height:1.5;">${sec}</div></div>`:''}
+${parseInt(conf)===5||parseInt(conf)===6?`<div style="margin:0 16px 8px;background:rgba(255,152,0,.08);border-left:3px solid #FF9800;border-radius:0 4px 4px 0;padding:10px 14px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:#FF9800;letter-spacing:.04em;">⚠️ Match serré — mise prudente conseillée</div>`:''}
+   ${mise?`<div style="margin:12px 16px 8px;background:rgba(232,24,44,.06);border-left:3px solid #E8182C;border-radius:0 4px 4px 0;padding:12px 14px;"><div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:800;color:#E8182C;letter-spacing:.16em;text-transform:uppercase;margin-bottom:6px;">🎯 Mise conseillée</div><div style="font-family:'Barlow',sans-serif;font-size:14px;font-weight:500;color:#F0EEE8;letter-spacing:.02em;line-height:1.5;">${mise}</div></div>`:''}
+${sec?`<div style="margin:0 16px 8px;background:rgba(255,255,255,.02);border-left:3px solid #444;border-radius:0 4px 4px 0;padding:12px 14px;"><div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:800;color:#555;letter-spacing:.16em;text-transform:uppercase;margin-bottom:6px;">🔀 Pari sécurisé</div><div style="font-family:'Barlow',sans-serif;font-size:13px;font-weight:400;color:#888;letter-spacing:.02em;line-height:1.5;">${sec}</div></div>`:''}
     ${conclusion?`<div style="margin:0 16px 12px;background:rgba(76,175,80,.08);border:1px solid rgba(76,175,80,.25);border-radius:4px;padding:12px 14px;"><div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:800;color:#4CAF50;letter-spacing:.16em;text-transform:uppercase;margin-bottom:4px;">✅ Conclusion</div><div style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:800;color:#4CAF50;letter-spacing:.04em;">${conclusion}</div></div>`:''}
     <div style="padding:8px 16px;font-family:'Barlow Condensed',sans-serif;font-size:10px;color:#2A2A2A;letter-spacing:.04em;text-align:center;">⚠️ Outil d'aide à la décision uniquement. Pariez de manière responsable.</div>
   `;
