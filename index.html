@@ -312,6 +312,11 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,.04);paddin
   .nav-links{display:none;}
   .wf-matches{grid-template-columns:1fr;}
 }
+  .p2-opt{transition:all .2s;}.p2-opt:hover{border-color:rgba(232,24,44,.2) !important;background:rgba(232,24,44,.03) !important;}
+.p2-opt.active{border-color:rgba(232,24,44,.5) !important;background:rgba(232,24,44,.06) !important;}
+.p2-pill{transition:all .2s;}.p2-pill.active{border-color:rgba(232,24,44,.5) !important;background:rgba(232,24,44,.06) !important;}
+.p2-style{transition:all .2s;}.p2-style.active{border-color:rgba(232,24,44,.5) !important;background:rgba(232,24,44,.06) !important;}
+.p2-ctx{transition:all .2s;}.p2-ctx:hover{border-color:rgba(232,24,44,.2) !important;}.p2-ctx.active{border-color:rgba(232,24,44,.5) !important;background:rgba(232,24,44,.06) !important;}
 </style>
 </head>
 <body>
@@ -512,196 +517,216 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,.04);paddin
     </div>
 
     <!-- PANEL 2 -->
-    <div class="panel" id="panel2">
-      <div class="sel-banner">
-        <div class="sel-banner-top">
-          <span class="sel-league" id="selLeague"></span>
-          <span class="sel-time" id="selTime"></span>
-        </div>
-        <div class="sel-body">
-          <div class="sel-teams">
-            <div class="sel-team">
-              <img id="selHomeLogo" src="" alt="" style="width:52px;height:52px;object-fit:contain;">
-              <div class="sel-team-name" id="selHome"></div>
-              <div class="sel-badge">Domicile</div>
-              <div class="sel-form" id="selHomeForm"></div>
-            </div>
-            <div class="sel-vs-col">
-              <div class="sel-vs">VS</div>
-            </div>
-            <div class="sel-team">
-              <img id="selAwayLogo" src="" alt="" style="width:52px;height:52px;object-fit:contain;">
-              <div class="sel-team-name" id="selAway"></div>
-              <div class="sel-badge">Extérieur</div>
-              <div class="sel-form" id="selAwayForm"></div>
-            </div>
-          </div>
-          <div class="sel-odds" id="selOdds">
-            <div class="odd-box"><div class="odd-label" id="ol1"></div><div class="odd-val" id="ov1">—</div><div class="odd-pct" id="op1"></div></div>
-            <div class="odd-box"><div class="odd-label">Nul</div><div class="odd-val" id="ov2">—</div><div class="odd-pct" id="op2"></div></div>
-            <div class="odd-box"><div class="odd-label" id="ol3"></div><div class="odd-val" id="ov3">—</div><div class="odd-pct" id="op3"></div></div>
-          </div>
-          <div class="prob-bar"><div class="pb-h" id="pbH"></div><div class="pb-d" id="pbD"></div><div class="pb-a" id="pbA"></div></div>
-        </div>
-        <div class="sel-footer"><button class="sel-change" onclick="goStep1()">← Changer de match</button></div>
-      </div>
+<div class="panel" id="panel2">
 
-      <!-- LIENS BOOKMAKERS -->
-      <div class="bookmakers-box" id="bookmakersBox">
-        <div class="bk-header">
-          <span class="bk-title">Cotes estimées</span>
-          <span class="bk-live"><div class="bk-dot"></div> Mis à jour par match</span>
+  <!-- BANNER MATCH -->
+  <div class="sel-banner">
+    <div class="sel-banner-top">
+      <span class="sel-league" id="selLeague"></span>
+      <span class="sel-time" id="selTime"></span>
+    </div>
+    <div class="sel-body">
+      <div class="sel-teams">
+        <div class="sel-team">
+          <img id="selHomeLogo" src="" alt="" style="width:52px;height:52px;object-fit:contain;filter:drop-shadow(0 0 8px rgba(232,24,44,.3));">
+          <div class="sel-team-name" id="selHome"></div>
+          <div class="sel-badge">Domicile</div>
+          <div class="sel-form" id="selHomeForm"></div>
         </div>
-        <div id="bkContent">
-          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:1rem;">
-            <a id="linkWinamax" href="https://www.winamax.fr/paris-sportifs/sports" target="_blank" style="background:#1A1A1A;border:1px solid rgba(255,255,255,.06);border-radius:4px;padding:12px;text-align:center;text-decoration:none;transition:border-color .2s;display:block;">
-              <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:800;color:#FF6B00;letter-spacing:.04em;margin-bottom:4px;">WINAMAX</div>
-              <div style="font-family:'Barlow',sans-serif;font-size:9px;color:#555;letter-spacing:.06em;">Voir les cotes →</div>
-            </a>
-            <a id="linkBetclic" href="https://www.betclic.fr/football" target="_blank" style="background:#1A1A1A;border:1px solid rgba(255,255,255,.06);border-radius:4px;padding:12px;text-align:center;text-decoration:none;transition:border-color .2s;display:block;">
-              <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:800;color:#00A651;letter-spacing:.04em;margin-bottom:4px;">BETCLIC</div>
-              <div style="font-family:'Barlow',sans-serif;font-size:9px;color:#555;letter-spacing:.06em;">Voir les cotes →</div>
-            </a>
-            <a id="linkUnibet" href="https://www.unibet.fr/paris-sportifs" target="_blank" style="background:#1A1A1A;border:1px solid rgba(255,255,255,.06);border-radius:4px;padding:12px;text-align:center;text-decoration:none;transition:border-color .2s;display:block;">
-              <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:800;color:#000;letter-spacing:.04em;margin-bottom:4px;background:#FFD700;border-radius:2px;padding:2px 6px;display:inline-block;">UNIBET</div>
-              <div style="font-family:'Barlow',sans-serif;font-size:9px;color:#555;letter-spacing:.06em;margin-top:4px;">Voir les cotes →</div>
-            </a>
-          </div>
-          <div style="padding:0 1rem 1rem;font-family:'Barlow',sans-serif;font-size:10px;color:#333;text-align:center;letter-spacing:.04em;">
-            Cotes estimées · Vérifie sur le bookmaker avant de miser
-          </div>
+        <div class="sel-vs-col"><div class="sel-vs">VS</div></div>
+        <div class="sel-team">
+          <img id="selAwayLogo" src="" alt="" style="width:52px;height:52px;object-fit:contain;filter:drop-shadow(0 0 8px rgba(232,24,44,.3));">
+          <div class="sel-team-name" id="selAway"></div>
+          <div class="sel-badge">Extérieur</div>
+          <div class="sel-form" id="selAwayForm"></div>
         </div>
       </div>
+      <div class="sel-odds" id="selOdds">
+        <div class="odd-box"><div class="odd-label" id="ol1"></div><div class="odd-val" id="ov1">—</div><div class="odd-pct" id="op1"></div></div>
+        <div class="odd-box"><div class="odd-label">Nul</div><div class="odd-val" id="ov2">—</div><div class="odd-pct" id="op2"></div></div>
+        <div class="odd-box"><div class="odd-label" id="ol3"></div><div class="odd-val" id="ov3">—</div><div class="odd-pct" id="op3"></div></div>
+      </div>
+      <div class="prob-bar"><div class="pb-h" id="pbH"></div><div class="pb-d" id="pbD"></div><div class="pb-a" id="pbA"></div></div>
+    </div>
+    <div class="sel-footer"><button class="sel-change" onclick="goStep1()">← Changer de match</button></div>
+  </div>
 
-      <div class="config-row" style="margin-top:1.5rem;">
-        <div class="config-label">Type d'analyse</div>
-        <div class="mode-cards">
-          <div class="mode-card active" onclick="setChip(this,'mode','court')">
-            <div class="mode-icon">⚡</div>
-            <div class="mode-title">Réponse courte</div>
-            <div class="mode-desc">Verdict + cote + gain potentiel en 5 lignes</div>
-          </div>
-          <div class="mode-card" onclick="setChip(this,'mode','detail')" style="position:relative;">
-  <div style="position:absolute;top:8px;right:8px;background:#FF9800;color:#000;font-family:var(--font-cond);font-size:8px;font-weight:800;letter-spacing:.08em;padding:2px 7px;border-radius:2px;">STARTER</div>
-  <div class="mode-icon">📊</div>
-  <div class="mode-title">Analyse complète</div>
-  <div class="mode-desc">Historique, forme, confrontations, facteurs de risque</div>
-</div>
-        </div>
+  <!-- BOOKMAKERS -->
+  <div class="bookmakers-box" id="bookmakersBox">
+    <div class="bk-header">
+      <span class="bk-title">Cotes estimées</span>
+      <span class="bk-live"><div class="bk-dot"></div> Mis à jour par match</span>
+    </div>
+    <div id="bkContent">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:1rem;">
+        <a id="linkWinamax" href="https://www.winamax.fr/paris-sportifs/sports" target="_blank" style="background:#111;border:1px solid rgba(255,255,255,.05);border-radius:4px;padding:12px;text-align:center;text-decoration:none;transition:border-color .2s;display:block;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:800;color:#FF6B00;letter-spacing:.04em;margin-bottom:4px;">WINAMAX</div>
+          <div style="font-family:'Barlow',sans-serif;font-size:9px;color:#444;letter-spacing:.06em;">Voir les cotes →</div>
+        </a>
+        <a id="linkBetclic" href="https://www.betclic.fr/football" target="_blank" style="background:#111;border:1px solid rgba(255,255,255,.05);border-radius:4px;padding:12px;text-align:center;text-decoration:none;transition:border-color .2s;display:block;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:800;color:#00A651;letter-spacing:.04em;margin-bottom:4px;">BETCLIC</div>
+          <div style="font-family:'Barlow',sans-serif;font-size:9px;color:#444;letter-spacing:.06em;">Voir les cotes →</div>
+        </a>
+        <a id="linkUnibet" href="https://www.unibet.fr/paris-sportifs" target="_blank" style="background:#111;border:1px solid rgba(255,255,255,.05);border-radius:4px;padding:12px;text-align:center;text-decoration:none;transition:border-color .2s;display:block;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:800;color:#000;letter-spacing:.04em;margin-bottom:4px;background:#FFD700;border-radius:2px;padding:2px 6px;display:inline-block;">UNIBET</div>
+          <div style="font-family:'Barlow',sans-serif;font-size:9px;color:#444;letter-spacing:.06em;margin-top:4px;">Voir les cotes →</div>
+        </a>
       </div>
-
-      <div class="config-row">
-        <div class="config-label">Historique par équipe</div>
-        <div class="hist-pills">
-  <div class="hist-pill active" onclick="setChip(this,'hist',5)">5 matchs</div>
-  <div class="hist-pill" onclick="setChip(this,'hist',10)">10 matchs</div>
-  <div class="hist-pill" onclick="setChip(this,'hist',20)" style="position:relative;">20 matchs<span style="position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:#FF9800;color:#000;font-family:var(--font-cond);font-size:7px;font-weight:800;letter-spacing:.06em;padding:1px 6px;border-radius:2px;white-space:nowrap;">STARTER</span></div>
-  <div class="hist-pill" onclick="setChip(this,'hist',30)" style="position:relative;">30 matchs<span style="position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:#E8182C;color:#fff;font-family:var(--font-cond);font-size:7px;font-weight:800;letter-spacing:.06em;padding:1px 6px;border-radius:2px;white-space:nowrap;">EXPERT</span></div>
-  <div class="hist-pill" onclick="setChip(this,'hist',0)" style="position:relative;">Saison<span style="position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:#E8182C;color:#fff;font-family:var(--font-cond);font-size:7px;font-weight:800;letter-spacing:.06em;padding:1px 6px;border-radius:2px;white-space:nowrap;">EXPERT</span></div>
-</div>
-        <div class="detail-card" id="dc" onclick="toggleDetail()">
-          <div>
-            <div class="detail-title">Détail match par match</div>
-            <div class="detail-sub">Score, adversaire et résultat V/N/D pour chaque match</div>
-          </div>
-          <div class="sw" id="sw"><div class="sw-k"></div></div>
-        </div>
-      </div>
-
-      <div class="config-row">
-        <div class="config-label">Mise envisagée</div>
-        <div class="mise-card">
-          <div class="mise-eur">€</div>
-          <div class="mise-sep"></div>
-          <div style="flex:1">
-            <div class="mise-lbl">Montant</div>
-            <input class="mise-inp" type="number" id="miseInput" placeholder="50" min="1" oninput="updateGain(this.value)">
-          </div>
-          <div class="mise-sep"></div>
-          <div class="mise-gain">
-            <div class="mise-gain-lbl">Gain potentiel</div>
-            <div class="mise-gain-val" id="gainVal">~€0</div>
-          </div>
-        </div>
-      </div>
-<!-- MARCHÉS -->
-<div class="config-row">
-  <div class="config-label">Marchés à analyser</div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
-    <div class="mode-card active" onclick="setChip(this,'marche','1x2')">
-      <div class="mode-icon">⚽</div>
-      <div class="mode-title">Résultat 1X2</div>
-      <div class="mode-desc">Victoire / Nul / Défaite</div>
-    </div>
-    <div class="mode-card" onclick="setChip(this,'marche','buts')" style="position:relative;">
-      <div style="position:absolute;top:8px;right:8px;background:#FF9800;color:#000;font-family:var(--font-cond);font-size:8px;font-weight:800;letter-spacing:.08em;padding:2px 7px;border-radius:2px;">STARTER</div>
-      <div class="mode-icon">📈</div>
-      <div class="mode-title">Plus/Moins buts</div>
-      <div class="mode-desc">2.5 / 3.5 buts</div>
-    </div>
-    <div class="mode-card" onclick="setChip(this,'marche','btts')" style="position:relative;">
-      <div style="position:absolute;top:8px;right:8px;background:#FF9800;color:#000;font-family:var(--font-cond);font-size:8px;font-weight:800;letter-spacing:.08em;padding:2px 7px;border-radius:2px;">STARTER</div>
-      <div class="mode-icon">🥅</div>
-      <div class="mode-title">BTTS</div>
-      <div class="mode-desc">Les deux équipes marquent</div>
-    </div>
-    <div class="mode-card" onclick="setChip(this,'marche','score')" style="position:relative;">
-      <div style="position:absolute;top:8px;right:8px;background:#E8182C;color:#fff;font-family:var(--font-cond);font-size:8px;font-weight:800;letter-spacing:.08em;padding:2px 7px;border-radius:2px;">EXPERT</div>
-      <div class="mode-icon">🎰</div>
-      <div class="mode-title">Score exact</div>
-      <div class="mode-desc">Cote élevée, risque fort</div>
-    </div>
-    <div class="mode-card" onclick="setChip(this,'marche','buteur')" style="position:relative;">
-      <div style="position:absolute;top:8px;right:8px;background:#E8182C;color:#fff;font-family:var(--font-cond);font-size:8px;font-weight:800;letter-spacing:.08em;padding:2px 7px;border-radius:2px;">EXPERT</div>
-      <div class="mode-icon">👟</div>
-      <div class="mode-title">Buteur probable</div>
-      <div class="mode-desc">Premier / Dernier buteur</div>
+      <div style="padding:0 1rem 1rem;font-family:'Barlow',sans-serif;font-size:10px;color:#333;text-align:center;letter-spacing:.04em;">Cotes estimées · Vérifie sur le bookmaker avant de miser</div>
     </div>
   </div>
-</div>
 
-<!-- STYLE DE MISE -->
-<div class="config-row">
-  <div class="config-label">Style de mise</div>
-  <div class="mode-cards">
-    <div class="mode-card" onclick="setChip(this,'style','prudent')">
-      <div class="mode-icon">🛡️</div>
-      <div class="mode-title">Mode prudent</div>
-      <div class="mode-desc">Cotes basses, risque minimal</div>
-    </div>
-    <div class="mode-card" onclick="setChip(this,'style','agressif')" style="position:relative;">
-      <div style="position:absolute;top:8px;right:8px;background:#E8182C;color:#fff;font-family:var(--font-cond);font-size:8px;font-weight:800;letter-spacing:.08em;padding:2px 7px;border-radius:2px;">EXPERT</div>
-      <div class="mode-icon">🔥</div>
-      <div class="mode-title">Mode agressif</div>
-      <div class="mode-desc">Cotes risquées, gains max</div>
+  <!-- TYPE D'ANALYSE -->
+  <div class="config-row" style="margin-top:1.5rem;">
+    <div class="config-label">Type d'analyse</div>
+    <div style="display:flex;gap:6px;">
+      <div class="p2-pill active" onclick="setChip(this,'mode','court')" style="flex:1;background:#111;border:1px solid rgba(232,24,44,.5);border-radius:6px;padding:12px 14px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:all .2s;">
+        <div style="width:30px;height:30px;border-radius:6px;background:rgba(232,24,44,.12);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">⚡</div>
+        <div>
+          <div style="font-size:13px;font-weight:800;color:#F0EEE8;letter-spacing:.04em;">Réponse courte</div>
+          <div style="font-size:9px;color:#666;margin-top:2px;">Verdict + cote + gain en 5 lignes</div>
+        </div>
+      </div>
+      <div class="p2-pill" onclick="setChip(this,'mode','detail')" style="flex:1;background:#111;border:1px solid rgba(255,255,255,.06);border-radius:6px;padding:12px 14px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:all .2s;position:relative;">
+        <span style="position:absolute;top:-8px;right:10px;background:#FF9800;color:#000;font-family:var(--font-cond);font-size:7px;font-weight:800;letter-spacing:.08em;padding:2px 8px;border-radius:10px;">STARTER</span>
+        <div style="width:30px;height:30px;border-radius:6px;background:rgba(255,255,255,.04);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">📊</div>
+        <div>
+          <div style="font-size:13px;font-weight:800;color:#555;letter-spacing:.04em;">Analyse complète</div>
+          <div style="font-size:9px;color:#333;margin-top:2px;">Historique, forme, confrontations</div>
+        </div>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- CONTEXTE -->
-<div class="config-row">
-  <div class="config-label">Contexte</div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
-    <div class="mode-card" onclick="setChip(this,'contexte','enjeux')" style="position:relative;">
-      <div style="position:absolute;top:8px;right:8px;background:#FF9800;color:#000;font-family:var(--font-cond);font-size:8px;font-weight:800;letter-spacing:.08em;padding:2px 7px;border-radius:2px;">STARTER</div>
-      <div class="mode-icon">🏆</div>
-      <div class="mode-title">Match à enjeux</div>
-      <div class="mode-desc">Finale, relégation, titre</div>
-    </div>
-    <div class="mode-card" onclick="setChip(this,'contexte','blessures')" style="position:relative;">
-      <div style="position:absolute;top:8px;right:8px;background:#E8182C;color:#fff;font-family:var(--font-cond);font-size:8px;font-weight:800;letter-spacing:.08em;padding:2px 7px;border-radius:2px;">EXPERT</div>
-      <div class="mode-icon">🤕</div>
-      <div class="mode-title">Blessures/Absences</div>
-      <div class="mode-desc">Joueurs clés indisponibles</div>
-    </div>
-    <div class="mode-card" onclick="setChip(this,'contexte','retour')" style="position:relative;">
-      <div style="position:absolute;top:8px;right:8px;background:#E8182C;color:#fff;font-family:var(--font-cond);font-size:8px;font-weight:800;letter-spacing:.08em;padding:2px 7px;border-radius:2px;">EXPERT</div>
-      <div class="mode-icon">🔄</div>
-      <div class="mode-title">Match retour</div>
-      <div class="mode-desc">Résultat aller à considérer</div>
+  <!-- MARCHÉS -->
+  <div class="config-row">
+    <div class="config-label">Marchés à analyser</div>
+    <div style="display:flex;flex-direction:column;gap:4px;">
+      <div class="p2-opt active" onclick="setChip(this,'marche','1x2')" style="background:#111;border:1px solid rgba(232,24,44,.5);border-radius:6px;padding:10px 14px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:all .2s;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:30px;height:30px;border-radius:6px;background:rgba(232,24,44,.12);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;">⚽</div>
+          <div><div style="font-size:13px;font-weight:800;color:#F0EEE8;">Résultat 1X2</div><div style="font-size:9px;color:#666;margin-top:1px;">Victoire / Nul / Défaite</div></div>
+        </div>
+        <div class="p2-check on" style="width:18px;height:18px;border-radius:50%;background:#E8182C;border:1px solid #E8182C;box-shadow:0 0 8px rgba(232,24,44,.4);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><div style="width:7px;height:7px;background:#fff;border-radius:50%;"></div></div>
+      </div>
+      <div class="p2-opt" onclick="setChip(this,'marche','buts')" style="background:#111;border:1px solid rgba(255,255,255,.06);border-radius:6px;padding:10px 14px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:all .2s;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:30px;height:30px;border-radius:6px;background:rgba(255,152,0,.1);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;">📈</div>
+          <div><div style="font-size:13px;font-weight:800;color:#666;">Plus/Moins buts</div><div style="font-size:9px;color:#444;margin-top:1px;">2.5 / 3.5 buts</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;"><span style="background:#FF9800;color:#000;font-family:var(--font-cond);font-size:7px;font-weight:800;letter-spacing:.08em;padding:2px 8px;border-radius:10px;">STARTER</span><div class="p2-check" style="width:18px;height:18px;border-radius:50%;border:1px solid #333;flex-shrink:0;"></div></div>
+      </div>
+      <div class="p2-opt" onclick="setChip(this,'marche','btts')" style="background:#111;border:1px solid rgba(255,255,255,.06);border-radius:6px;padding:10px 14px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:all .2s;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:30px;height:30px;border-radius:6px;background:rgba(255,152,0,.1);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;">🥅</div>
+          <div><div style="font-size:13px;font-weight:800;color:#666;">BTTS</div><div style="font-size:9px;color:#444;margin-top:1px;">Les deux équipes marquent</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;"><span style="background:#FF9800;color:#000;font-family:var(--font-cond);font-size:7px;font-weight:800;letter-spacing:.08em;padding:2px 8px;border-radius:10px;">STARTER</span><div class="p2-check" style="width:18px;height:18px;border-radius:50%;border:1px solid #333;flex-shrink:0;"></div></div>
+      </div>
+      <div class="p2-opt" onclick="setChip(this,'marche','score')" style="background:#111;border:1px solid rgba(255,255,255,.06);border-radius:6px;padding:10px 14px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:all .2s;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:30px;height:30px;border-radius:6px;background:rgba(232,24,44,.06);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;">🎰</div>
+          <div><div style="font-size:13px;font-weight:800;color:#666;">Score exact</div><div style="font-size:9px;color:#444;margin-top:1px;">Cote élevée, risque fort</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;"><span style="background:#E8182C;color:#fff;font-family:var(--font-cond);font-size:7px;font-weight:800;letter-spacing:.08em;padding:2px 8px;border-radius:10px;">EXPERT</span><div class="p2-check" style="width:18px;height:18px;border-radius:50%;border:1px solid #333;flex-shrink:0;"></div></div>
+      </div>
+      <div class="p2-opt" onclick="setChip(this,'marche','buteur')" style="background:#111;border:1px solid rgba(255,255,255,.06);border-radius:6px;padding:10px 14px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:all .2s;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:30px;height:30px;border-radius:6px;background:rgba(232,24,44,.06);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;">👟</div>
+          <div><div style="font-size:13px;font-weight:800;color:#666;">Buteur probable</div><div style="font-size:9px;color:#444;margin-top:1px;">Premier / Dernier buteur</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;"><span style="background:#E8182C;color:#fff;font-family:var(--font-cond);font-size:7px;font-weight:800;letter-spacing:.08em;padding:2px 8px;border-radius:10px;">EXPERT</span><div class="p2-check" style="width:18px;height:18px;border-radius:50%;border:1px solid #333;flex-shrink:0;"></div></div>
+      </div>
     </div>
   </div>
-</div>
+
+  <!-- STYLE DE MISE -->
+  <div class="config-row">
+    <div class="config-label">Style de mise</div>
+    <div style="display:flex;gap:6px;">
+      <div class="p2-style active" onclick="setChip(this,'style','neutre')" style="flex:1;background:#111;border:1px solid rgba(232,24,44,.5);border-radius:6px;padding:10px;text-align:center;cursor:pointer;transition:all .2s;">
+        <div style="font-size:20px;margin-bottom:4px;">⚖️</div>
+        <div style="font-size:12px;font-weight:800;color:#F0EEE8;letter-spacing:.04em;">Neutre</div>
+        <div style="font-size:9px;color:#666;margin-top:2px;">Équilibré</div>
+      </div>
+      <div class="p2-style" onclick="setChip(this,'style','prudent')" style="flex:1;background:#111;border:1px solid rgba(255,255,255,.06);border-radius:6px;padding:10px;text-align:center;cursor:pointer;transition:all .2s;">
+        <div style="font-size:20px;margin-bottom:4px;">🛡️</div>
+        <div style="font-size:12px;font-weight:800;color:#555;letter-spacing:.04em;">Prudent</div>
+        <div style="font-size:9px;color:#333;margin-top:2px;">Cotes basses</div>
+      </div>
+      <div class="p2-style" onclick="setChip(this,'style','agressif')" style="flex:1;background:#111;border:1px solid rgba(255,255,255,.06);border-radius:6px;padding:10px;text-align:center;cursor:pointer;transition:all .2s;position:relative;">
+        <span style="position:absolute;top:-8px;right:6px;background:#E8182C;color:#fff;font-family:var(--font-cond);font-size:7px;font-weight:800;letter-spacing:.08em;padding:2px 8px;border-radius:10px;">EXPERT</span>
+        <div style="font-size:20px;margin-bottom:4px;">🔥</div>
+        <div style="font-size:12px;font-weight:800;color:#555;letter-spacing:.04em;">Agressif</div>
+        <div style="font-size:9px;color:#333;margin-top:2px;">Gains max</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTEXTE -->
+  <div class="config-row">
+    <div class="config-label">Contexte</div>
+    <div style="display:flex;flex-direction:column;gap:4px;">
+      <div class="p2-ctx" onclick="setChip(this,'contexte','enjeux')" style="background:#111;border:1px solid rgba(255,255,255,.06);border-radius:6px;padding:10px 14px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:all .2s;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:30px;height:30px;border-radius:6px;background:rgba(255,152,0,.1);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;">🏆</div>
+          <div><div style="font-size:13px;font-weight:800;color:#666;">Match à enjeux</div><div style="font-size:9px;color:#444;margin-top:1px;">Finale, relégation, titre</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;"><span style="background:#FF9800;color:#000;font-family:var(--font-cond);font-size:7px;font-weight:800;letter-spacing:.08em;padding:2px 8px;border-radius:10px;">STARTER</span><div class="p2-check" style="width:18px;height:18px;border-radius:50%;border:1px solid #333;flex-shrink:0;"></div></div>
+      </div>
+      <div class="p2-ctx" onclick="setChip(this,'contexte','blessures')" style="background:#111;border:1px solid rgba(255,255,255,.06);border-radius:6px;padding:10px 14px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:all .2s;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:30px;height:30px;border-radius:6px;background:rgba(232,24,44,.06);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;">🤕</div>
+          <div><div style="font-size:13px;font-weight:800;color:#666;">Blessures/Absences</div><div style="font-size:9px;color:#444;margin-top:1px;">Joueurs clés indisponibles</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;"><span style="background:#E8182C;color:#fff;font-family:var(--font-cond);font-size:7px;font-weight:800;letter-spacing:.08em;padding:2px 8px;border-radius:10px;">EXPERT</span><div class="p2-check" style="width:18px;height:18px;border-radius:50%;border:1px solid #333;flex-shrink:0;"></div></div>
+      </div>
+      <div class="p2-ctx" onclick="setChip(this,'contexte','retour')" style="background:#111;border:1px solid rgba(255,255,255,.06);border-radius:6px;padding:10px 14px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:all .2s;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:30px;height:30px;border-radius:6px;background:rgba(232,24,44,.06);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;">🔄</div>
+          <div><div style="font-size:13px;font-weight:800;color:#666;">Match retour</div><div style="font-size:9px;color:#444;margin-top:1px;">Résultat aller à considérer</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;"><span style="background:#E8182C;color:#fff;font-family:var(--font-cond);font-size:7px;font-weight:800;letter-spacing:.08em;padding:2px 8px;border-radius:10px;">EXPERT</span><div class="p2-check" style="width:18px;height:18px;border-radius:50%;border:1px solid #333;flex-shrink:0;"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HISTORIQUE -->
+  <div class="config-row">
+    <div class="config-label">Historique par équipe</div>
+    <div class="hist-pills">
+      <div class="hist-pill active" onclick="setChip(this,'hist',5)">5 matchs</div>
+      <div class="hist-pill" onclick="setChip(this,'hist',10)">10 matchs</div>
+      <div class="hist-pill" onclick="setChip(this,'hist',20)" style="position:relative;">20 matchs<span style="position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:#FF9800;color:#000;font-family:var(--font-cond);font-size:7px;font-weight:800;letter-spacing:.06em;padding:1px 6px;border-radius:2px;white-space:nowrap;">STARTER</span></div>
+      <div class="hist-pill" onclick="setChip(this,'hist',30)" style="position:relative;">30 matchs<span style="position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:#E8182C;color:#fff;font-family:var(--font-cond);font-size:7px;font-weight:800;letter-spacing:.06em;padding:1px 6px;border-radius:2px;white-space:nowrap;">EXPERT</span></div>
+      <div class="hist-pill" onclick="setChip(this,'hist',0)" style="position:relative;">Saison<span style="position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:#E8182C;color:#fff;font-family:var(--font-cond);font-size:7px;font-weight:800;letter-spacing:.06em;padding:1px 6px;border-radius:2px;white-space:nowrap;">EXPERT</span></div>
+    </div>
+    <div class="detail-card" id="dc" onclick="toggleDetail()">
+      <div>
+        <div class="detail-title">Détail match par match</div>
+        <div class="detail-sub">Score, adversaire et résultat V/N/D pour chaque match</div>
+      </div>
+      <div class="sw" id="sw"><div class="sw-k"></div></div>
+    </div>
+  </div>
+
+  <!-- MISE -->
+  <div class="config-row">
+    <div class="config-label">Mise envisagée</div>
+    <div class="mise-card">
+      <div class="mise-eur">€</div>
+      <div class="mise-sep"></div>
+      <div style="flex:1">
+        <div class="mise-lbl">Montant</div>
+        <input class="mise-inp" type="number" id="miseInput" placeholder="50" min="1" oninput="updateGain(this.value)">
+      </div>
+      <div class="mise-sep"></div>
+      <div class="mise-gain">
+        <div class="mise-gain-lbl">Gain potentiel</div>
+        <div class="mise-gain-val" id="gainVal">~€0</div>
+      </div>
+    </div>
+  </div>
       <button class="gen-btn" onclick="launch()">⚡ LANCER L'ANALYSE →</button>
       <p class="prono-note">⚠️ Outil d'aide à la décision uniquement.</p>
     </div>
@@ -1079,8 +1104,34 @@ function toggleManual(){
 
 let bestOdd=2.1;
 function setChip(btn,type,val){
-  const parent=btn.parentElement;parent.querySelectorAll('.mode-card,.hist-pill').forEach(c=>c.classList.remove('active'));btn.classList.add('active');
-  if(type==='mode') mode=val;else if(type==='hist') hist=val;else if(type==='marche') marche=val;else if(type==='style') styleMise=val;else if(type==='contexte'){if(contexte.includes(val)) contexte=contexte.filter(c=>c!==val);else contexte.push(val);}
+  if(type==='mode'){
+    document.querySelectorAll('.p2-pill').forEach(c=>{c.classList.remove('active');c.style.borderColor='rgba(255,255,255,.06)';});
+    btn.classList.add('active');btn.style.borderColor='rgba(232,24,44,.5)';
+    mode=val;
+  } else if(type==='hist'){
+    document.querySelectorAll('.hist-pill').forEach(c=>c.classList.remove('active'));
+    btn.classList.add('active');hist=val;
+  } else if(type==='marche'){
+    const isOn=btn.classList.contains('active');
+    const check=btn.querySelector('.p2-check');
+    btn.classList.toggle('active');
+    btn.style.borderColor=isOn?'rgba(255,255,255,.06)':'rgba(232,24,44,.5)';
+    btn.style.background=isOn?'#111':'rgba(232,24,44,.06)';
+    if(check){check.style.background=isOn?'transparent':'#E8182C';check.style.border=isOn?'1px solid #333':'1px solid #E8182C';check.style.boxShadow=isOn?'none':'0 0 8px rgba(232,24,44,.4)';check.innerHTML=isOn?'':'<div style="width:7px;height:7px;background:#fff;border-radius:50%;"></div>';}
+    marche=val;
+  } else if(type==='style'){
+    document.querySelectorAll('.p2-style').forEach(c=>{c.classList.remove('active');c.style.borderColor='rgba(255,255,255,.06)';});
+    btn.classList.add('active');btn.style.borderColor='rgba(232,24,44,.5)';
+    styleMise=val;
+  } else if(type==='contexte'){
+    const isOn=btn.classList.contains('active');
+    const check=btn.querySelector('.p2-check');
+    btn.classList.toggle('active');
+    btn.style.borderColor=isOn?'rgba(255,255,255,.06)':'rgba(232,24,44,.5)';
+    btn.style.background=isOn?'#111':'rgba(232,24,44,.06)';
+    if(check){check.style.background=isOn?'transparent':'#E8182C';check.style.border=isOn?'1px solid #333':'1px solid #E8182C';check.innerHTML=isOn?'':'<div style="width:7px;height:7px;background:#fff;border-radius:50%;"></div>';}
+    if(contexte.includes(val)) contexte=contexte.filter(c=>c!==val);else contexte.push(val);
+  }
 }
 function toggleDetail(){detail=!detail;document.getElementById('sw').classList.toggle('on',detail);document.getElementById('dc').classList.toggle('on',detail);}
 function updateGain(v,odd){if(odd) bestOdd=odd;const n=parseFloat(v)||0;document.getElementById('gainVal').textContent=n>0?`~€${Math.round(n*bestOdd)}`:'~€0';}
