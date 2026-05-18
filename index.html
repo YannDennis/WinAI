@@ -1215,6 +1215,7 @@ async function launch(){
     const res=await fetch('/api/pronostic',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt,homeTeamKey:selHomeKey,awayTeamKey:selAwayKey,hist})});
     const data=await res.json();
     if(!res.ok||data.error){showResultError(data.error||'Erreur inconnue.');return;}
+    console.log(data.result);
     showResult(data.result);
   }catch(err){showResultError('Impossible de joindre le serveur. Réessaie.');}
 }
