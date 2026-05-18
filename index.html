@@ -1077,9 +1077,12 @@ function renderBookmakers(m){
   const betclic=bk.betclic||{};
   const unibet=bk.unibet||{};
 
-  const coteH=winamax.home||betclic.home||unibet.home||(m.w>0?(1/(m.w/100)*margin).toFixed(2):null);
-  const coteD=winamax.draw||betclic.draw||unibet.draw||(m.d>0?(1/(m.d/100)*margin).toFixed(2):null);
-  const coteA=winamax.away||betclic.away||unibet.away||(m.l>0?(1/(m.l/100)*margin).toFixed(2):null);
+ const computedH=m.computed_odds?.home;
+const computedD=m.computed_odds?.draw;
+const computedA=m.computed_odds?.away;
+const coteH=winamax.home||betclic.home||unibet.home||computedH||(m.w>0?(1/(m.w/100)*margin).toFixed(2):null);
+const coteD=winamax.draw||betclic.draw||unibet.draw||computedD||(m.d>0?(1/(m.d/100)*margin).toFixed(2):null);
+const coteA=winamax.away||betclic.away||unibet.away||computedA||(m.l>0?(1/(m.l/100)*margin).toFixed(2):null);
 
   const fmt=v=>v?parseFloat(v).toFixed(2):'—';
   const hasReal=Object.keys(bk).length>0;
