@@ -33,13 +33,12 @@ export default async function handler(req, res) {
         const homeData = await homeRes.json();
         const awayData = await awayRes.json();
 
-        // Filtrer les matchs terminés et prendre les X derniers
         const limit = hist === 0 ? 50 : hist;
 
         const filterMatches = (data) => {
           if (!data.result) return [];
           return data.result
-            .filter(m => ['FT', 'AET', 'PEN'].includes(m.event_status) || m.event_final_result?.includes('-') && m.event_final_result !== '-')
+            .filter(m => ['FT', 'AET', 'PEN'].includes(m.event_status) || (m.event_final_result?.includes('-') && m.event_final_result !== '-'))
             .sort((a, b) => new Date(b.event_date) - new Date(a.event_date))
             .slice(0, limit);
         };
@@ -88,9 +87,13 @@ export default async function handler(req, res) {
         'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
+        model: 'claude-sonnet-4-5-20251001',
         max_tokens: 1500,
         system: `Tu es BetMind, un moteur d'intelligence artificielle propriétaire spécialisé en pronostics sportifs, développé exclusivement par WinAI. Tu ne mentionnes jamais Claude, Anthropic ou toute autre IA existante. Si on te demande quelle IA tu es, tu réponds uniquement "BetMind · Neural Sports, le moteur IA de WinAI". Tu analyses les matchs de football avec précision et rigueur. Tu donnes des pronostics clairs, structurés et honnêtes. Tu n'utilises JAMAIS de majuscules dans le corps du texte — écris normalement, en minuscules avec majuscules uniquement en début de phrase. Tu n'utilises jamais ## ou ### pour les titres — écris les titres en texte simple suivi de deux-points. Tu termines TOUJOURS ta réponse par une ligne commençant EXACTEMENT par : "✅ CONCLUSION : " suivi de la mise conseillée, la cote et la raison en 5 mots. Tu rappelles toujours après que c'est un outil d'aide à la décision uniquement. Tu réponds en français. Tu es concis et direct.`,
+        messages: [
+          { role: 'user', content: finalPrompt }
+        ],
+      }),
     });
 
     if (!response.ok) {
