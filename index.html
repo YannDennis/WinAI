@@ -1263,7 +1263,7 @@ function showResult(text){
       return'<div style="display:flex;gap:1px;margin:1px 0;">'+cells.map(c=>`<div style="flex:1;padding:5px 8px;background:#1E1E1E;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:600;color:#888;">${c.trim()}</div>`).join('')+'</div>';
     })
     .replace(/^---$/gm,'<div style="height:1px;background:rgba(255,255,255,.04);margin:8px 0;"></div>')
-    .replace(/\n{3,}/g,'\n\n')
+    .replace(/\n{2,}/g,'\n')
     .replace(/\n/g,'<br>');
   box.innerHTML=`
     <div style="background:rgba(232,24,44,.06);padding:10px 16px;border-bottom:1px solid rgba(255,255,255,.04);display:flex;align-items:center;justify-content:space-between;">
