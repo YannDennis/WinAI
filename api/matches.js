@@ -72,5 +72,7 @@ module.exports = async function(req, res) {
   });
 
   res.setHeader('Access-Control-Allow-Origin', '*');
+  console.log('ODDS sample:', JSON.stringify(allOdds.slice(0,2), null, 2));
+console.log('MATCH sample:', JSON.stringify(allMatches.slice(0,2).map(m=>({home:m.event_home_team,away:m.event_away_team,bk:m.bookmakers})), null, 2));
   res.json({ football: { result: matchesWithOdds }, odds: allOdds });
 };
