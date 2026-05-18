@@ -150,5 +150,12 @@ module.exports = async function(req, res) {
   });
 
   res.setHeader('Access-Control-Allow-Origin', '*');
+  console.log('Stats sample:', JSON.stringify(Object.entries(statsMap).slice(0,2)));
+console.log('Odds sample:', JSON.stringify(matchesWithOdds.slice(0,2).map(m=>({
+  home: m.event_home_team,
+  away: m.event_away_team,
+  computed: m.computed_odds,
+  w: m.w
+}))));
   res.json({ football: { result: matchesWithOdds }, odds: [] });
 };
