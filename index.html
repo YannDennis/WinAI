@@ -1022,7 +1022,7 @@ function updateHero(filtered){
 
 function selectAndScroll(i){selectMatch(i);document.getElementById('prono').scrollIntoView({behavior:'smooth'});}
 
-let selHome='',selAway='',selLeague='',selIdx=-1,mode='court',hist=10,detail=false,selHomeKey=0,selAwayKey=0;
+let selHome='',selAway='',selLeague='',selIdx=-1,mode='court',hist=10,detail=false,selHomeKey=0,selAwayKey=0,marche='1x2',styleMise='',contexte=[];
 
 function selectMatch(i){
   const m=matches[i];selHome=m.home;selAway=m.away;selLeague=m.league;selIdx=i;selHomeKey=m.homeKey||0;selAwayKey=m.awayKey||0;
@@ -1080,7 +1080,7 @@ function toggleManual(){
 let bestOdd=2.1;
 function setChip(btn,type,val){
   const parent=btn.parentElement;parent.querySelectorAll('.mode-card,.hist-pill').forEach(c=>c.classList.remove('active'));btn.classList.add('active');
-  if(type==='mode') mode=val;else if(type==='hist') hist=val;
+  if(type==='mode') mode=val;else if(type==='hist') hist=val;else if(type==='marche') marche=val;else if(type==='style') styleMise=val;else if(type==='contexte'){if(contexte.includes(val)) contexte=contexte.filter(c=>c!==val);else contexte.push(val);}
 }
 function toggleDetail(){detail=!detail;document.getElementById('sw').classList.toggle('on',detail);document.getElementById('dc').classList.toggle('on',detail);}
 function updateGain(v,odd){if(odd) bestOdd=odd;const n=parseFloat(v)||0;document.getElementById('gainVal').textContent=n>0?`~€${Math.round(n*bestOdd)}`:'~€0';}
@@ -1089,12 +1089,18 @@ async function launch(){
   const miseVal=document.getElementById('miseInput').value.trim();
   if(!miseVal){document.getElementById('miseInput').focus();return;}
   const histLabel=hist===0?'toute la saison':`les ${hist} derniers matchs`;
-  const detailInstr=detail?`Pour chaque match, donne : date, adversaire, score, résultat V/N/D.`:`Résume la forme globale en 2 lignes : série en cours, buts marqués/encaissés, % victoires.`;
+  const detailInstr=detail?`Pour chaque match, donne : date, adversaire, score, résultat V/N/D.`:`Résume la forme globale en 2 lignes.`;
+  const marcheLabel={'1x2':'le résultat final (1X2)','buts':'les paris plus/moins de buts (2.5 et 3.5)','btts':'les deux équipes marquent (BTTS)','score':'le score exact','buteur':'le buteur probable'}[marche]||'le résultat final (1X2)';
+  const styleLabel=styleMise==='agressif'?'MODE AGRESSIF : propose des cotes élevées (>2.0), des combinés, des paris risqués mais très rentables.':styleMise==='prudent'?'MODE PRUDENT : propose uniquement des cotes basses (<1.80), sûres et des mises minimales.':'';
+  const contexteLabel=[];
+  if(contexte.includes('enjeux')) contexteLabel.push('Ce match est à fort enjeu (finale, relégation ou titre).');
+  if(contexte.includes('blessures')) contexteLabel.push('Mentionne les blessures et absences connues des joueurs clés.');
+  if(contexte.includes('retour')) contexteLabel.push('Il s\'agit d\'un match retour — analyse le résultat aller et son impact.');
   let prompt='';
   if(mode==='court'){
-    prompt=`Pronostic court — Football : ${selHome} vs ${selAway} (${selLeague}). Mise : ${miseVal}€.\nBase-toi sur ${histLabel}. ${detailInstr}\n\nDonne exactement :\n🎯 MISE : [pari conseillé] @ [cote] → sur ${miseVal}€ misés = [gain potentiel calculé]\n🔀 SÉCURISÉ : [pari alternatif] @ [cote] → [justification en 1 ligne]\n📊 Confiance : [X]/10\n\n⚠️ Outil d'aide à la décision uniquement.`;
+    prompt=`Pronostic court — Football : ${selHome} vs ${selAway} (${selLeague}). Mise : ${miseVal}€.\nBase-toi sur ${histLabel}. ${detailInstr}\nAnalyse spécifiquement : ${marcheLabel}.\n${styleLabel}\n${contexteLabel.join(' ')}\n\nDonne exactement :\n🎯 MISE : [pari conseillé] @ [cote] → sur ${miseVal}€ misés = [gain potentiel calculé]\n🔀 SÉCURISÉ : [pari alternatif] @ [cote] → [justification en 1 ligne]\n📊 Confiance : [X]/10\n\n⚠️ Outil d'aide à la décision uniquement.`;
   }else{
-    prompt=`Analyse complète — Football : ${selHome} vs ${selAway} (${selLeague}). Mise : ${miseVal}€.\n\n**1. HISTORIQUE (${histLabel} par équipe)**\n${detailInstr}\n\n**2. FORME & STATS**\nSérie, buts marqués/encaissés, forces et faiblesses.\n\n**3. CONFRONTATIONS DIRECTES**\nDerniers face-à-face.\n\n**4. PRONOSTIC PRINCIPAL**\n🎯 MISE : [pari conseillé] @ [cote] → sur ${miseVal}€ misés = [gain potentiel calculé]\n\n**5. PARI ALTERNATIF**\n🔀 SÉCURISÉ : [pari alternatif] @ [cote] → [justification courte]\n\n**6. CONFIANCE & RISQUES**\n📊 Confiance : [X]/10 + facteurs de risque.\n\n⚠️ Outil d'aide à la décision uniquement.`;
+    prompt=`Analyse complète — Football : ${selHome} vs ${selAway} (${selLeague}). Mise : ${miseVal}€.\nAnalyse spécifiquement : ${marcheLabel}.\n${styleLabel}\n${contexteLabel.join(' ')}\n\n**1. HISTORIQUE (${histLabel} par équipe)**\n${detailInstr}\n\n**2. FORME & STATS**\nSérie, buts marqués/encaissés, forces et faiblesses.\n\n**3. CONFRONTATIONS DIRECTES**\nDerniers face-à-face.\n\n**4. PRONOSTIC PRINCIPAL**\n🎯 MISE : [pari conseillé] @ [cote] → sur ${miseVal}€ misés = [gain potentiel calculé]\n\n**5. PARI ALTERNATIF**\n🔀 SÉCURISÉ : [pari alternatif] @ [cote] → [justification courte]\n\n**6. CONFIANCE & RISQUES**\n📊 Confiance : [X]/10 + facteurs de risque.\n\n⚠️ Outil d'aide à la décision uniquement.`;
   }
   document.getElementById('si2').classList.remove('active');document.getElementById('si2').classList.add('done');document.getElementById('si3').classList.add('active');
   showResultLoading();
