@@ -877,9 +877,10 @@ async function fetchMatches(){
         let dayLabel='Cette semaine';
         if(matchDate.getTime()===today2.getTime()) dayLabel='Aujourd\'hui';
         else if(matchDate.getTime()===tomorrow2.getTime()) dayLabel='Demain';
-        matches.push({
-          home:f.event_home_team,away:f.event_away_team,
-          homeLogo:f.home_team_logo||'',awayLogo:f.away_team_logo||'',
+       matches.push({
+  home:f.event_home_team,away:f.event_away_team,
+  homeKey:f.home_team_key||0,awayKey:f.away_team_key||0,
+  homeLogo:f.home_team_logo||'',awayLogo:f.away_team_logo||'',
           league:f.league_name,
           date:new Date(f.event_date).toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'}),
           dayLabel,time:f.event_time||'TBD',event_date:f.event_date,
