@@ -581,11 +581,12 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,.04);paddin
             <div class="mode-title">Réponse courte</div>
             <div class="mode-desc">Verdict + cote + gain potentiel en 5 lignes</div>
           </div>
-          <div class="mode-card" onclick="setChip(this,'mode','detail')">
-            <div class="mode-icon">📊</div>
-            <div class="mode-title">Analyse complète</div>
-            <div class="mode-desc">Historique, forme, confrontations, facteurs de risque</div>
-          </div>
+          <div class="mode-card" onclick="setChip(this,'mode','detail')" style="position:relative;">
+  <div style="position:absolute;top:8px;right:8px;background:#FF9800;color:#000;font-family:var(--font-cond);font-size:8px;font-weight:800;letter-spacing:.08em;padding:2px 7px;border-radius:2px;">STARTER</div>
+  <div class="mode-icon">📊</div>
+  <div class="mode-title">Analyse complète</div>
+  <div class="mode-desc">Historique, forme, confrontations, facteurs de risque</div>
+</div>
         </div>
       </div>
 
