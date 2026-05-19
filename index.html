@@ -1168,6 +1168,7 @@ let bestOdd=2.1;
   setTimeout(() => msg.remove(), 3000);
 }
 function setChip(btn,type,val){
+  console.log('setChip called:', type, val);
   const planLimits={'detail':'starter','buts':'starter','btts':'starter','score':'expert','buteur':'expert','agressif':'expert','enjeux':'starter','blessures':'expert','retour':'expert'};
   
   if(planLimits[val]){
