@@ -1211,7 +1211,6 @@ async function launch(){
   }
 
   const histLabel=hist===0?'toute la saison':`les ${hist} derniers matchs`;
-  const histLabel=hist===0?'toute la saison':`les ${hist} derniers matchs`;
   const detailInstr=detail?`Pour chaque match, donne : date, adversaire, score, résultat V/N/D.`:`Résume la forme globale en 2 lignes.`;
   const marcheLabel={'1x2':'le résultat final (1X2)','buts':'les paris plus/moins de buts (2.5 et 3.5)','btts':'les deux équipes marquent (BTTS)','score':'le score exact','buteur':'le buteur probable'}[marche]||'le résultat final (1X2)';
   const styleLabel=styleMise==='agressif'?'MODE AGRESSIF : propose des cotes élevées (>2.0), des combinés, des paris risqués mais très rentables.':styleMise==='prudent'?'MODE PRUDENT : propose uniquement des cotes basses (<1.80), sûres et des mises minimales.':'';
