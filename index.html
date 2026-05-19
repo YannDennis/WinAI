@@ -1168,9 +1168,8 @@ let bestOdd=2.1;
   setTimeout(() => msg.remove(), 3000);
 }
 function setChip(btn,type,val){
-  // Vérifier les options premium
   const planLimits = {
-    'mode-detail': 'starter',
+    'detail': 'starter',
     'buts': 'starter',
     'btts': 'starter',
     'score': 'expert',
@@ -1187,12 +1186,18 @@ function setChip(btn,type,val){
       const required = planLimits[val];
       const planOrder = ['free','starter','expert'];
       if(planOrder.indexOf(userPlan) < planOrder.indexOf(required)) {
-        // Bloquer et afficher message
         const planName = required === 'starter' ? 'Starter 6.99€/mois' : 'Expert 14.99€/mois';
         showPlanError(btn, planName);
-        return;
+        // Remettre l'option à son état précédent
+        btn.classList.remove('active');
+        btn.style.borderColor='rgba(255,255,255,.06)';
+        btn.style.background='#111';
+        const check=btn.querySelector('.p2-check');
+        if(check){check.style.background='transparent';check.style.border='1px solid #333';check.innerHTML='';}
       }
     });
+    // Si premium requis, on laisse le code continuer UNIQUEMENT si l'user a le bon plan
+    // On stocke temporairement et on annule si besoin
   }
   // ... reste du code setChip
   if(type==='mode'){
@@ -1244,6 +1249,22 @@ async function launch(){
     }
     return;
   }
+  // Filtrer les options selon le plan
+const userProfile = await WinAuth.getProfile();
+const userPlan = userProfile?.plan || 'free';
+const planOrder = ['free','starter','expert'];
+
+if(planOrder.indexOf(userPlan) < planOrder.indexOf('starter')) {
+  if(mode === 'detail') mode = 'court';
+  if(['buts','btts','enjeux'].includes(marche)) marche = '1x2';
+  styleMise = '';
+  contexte = contexte.filter(c => !['enjeux','blessures','retour'].includes(c));
+}
+if(planOrder.indexOf(userPlan) < planOrder.indexOf('expert')) {
+  if(['score','buteur'].includes(marche)) marche = '1x2';
+  if(styleMise === 'agressif') styleMise = '';
+  contexte = contexte.filter(c => !['blessures','retour'].includes(c));
+}
   const histLabel=hist===0?'toute la saison':`les ${hist} derniers matchs`;
   
   const detailInstr=detail?`Pour chaque match, donne : date, adversaire, score, résultat V/N/D.`:`Résume la forme globale en 2 lignes.`;
