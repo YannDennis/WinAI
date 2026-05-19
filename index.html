@@ -1168,29 +1168,9 @@ let bestOdd=2.1;
   setTimeout(() => msg.remove(), 3000);
 }
 function setChip(btn,type,val){
-  const planLimits={
-  'detail':'starter',
-  'buts':'starter',
-  'btts':'starter',
-  'score':'expert',
-  'buteur':'expert',
-  'agressif':'expert',
-  'enjeux':'starter',
-  'blessures':'expert',
-  'retour':'expert',
-  20:'starter',
-  30:'expert',
-  0:'expert',
-};
+  const planLimits={'detail':'starter','buts':'starter','btts':'starter','score':'expert','buteur':'expert','agressif':'expert','enjeux':'starter','blessures':'expert','retour':'expert',20:'starter',30:'expert',0:'expert'};
   
   if(planLimits[val]){
-    // Bloquer immédiatement toute activation visuelle
-    btn.classList.remove('active');
-    btn.style.borderColor='rgba(255,255,255,.06)';
-    btn.style.background='#111';
-    const check=btn.querySelector('.p2-check');
-    if(check){check.style.background='transparent';check.style.border='1px solid #333';check.innerHTML='';}
-    
     WinAuth.getProfile().then(profile=>{
       const userPlan=profile?.plan||'free';
       const required=planLimits[val];
@@ -1198,6 +1178,12 @@ function setChip(btn,type,val){
       if(planOrder.indexOf(userPlan)<planOrder.indexOf(required)){
         const planName=required==='starter'?'Starter 6.99€/mois':'Expert 14.99€/mois';
         showPlanError(btn,planName);
+        // Bloquer seulement si pas autorisé
+        btn.classList.remove('active');
+        btn.style.borderColor='rgba(255,255,255,.06)';
+        btn.style.background='#111';
+        const check=btn.querySelector('.p2-check');
+        if(check){check.style.background='transparent';check.style.border='1px solid #333';check.innerHTML='';}
         return;
       }
       _applyChip(btn,type,val);
