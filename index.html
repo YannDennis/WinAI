@@ -1159,7 +1159,42 @@ function toggleManual(){
 }
 
 let bestOdd=2.1;
+  function showPlanError(btn, planName) {
+  btn.style.animation = 'shake .3s ease';
+  const msg = document.createElement('div');
+  msg.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#1A1A1A;border:1px solid #E8182C;border-radius:6px;padding:12px 16px;font-family:Barlow Condensed,sans-serif;font-size:13px;color:#F0EEE8;z-index:9999;';
+  msg.innerHTML = `🔒 Option réservée au plan <strong style="color:#E8182C;">${planName}</strong> <a href="#abonnement" style="color:#E8182C;margin-left:8px;">Upgrader →</a>`;
+  document.body.appendChild(msg);
+  setTimeout(() => msg.remove(), 3000);
+}
 function setChip(btn,type,val){
+  // Vérifier les options premium
+  const planLimits = {
+    'mode-detail': 'starter',
+    'buts': 'starter',
+    'btts': 'starter',
+    'score': 'expert',
+    'buteur': 'expert',
+    'agressif': 'expert',
+    'enjeux': 'starter',
+    'blessures': 'expert',
+    'retour': 'expert',
+  };
+
+  if(planLimits[val]) {
+    WinAuth.getProfile().then(profile => {
+      const userPlan = profile?.plan || 'free';
+      const required = planLimits[val];
+      const planOrder = ['free','starter','expert'];
+      if(planOrder.indexOf(userPlan) < planOrder.indexOf(required)) {
+        // Bloquer et afficher message
+        const planName = required === 'starter' ? 'Starter 6.99€/mois' : 'Expert 14.99€/mois';
+        showPlanError(btn, planName);
+        return;
+      }
+    });
+  }
+  // ... reste du code setChip
   if(type==='mode'){
     document.querySelectorAll('.p2-pill').forEach(c=>{c.classList.remove('active');c.style.borderColor='rgba(255,255,255,.06)';});
     btn.classList.add('active');btn.style.borderColor='rgba(232,24,44,.5)';
