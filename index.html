@@ -1195,6 +1195,22 @@ function updateGain(v,odd){if(odd) bestOdd=odd;const n=parseFloat(v)||0;document
 async function launch(){
   const miseVal=document.getElementById('miseInput').value.trim();
   if(!miseVal){document.getElementById('miseInput').focus();return;}
+
+  // Vérifier auth et quota
+  const user = await WinAuth.getUser();
+  if (!user) {
+    showResultError('🔒 Connecte-toi pour lancer une analyse. <a href="/login.html" style="color:#E8182C;">Se connecter →</a>');
+    return;
+  }
+  const quota = await WinAuth.checkAnalysisLimit();
+  if (!quota.allowed) {
+    if (quota.reason === 'limit_reached') {
+      showResultError(`🚫 Tu as atteint ta limite de ${quota.limit} analyses ce mois-ci. <a href="#abonnement" style="color:#E8182C;">Passer au plan supérieur →</a>`);
+    }
+    return;
+  }
+
+  const histLabel=hist===0?'toute la saison':`les ${hist} derniers matchs`;
   const histLabel=hist===0?'toute la saison':`les ${hist} derniers matchs`;
   const detailInstr=detail?`Pour chaque match, donne : date, adversaire, score, résultat V/N/D.`:`Résume la forme globale en 2 lignes.`;
   const marcheLabel={'1x2':'le résultat final (1X2)','buts':'les paris plus/moins de buts (2.5 et 3.5)','btts':'les deux équipes marquent (BTTS)','score':'le score exact','buteur':'le buteur probable'}[marche]||'le résultat final (1X2)';
@@ -1216,6 +1232,7 @@ async function launch(){
     const data=await res.json();
     if(!res.ok||data.error){showResultError(data.error||'Erreur inconnue.');return;}
     showResult(data.result);
+    await WinAuth.incrementAnalysisCount();
   }catch(err){showResultError('Impossible de joindre le serveur. Réessaie.');}
 }
 
