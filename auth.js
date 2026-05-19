@@ -120,9 +120,52 @@ async function requireAuth(redirectUrl) {
   }
   return session;
 }
+async function getProfile() {
+  const sb = await getClient();
+  const user = await getUser();
+  if (!user) return null;
+  const { data } = await sb.from('profiles').select('*').eq('id', user.id).single();
+  return data;
+}
 
+async function checkAnalysisLimit() {
+  const profile = await getProfile();
+  if (!profile) return { allowed: false, reason: 'not_logged' };
+
+  const limits = { free: 10, starter: 50, expert: Infinity };
+  const limit = limits[profile.plan] || 10;
+
+  // Reset mensuel
+  const resetDate = new Date(profile.analyses_reset_date);
+  const now = new Date();
+  if (now.getMonth() !== resetDate.getMonth() || now.getFullYear() !== resetDate.getFullYear()) {
+    const sb = await getClient();
+    await sb.from('profiles').update({ analyses_count: 0, analyses_reset_date: now.toISOString().split('T')[0] }).eq('id', profile.id);
+    return { allowed: true, count: 0, limit, plan: profile.plan };
+  }
+
+  if (profile.analyses_count >= limit) {
+    return { allowed: false, reason: 'limit_reached', count: profile.analyses_count, limit, plan: profile.plan };
+  }
+  return { allowed: true, count: profile.analyses_count, limit, plan: profile.plan };
+}
+
+async function incrementAnalysisCount() {
+  const sb = await getClient();
+  const user = await getUser();
+  if (!user) return;
+  await sb.from('profiles').update({ analyses_count: sb.rpc('increment', { row_id: user.id }) }).eq('id', user.id);
+  // Simple increment
+  const profile = await getProfile();
+  if (profile) {
+    await sb.from('profiles').update({ analyses_count: (profile.analyses_count || 0) + 1 }).eq('id', user.id);
+  }
+}
 // ── Export global ─────────────────────────────────────────────
 window.WinAuth = {
+  getProfile,
+checkAnalysisLimit,
+incrementAnalysisCount,
   signUp,
   signIn,
   signOut,
