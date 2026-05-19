@@ -1172,6 +1172,7 @@ function setChip(btn,type,val){
   
   if(planLimits[val]){
     WinAuth.getProfile().then(profile=>{
+      console.log('Profile:', profile, 'val:', val, 'required:', planLimits[val]);
       const userPlan=profile?.plan||'free';
       const required=planLimits[val];
       const planOrder=['free','starter','expert'];
@@ -1191,7 +1192,6 @@ function setChip(btn,type,val){
   }
   _applyChip(btn,type,val);
 }
-
 function _applyChip(btn,type,val){
   if(type==='mode'){
     document.querySelectorAll('.p2-pill').forEach(c=>{c.classList.remove('active');c.style.borderColor='rgba(255,255,255,.06)';});
