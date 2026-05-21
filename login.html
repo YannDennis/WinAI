@@ -10,6 +10,7 @@
 <style>
 :root{
   --red:#E8182C;--red-light:#FF3347;--red-2:#C01020;
+  --neon-blue:#00D4FF;--neon-green:#00FF87;
   --black:#060606;--black-2:#0D0D0D;--black-3:#111;--black-4:#161616;--black-5:#1E1E1E;
   --gray:#555;--gray-2:#777;--gray-3:#AAA;--white:#F0EEE8;
   --font-display:'Russo One',sans-serif;
@@ -39,13 +40,15 @@ body::after{
   background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
   background-size:200px;
 }
-/* Red glow */
+/* Neon ambient glows */
 .bg-glow{
-  position:fixed;top:40%;left:50%;transform:translate(-50%,-50%);
-  width:700px;height:700px;border-radius:50%;
-  background:radial-gradient(circle,rgba(232,24,44,.07) 0%,transparent 65%);
-  pointer-events:none;z-index:0;
+  position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 55% 45% at 90% 10%,rgba(232,24,44,.1) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 40% at 10% 90%,rgba(0,212,255,.07) 0%,transparent 60%);
+  animation:bgNeonPulse 9s ease-in-out infinite;
 }
+@keyframes bgNeonPulse{0%,100%{opacity:.7}50%{opacity:1}}
 /* Back link */
 .back-link{
   position:fixed;top:24px;left:24px;z-index:10;
@@ -64,7 +67,7 @@ body::after{
   font-family:var(--font-display);font-size:52px;letter-spacing:6px;
   color:var(--white);line-height:1;margin-bottom:10px;
 }
-.hero-logo span{color:var(--red);}
+.hero-logo span{color:var(--red);text-shadow:0 0 15px rgba(232,24,44,.7);}
 .hero-sep{
   display:inline-flex;align-items:center;gap:10px;
   margin-bottom:8px;
@@ -72,7 +75,7 @@ body::after{
 .hero-sep::before,.hero-sep::after{content:'';width:28px;height:1px;background:rgba(232,24,44,.3);}
 .hero-tagline{
   font-family:var(--font-cond);font-size:11px;font-weight:700;letter-spacing:.35em;
-  color:#3A3A3A;text-transform:uppercase;
+  color:var(--neon-blue);text-shadow:0 0 8px rgba(0,212,255,.5);text-transform:uppercase;
 }
 
 /* Card */
