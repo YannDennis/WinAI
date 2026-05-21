@@ -1,0 +1,9 @@
+{
+  "name": "winai",
+  "version": "1.0.0",
+  "description": "WinAI — Pronostics IA Paris Sportifs",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0",
+    "stripe": "^14.10.0"
+  }
+}

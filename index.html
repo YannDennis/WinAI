@@ -268,7 +268,12 @@ section{padding:7rem 5%;position:relative;z-index:1;}
 .pbtn-outline{border:1px solid rgba(255,255,255,.1)!important;color:var(--gray-3);background:transparent;}
 .pbtn-outline:hover{border-color:rgba(255,255,255,.3)!important;color:var(--white);}
 .pbtn-red{background:var(--red);color:#fff;}
-.pbtn-red:hover{background:var(--red-light);}
+.pbtn-red:hover:not(:disabled){background:var(--red-light);}
+.price-btn:disabled{opacity:.55;cursor:not-allowed;}
+.toast{position:fixed;top:72px;left:50%;transform:translateX(-50%) translateY(-16px);z-index:600;padding:12px 24px;border-radius:4px;font-family:var(--font-cond);font-size:13px;font-weight:700;letter-spacing:.06em;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;white-space:nowrap;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.toast-success{background:#112211;border:1px solid #2d6a2d;color:#6fcf6f;}
+.toast-error{background:#221111;border:1px solid #6a2d2d;color:#cf6f6f;}
 #avis{background:var(--black-2);}
 .avis-inner{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:start;margin-top:3rem;}
 .reward-card{background:var(--black-3);border:1px solid rgba(255,255,255,.05);border-radius:4px;padding:2rem;}
@@ -320,6 +325,7 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,.04);paddin
 </style>
 </head>
 <body>
+<div class="toast" id="toast"></div>
 
 <!-- SPLASH -->
 <div id="splash">
@@ -796,7 +802,7 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,.04);paddin
         <li><span class="check">✓</span> Historique jusqu'à 20 matchs</li>
         <li><span class="cross">✗</span> <span style="color:#333">Historique toute la saison</span></li>
       </ul>
-      <button class="price-btn pbtn-red">Démarrer 6.99€/mois →</button>
+      <button class="price-btn pbtn-red" id="btn-starter" onclick="subscribe('starter')">S'abonner — 6.99€/mois →</button>
     </div>
     <div class="price-card reveal">
       <div class="price-tier">Expert</div>
@@ -810,7 +816,7 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,.04);paddin
         <li><span class="check">✓</span> Historique toute la saison</li>
         <li><span class="check">✓</span> Détail match par match</li>
       </ul>
-      <button class="price-btn pbtn-outline">Devenir Expert →</button>
+      <button class="price-btn pbtn-red" id="btn-expert" onclick="subscribe('expert')">S'abonner — 14.99€/mois →</button>
     </div>
   </div>
 </section>
@@ -1421,6 +1427,63 @@ function startTypewriter(team,cote,gain){
 }
 
 setTimeout(function(){fetchMatches();},100);
+
+/* --- STRIPE CHECKOUT --- */
+async function subscribe(plan) {
+  const btn = document.getElementById('btn-' + plan);
+  const originalText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Chargement...';
+
+  try {
+    const res = await fetch('/api/stripe-checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ plan }),
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || 'Erreur serveur');
+    }
+
+    const data = await res.json();
+    if (data.url) {
+      window.location.href = data.url;
+    } else {
+      throw new Error('URL de paiement manquante');
+    }
+  } catch (err) {
+    showToast('Erreur : ' + err.message, 'error');
+    btn.disabled = false;
+    btn.textContent = originalText;
+  }
+}
+
+function showToast(msg, type) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.className = 'toast toast-' + (type === 'error' ? 'error' : 'success');
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 5000);
+}
+
+(function handleUrlParams() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('success') === 'true') {
+    const plan = params.get('plan') || '';
+    const label = plan === 'expert' ? 'Expert' : 'Starter';
+    showToast('Paiement confirme ! Bienvenue sur le plan ' + label + ' ✓', 'success');
+    window.history.replaceState({}, '', window.location.pathname);
+    setTimeout(() => {
+      const tarifs = document.getElementById('tarifs') || document.getElementById('abonnement');
+      if (tarifs) tarifs.scrollIntoView({ behavior: 'smooth' });
+    }, 300);
+  } else if (params.get('canceled') === 'true') {
+    showToast('Paiement annule. Tu peux reessayer quand tu veux.', 'error');
+    window.history.replaceState({}, '', window.location.pathname);
+  }
+})();
 </script>
   <script src="/auth.js"></script>
 <script>
