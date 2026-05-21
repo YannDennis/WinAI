@@ -68,7 +68,7 @@ module.exports = async (req, res) => {
       payment_method_types: ['card'],
       line_items: [{ price: PRICE_IDS[plan], quantity: 1 }],
       mode: 'subscription',
-      success_url: `${baseUrl}/?success=true&plan=${plan}&session_id={CHECKOUT_SESSION_ID}`,
+      success_url: 'https://winai.pro/?success=true&session_id={CHECKOUT_SESSION_ID}',
       cancel_url: `${baseUrl}/?canceled=true`,
       metadata: {
         plan,
