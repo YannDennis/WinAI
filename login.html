@@ -264,7 +264,8 @@ footer{
     const user = await WinAuth.getUser();
     if (user) {
       const params = new URLSearchParams(window.location.search);
-      window.location.href = params.get('redirect') || '/';
+      const redirect = params.get('redirect');
+      window.location.href = redirect === 'abonnement' ? '/#abonnement' : (redirect || '/');
     }
   } catch(e) {}
   const params = new URLSearchParams(window.location.search);
@@ -326,7 +327,9 @@ async function handleLogin(e) {
     await WinAuth.signIn(email, pwd);
     showAlert('success', '✅ Connexion réussie ! Redirection...');
     const params = new URLSearchParams(window.location.search);
-    setTimeout(() => { window.location.href = params.get('redirect') || '/'; }, 800);
+    const redirect = params.get('redirect');
+    const dest = redirect === 'abonnement' ? '/#abonnement' : (redirect || '/');
+    setTimeout(() => { window.location.href = dest; }, 800);
   } catch (err) {
     setLoading('loginBtn', false);
     showAlert('error', '❌ ' + translateError(err.message));

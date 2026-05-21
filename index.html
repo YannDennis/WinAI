@@ -1430,6 +1430,12 @@ setTimeout(function(){fetchMatches();},100);
 
 /* --- STRIPE CHECKOUT --- */
 async function subscribe(plan) {
+  const user = await WinAuth.getUser();
+  if (!user) {
+    window.location.href = '/login.html?redirect=abonnement';
+    return;
+  }
+
   const btn = document.getElementById('btn-' + plan);
   const originalText = btn.textContent;
   btn.disabled = true;
