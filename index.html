@@ -472,10 +472,6 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,.04);paddin
   <div class="s-label">Live & À venir</div>
   <div class="s-title reveal">MATCHS<br>DU JOUR</div>
   <p class="s-sub reveal">Clique sur un match pour lancer l'analyse en un clic.</p>
-  <div class="sport-filters">
-    <button class="sport-filter active" onclick="filterSport(this,'Tous')"><span class="sport-filter-icon">🏆</span> Tous</button>
-    <button class="sport-filter" onclick="filterSport(this,'Football')"><span class="sport-filter-icon">⚽</span> Football</button>
-  </div>
   <div id="allMatchesGrid"></div>
 </section>
 
@@ -881,7 +877,7 @@ const observer=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isI
 document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
 
 // DATA
-let matches=[],oddsData=[],currentFilter='Tous';
+let matches=[],oddsData=[];
 
 async function fetchMatches(){
   try{
@@ -898,7 +894,7 @@ async function fetchMatches(){
         let dayLabel='Cette semaine';
         if(matchDate.getTime()===today2.getTime()) dayLabel='Aujourd\'hui';
         else if(matchDate.getTime()===tomorrow2.getTime()) dayLabel='Demain';
-        matches.push({home:f.event_home_team,away:f.event_away_team,homeKey:f.home_team_key||0,awayKey:f.away_team_key||0,homeLogo:f.home_team_logo||'',awayLogo:f.away_team_logo||'',league:f.league_name,date:new Date(f.event_date).toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'}),dayLabel,time:f.event_time||'TBD',event_date:f.event_date,status:f.event_status,homeGoals:f.event_final_result?f.event_final_result.split(' - ')[0]:null,awayGoals:f.event_final_result?f.event_final_result.split(' - ')[1]:null,sport:'Football',w:50,d:25,l:25});
+        matches.push({home:f.event_home_team,away:f.event_away_team,homeKey:f.home_team_key||0,awayKey:f.away_team_key||0,leagueId:f.league_id||0,homeLogo:f.home_team_logo||'',awayLogo:f.away_team_logo||'',league:f.league_name,date:new Date(f.event_date).toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'}),dayLabel,time:f.event_time||'TBD',event_date:f.event_date,status:f.event_status,homeGoals:f.event_final_result?f.event_final_result.split(' - ')[0]:null,awayGoals:f.event_final_result?f.event_final_result.split(' - ')[1]:null,w:50,d:25,l:25});
       });
     }
     if(matches.length===0) throw new Error('Aucun match');
@@ -906,7 +902,6 @@ async function fetchMatches(){
   }catch(e){console.error('API:',e);useFallback();}
 }
 
-function showSoon(){document.getElementById('allMatchesGrid').innerHTML=`<div style="padding:3rem;text-align:center;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:#444;letter-spacing:.1em;text-transform:uppercase;">🚀 Bientôt disponible</div>`;}
 
 function useFallback(){
   matches=[
@@ -920,7 +915,6 @@ function useFallback(){
   renderAll();
 }
 
-function filterSport(btn,s){document.querySelectorAll('.sport-filter').forEach(b=>b.classList.remove('active'));btn.classList.add('active');currentFilter=s;renderAll();}
 function getDayLabel(m){return m.dayLabel||'Cette semaine';}
 
 function makeCard(m){
@@ -959,7 +953,7 @@ function makeCard(m){
 }
 
 function renderAll(){
-  const filtered=currentFilter==='Tous'?matches:matches.filter(m=>m.sport===currentFilter);
+  const filtered=matches;
   if(filtered.length===0){document.getElementById('allMatchesGrid').innerHTML=`<div style="padding:3rem;text-align:center;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:#444;letter-spacing:.1em;text-transform:uppercase;">Aucun match disponible</div>`;return;}
   const dayGroups={};
   filtered.forEach(m=>{const day=getDayLabel(m);if(!dayGroups[day]) dayGroups[day]=[];dayGroups[day].push(m);});
@@ -1029,10 +1023,10 @@ function updateHero(filtered){
 
 function selectAndScroll(i){selectMatch(i);document.getElementById('prono').scrollIntoView({behavior:'smooth'});}
 
-let selHome='',selAway='',selLeague='',selIdx=-1,mode='court',hist=10,selHomeKey=0,selAwayKey=0,marche='1x2',styleMise='',contexte=[];
+let selHome='',selAway='',selLeague='',selIdx=-1,mode='court',hist=10,selHomeKey=0,selAwayKey=0,selLeagueId=0,marche='1x2',styleMise='',contexte=[];
 
 function selectMatch(i){
-  const m=matches[i];selHome=m.home;selAway=m.away;selLeague=m.league;selIdx=i;selHomeKey=m.homeKey||0;selAwayKey=m.awayKey||0;
+  const m=matches[i];selHome=m.home;selAway=m.away;selLeague=m.league;selIdx=i;selHomeKey=m.homeKey||0;selAwayKey=m.awayKey||0;selLeagueId=m.leagueId||0;
   document.querySelectorAll('.wf-card').forEach(c=>c.classList.remove('selected'));
   const wfc=document.getElementById('wfc'+i);if(wfc) wfc.classList.add('selected');
   document.getElementById('selLeague').textContent=m.league;
@@ -1253,7 +1247,7 @@ if(planOrder.indexOf(userPlan) < planOrder.indexOf('expert')) {
   document.getElementById('si2').classList.remove('active');document.getElementById('si2').classList.add('done');document.getElementById('si3').classList.add('active');
   showResultLoading();
   try{
-    const res=await fetch('/api/pronostic',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt,homeTeamKey:selHomeKey,awayTeamKey:selAwayKey,hist})});
+    const res=await fetch('/api/pronostic',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt,homeTeamKey:selHomeKey,awayTeamKey:selAwayKey,hist,leagueId:selLeagueId})});
     const data=await res.json();
     if(!res.ok||data.error){showResultError(data.error||'Erreur inconnue.');return;}
     showResult(data.result);

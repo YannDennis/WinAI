@@ -7,7 +7,7 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   try {
-    const { prompt, homeTeamKey, awayTeamKey, hist = 10 } = req.body;
+    const { prompt, homeTeamKey, awayTeamKey, hist = 10, leagueId } = req.body;
 
     if (!prompt || prompt.trim().length < 10) {
       return res.status(400).json({ error: 'Prompt invalide ou manquant.' });
@@ -17,7 +17,7 @@ export default async function handler(req, res) {
     const sportsKey = process.env.ALL_SPORTS_KEY;
     if (!apiKey) return res.status(500).json({ error: 'Clé API manquante.' });
 
-    // Récupérer les vrais matchs des équipes
+    // Récupérer les vrais matchs, H2H et classement en parallèle
     let statsContext = '';
     if (sportsKey && homeTeamKey && awayTeamKey) {
       try {
@@ -25,18 +25,22 @@ export default async function handler(req, res) {
         const toDate = today.toISOString().split('T')[0];
         const fromDate = new Date(today.getTime() - 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
 
-        const [homeRes, awayRes] = await Promise.all([
+        const apiCalls = [
           fetch(`https://apiv2.allsportsapi.com/football/?met=Fixtures&APIkey=${sportsKey}&teamId=${homeTeamKey}&from=${fromDate}&to=${toDate}`),
-          fetch(`https://apiv2.allsportsapi.com/football/?met=Fixtures&APIkey=${sportsKey}&teamId=${awayTeamKey}&from=${fromDate}&to=${toDate}`)
-        ]);
+          fetch(`https://apiv2.allsportsapi.com/football/?met=Fixtures&APIkey=${sportsKey}&teamId=${awayTeamKey}&from=${fromDate}&to=${toDate}`),
+          fetch(`https://apiv2.allsportsapi.com/football/?met=H2H&APIkey=${sportsKey}&firstTeamId=${homeTeamKey}&secondTeamId=${awayTeamKey}`),
+        ];
+        if (leagueId) {
+          apiCalls.push(fetch(`https://apiv2.allsportsapi.com/football/?met=Standings&APIkey=${sportsKey}&leagueId=${leagueId}`));
+        }
 
-        const homeData = await homeRes.json();
-        const awayData = await awayRes.json();
+        const responses = await Promise.all(apiCalls);
+        const [homeData, awayData, h2hData, standingsData] = await Promise.all(responses.map(r => r.json().catch(() => null)));
 
         const limit = hist === 0 ? 50 : hist;
 
         const filterMatches = (data) => {
-          if (!data.result) return [];
+          if (!data?.result) return [];
           return data.result
             .filter(m => ['FT', 'AET', 'PEN'].includes(m.event_status) || (m.event_final_result?.includes('-') && m.event_final_result !== '-'))
             .sort((a, b) => new Date(b.event_date) - new Date(a.event_date))
@@ -46,31 +50,100 @@ export default async function handler(req, res) {
         const homeMatches = filterMatches(homeData);
         const awayMatches = filterMatches(awayData);
 
-        const formatMatches = (matches, teamKey) => {
-          return matches.map(m => {
-            const isHome = m.home_team_key == teamKey;
-            const opponent = isHome ? m.event_away_team : m.event_home_team;
-            const score = m.event_final_result || '-';
-            const [homeGoals, awayGoals] = score.split(' - ').map(Number);
-            let result = 'N';
-            if (!isNaN(homeGoals) && !isNaN(awayGoals)) {
-              if (isHome) result = homeGoals > awayGoals ? 'V' : homeGoals < awayGoals ? 'D' : 'N';
-              else result = awayGoals > homeGoals ? 'V' : awayGoals < homeGoals ? 'D' : 'N';
-            }
-            const venue = isHome ? 'D' : 'E';
-            return `${m.event_date} | ${venue} | vs ${opponent} | ${score} | ${result}`;
-          }).join('\n');
+        // Parse result helper
+        const parseResult = (m, teamKey) => {
+          const isHome = m.home_team_key == teamKey;
+          const score = m.event_final_result || '-';
+          const [hg, ag] = score.split(' - ').map(Number);
+          let res = 'N';
+          if (!isNaN(hg) && !isNaN(ag)) {
+            res = isHome ? (hg > ag ? 'V' : hg < ag ? 'D' : 'N') : (ag > hg ? 'V' : ag < hg ? 'D' : 'N');
+          }
+          return { isHome, opponent: isHome ? m.event_away_team : m.event_home_team, score, hg, ag, res };
         };
+
+        // Compute stats: form, home/away split, goal averages
+        const computeStats = (matches, teamKey) => {
+          const homeGames = [], awayGames = [];
+          let goalsFor = 0, goalsAgainst = 0;
+          const form = [];
+
+          matches.forEach(m => {
+            const { isHome, res, hg, ag } = parseResult(m, teamKey);
+            const gf = isHome ? hg : ag;
+            const ga = isHome ? ag : hg;
+            if (!isNaN(gf)) goalsFor += gf;
+            if (!isNaN(ga)) goalsAgainst += ga;
+            form.push(res);
+            if (isHome) homeGames.push(res); else awayGames.push(res);
+          });
+
+          const n = matches.length || 1;
+          const winRate = (g) => g.length ? Math.round(g.filter(r => r === 'V').length / g.length * 100) : 0;
+
+          return {
+            form: form.slice(0, 5).join(' '),
+            homeForm: homeGames.slice(0, 5).join(' ') || '—',
+            awayForm: awayGames.slice(0, 5).join(' ') || '—',
+            avgFor: (goalsFor / n).toFixed(1),
+            avgAgainst: (goalsAgainst / n).toFixed(1),
+            homeWin: winRate(homeGames),
+            awayWin: winRate(awayGames),
+          };
+        };
+
+        const formatMatchLine = (m, teamKey) => {
+          const { isHome, opponent, score, res } = parseResult(m, teamKey);
+          return `${m.event_date} | ${isHome ? 'Dom' : 'Ext'} | vs ${opponent} | ${score} | ${res}`;
+        };
+
+        const homeStats = computeStats(homeMatches, homeTeamKey);
+        const awayStats = computeStats(awayMatches, awayTeamKey);
+
+        // Build standings context
+        let standingsContext = '';
+        if (standingsData?.result?.length) {
+          const rows = standingsData.result.filter(r =>
+            r.team_key == homeTeamKey || r.team_key == awayTeamKey
+          );
+          if (rows.length) {
+            standingsContext = '\nCLASSEMENT LIGUE :\n';
+            rows.forEach(r => {
+              standingsContext += `#${r.standing_place} ${r.standing_team} — ${r.standing_PTS} pts | ${r.standing_W}V ${r.standing_D}N ${r.standing_L}D | Buts: ${r.standing_F}/${r.standing_A}\n`;
+            });
+          }
+        }
+
+        // Build H2H context
+        let h2hContext = '';
+        const h2hMatches = h2hData?.result?.H2H || [];
+        if (h2hMatches.length) {
+          h2hContext = '\nCONFRONTATIONS DIRECTES (5 dernières) :\n';
+          h2hMatches.slice(0, 5).forEach(m => {
+            h2hContext += `${m.event_date} : ${m.event_home_team} ${m.event_final_result} ${m.event_away_team}\n`;
+          });
+        }
 
         if (homeMatches.length > 0 || awayMatches.length > 0) {
           statsContext = `\n\n=== DONNÉES RÉELLES AllSports API ===\n`;
+          statsContext += standingsContext;
+          statsContext += h2hContext;
+
           if (homeMatches.length > 0) {
-            statsContext += `\nDERNIERS MATCHS ÉQUIPE DOMICILE (${limit} max) :\nDate | D/E | Adversaire | Score | Résultat\n${formatMatches(homeMatches, homeTeamKey)}\n`;
+            statsContext += `\nÉQUIPE DOMICILE — Forme: ${homeStats.form} | Dom: ${homeStats.homeForm} | Ext: ${homeStats.awayForm}\n`;
+            statsContext += `Moy buts marqués: ${homeStats.avgFor}/match | Moy buts encaissés: ${homeStats.avgAgainst}/match\n`;
+            statsContext += `Détail (${limit} derniers matchs) :\nDate | Lieu | Adversaire | Score | Résultat\n`;
+            statsContext += homeMatches.map(m => formatMatchLine(m, homeTeamKey)).join('\n') + '\n';
           }
+
           if (awayMatches.length > 0) {
-            statsContext += `\nDERNIERS MATCHS ÉQUIPE EXTÉRIEUR (${limit} max) :\nDate | D/E | Adversaire | Score | Résultat\n${formatMatches(awayMatches, awayTeamKey)}\n`;
+            statsContext += `\nÉQUIPE EXTÉRIEUR — Forme: ${awayStats.form} | Dom: ${awayStats.homeForm} | Ext: ${awayStats.awayForm}\n`;
+            statsContext += `Moy buts marqués: ${awayStats.avgFor}/match | Moy buts encaissés: ${awayStats.avgAgainst}/match\n`;
+            statsContext += `Détail (${limit} derniers matchs) :\nDate | Lieu | Adversaire | Score | Résultat\n`;
+            statsContext += awayMatches.map(m => formatMatchLine(m, awayTeamKey)).join('\n') + '\n';
           }
-          statsContext += `\nUtilise UNIQUEMENT ces données réelles pour ton analyse. Ne invente aucune statistique.`;
+
+          statsContext += `\nUtilise UNIQUEMENT ces données réelles. Ne invente aucune statistique.`;
         }
       } catch (statsErr) {
         console.error('Stats fetch error:', statsErr);

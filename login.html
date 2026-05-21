@@ -10,7 +10,7 @@
 <style>
 :root{
   --red:#E8182C;--red-light:#FF3347;--red-2:#C01020;
-  --black:#080808;--black-2:#0F0F0F;--black-3:#161616;--black-4:#1E1E1E;--black-5:#2A2A2A;
+  --black:#060606;--black-2:#0D0D0D;--black-3:#111;--black-4:#161616;--black-5:#1E1E1E;
   --gray:#555;--gray-2:#777;--gray-3:#AAA;--white:#F0EEE8;
   --font-display:'Russo One',sans-serif;
   --font-cond:'Barlow Condensed',sans-serif;
@@ -22,240 +22,321 @@ body{
   background:var(--black);color:var(--white);
   font-family:var(--font-body);font-size:16px;line-height:1.6;
   overflow-x:hidden;min-height:100vh;
-  display:flex;flex-direction:column;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  position:relative;
 }
+/* Grid background */
 body::before{
-  content:'';position:fixed;inset:0;z-index:0;opacity:.025;pointer-events:none;
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(232,24,44,.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(232,24,44,.03) 1px,transparent 1px);
+  background-size:48px 48px;
+}
+/* Noise overlay */
+body::after{
+  content:'';position:fixed;inset:0;z-index:0;opacity:.015;pointer-events:none;
   background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
   background-size:200px;
 }
-nav{
-  position:fixed;top:0;left:0;right:0;z-index:500;height:60px;
-  display:flex;align-items:center;justify-content:space-between;padding:0 5%;
-  background:rgba(8,8,8,.92);backdrop-filter:blur(20px);
-  border-bottom:1px solid rgba(255,255,255,.04);
-}
-.nav-logo{font-family:var(--font-display);font-size:22px;letter-spacing:2px;color:var(--white);text-decoration:none;position:relative;}
-.nav-logo::after{content:'';position:absolute;bottom:-2px;left:0;width:100%;height:1.5px;background:var(--red);}
-.nav-logo span{color:var(--red);}
-.nav-back{font-family:var(--font-cond);font-size:12px;font-weight:700;letter-spacing:.08em;color:var(--gray);text-decoration:none;padding:7px 16px;border:1px solid rgba(255,255,255,.08);border-radius:2px;transition:all .2s;text-transform:uppercase;}
-.nav-back:hover{border-color:rgba(255,255,255,.2);color:var(--white);}
+/* Red glow */
 .bg-glow{
-  position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
-  width:600px;height:600px;border-radius:50%;
-  background:radial-gradient(circle,rgba(232,24,44,.06) 0%,transparent 70%);
+  position:fixed;top:40%;left:50%;transform:translate(-50%,-50%);
+  width:700px;height:700px;border-radius:50%;
+  background:radial-gradient(circle,rgba(232,24,44,.07) 0%,transparent 65%);
   pointer-events:none;z-index:0;
 }
-main{
-  flex:1;display:flex;align-items:center;justify-content:center;
-  padding:80px 1rem 2rem;position:relative;z-index:1;
+/* Back link */
+.back-link{
+  position:fixed;top:24px;left:24px;z-index:10;
+  font-family:var(--font-cond);font-size:11px;font-weight:700;letter-spacing:.1em;
+  color:#333;text-decoration:none;text-transform:uppercase;
+  transition:color .2s;
 }
+.back-link:hover{color:var(--red);}
+
+/* Hero */
+.hero{
+  text-align:center;margin-bottom:36px;position:relative;z-index:1;
+  animation:fadeUp .5s ease both;
+}
+.hero-logo{
+  font-family:var(--font-display);font-size:52px;letter-spacing:6px;
+  color:var(--white);line-height:1;margin-bottom:10px;
+}
+.hero-logo span{color:var(--red);}
+.hero-sep{
+  display:inline-flex;align-items:center;gap:10px;
+  margin-bottom:8px;
+}
+.hero-sep::before,.hero-sep::after{content:'';width:28px;height:1px;background:rgba(232,24,44,.3);}
+.hero-tagline{
+  font-family:var(--font-cond);font-size:11px;font-weight:700;letter-spacing:.35em;
+  color:#3A3A3A;text-transform:uppercase;
+}
+
+/* Card */
 .auth-card{
-  width:100%;max-width:420px;
+  width:100%;max-width:440px;
   background:var(--black-3);
   border:1px solid rgba(255,255,255,.06);
-  border-radius:8px;overflow:hidden;
-  box-shadow:0 40px 80px rgba(0,0,0,.6);
-  animation:fadeUp .6s ease both;
+  border-radius:10px;overflow:hidden;
+  box-shadow:0 40px 100px rgba(0,0,0,.7),0 0 0 1px rgba(232,24,44,.04);
+  position:relative;z-index:1;
+  animation:fadeUp .6s .08s ease both;
 }
-@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-.auth-header{
-  background:var(--black-4);padding:24px 28px 20px;
-  border-bottom:1px solid rgba(255,255,255,.04);
-  display:flex;align-items:center;gap:12px;
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+
+/* Tabs */
+.auth-tabs{
+  display:flex;border-bottom:1px solid rgba(255,255,255,.05);
+  background:rgba(0,0,0,.4);
 }
-.auth-header-dots{display:flex;gap:6px;}
-.auth-dot{width:8px;height:8px;border-radius:50%;}
-.auth-dot:nth-child(1){background:#FF5F57;}
-.auth-dot:nth-child(2){background:#FFBD2E;}
-.auth-dot:nth-child(3){background:#28C840;}
-.auth-tabs{display:flex;border-bottom:1px solid rgba(255,255,255,.05);background:var(--black-4);}
 .auth-tab{
-  flex:1;padding:14px;
-  font-family:var(--font-cond);font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
-  color:var(--gray);background:transparent;border:none;cursor:pointer;
+  flex:1;padding:16px;
+  font-family:var(--font-cond);font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;
+  color:#333;background:transparent;border:none;cursor:pointer;
   transition:all .2s;position:relative;
 }
 .auth-tab.active{color:var(--white);}
 .auth-tab.active::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--red);}
-.auth-tab:hover:not(.active){color:var(--gray-3);}
-.auth-body{padding:28px;}
-.auth-form{display:flex;flex-direction:column;gap:20px;}
+.auth-tab:hover:not(.active){color:#555;}
+
+/* Body */
+.auth-body{padding:32px;}
+
+/* Benefits banner (signup only) */
+.benefits{
+  display:flex;gap:0;margin-bottom:24px;
+  background:rgba(232,24,44,.05);
+  border:1px solid rgba(232,24,44,.12);border-radius:6px;overflow:hidden;
+}
+.benefit{
+  flex:1;padding:12px 8px;text-align:center;
+  border-right:1px solid rgba(232,24,44,.1);
+}
+.benefit:last-child{border-right:none;}
+.benefit-icon{font-size:18px;margin-bottom:4px;}
+.benefit-text{
+  font-family:var(--font-cond);font-size:10px;font-weight:800;
+  color:#888;letter-spacing:.06em;text-transform:uppercase;line-height:1.3;
+}
+
+/* Form */
+.auth-form{display:flex;flex-direction:column;gap:18px;}
 .field-group{display:flex;flex-direction:column;gap:6px;}
-.field-label{font-family:var(--font-cond);font-size:10px;font-weight:800;color:var(--gray);letter-spacing:.16em;text-transform:uppercase;}
+.field-label{
+  font-family:var(--font-cond);font-size:10px;font-weight:800;
+  color:#444;letter-spacing:.16em;text-transform:uppercase;
+}
 .field-wrap{position:relative;}
 .field-input{
-  width:100%;background:var(--black-4);
-  border:1px solid rgba(255,255,255,.06);border-radius:2px;
-  color:var(--white);padding:12px 14px;
+  width:100%;background:var(--black-2);
+  border:1px solid rgba(255,255,255,.05);border-radius:4px;
+  color:var(--white);padding:13px 16px;
   font-family:var(--font-cond);font-size:14px;font-weight:600;
-  outline:none;transition:border-color .2s;letter-spacing:.04em;
+  outline:none;transition:border-color .2s,box-shadow .2s;letter-spacing:.04em;
 }
-.field-input:focus{border-color:var(--red);}
-.field-input::placeholder{color:#333;}
+.field-input:focus{
+  border-color:rgba(232,24,44,.4);
+  box-shadow:0 0 0 3px rgba(232,24,44,.06);
+}
+.field-input::placeholder{color:#222;}
 .field-input.error{border-color:rgba(232,24,44,.5);}
 .pw-toggle{
   position:absolute;right:12px;top:50%;transform:translateY(-50%);
   background:none;border:none;cursor:pointer;
-  color:var(--gray);font-size:16px;padding:2px;line-height:1;
+  color:#333;font-size:16px;padding:2px;line-height:1;
   transition:color .2s;
 }
-.pw-toggle:hover{color:var(--gray-3);}
-.field-error{font-family:var(--font-cond);font-size:10px;font-weight:700;color:var(--red);letter-spacing:.04em;display:none;}
+.pw-toggle:hover{color:#666;}
+.field-error{
+  font-family:var(--font-cond);font-size:10px;font-weight:700;
+  color:var(--red);letter-spacing:.04em;display:none;
+}
 .field-error.show{display:block;}
+
+/* Alert */
 .auth-alert{
-  padding:12px 14px;border-radius:2px;
+  padding:12px 14px;border-radius:4px;
   font-family:var(--font-cond);font-size:12px;font-weight:700;letter-spacing:.04em;
   display:none;margin-bottom:16px;
 }
 .auth-alert.show{display:block;}
 .auth-alert.error{background:rgba(232,24,44,.08);border:1px solid rgba(232,24,44,.2);color:var(--red-light);}
 .auth-alert.success{background:rgba(76,175,80,.08);border:1px solid rgba(76,175,80,.2);color:#4CAF50;}
-.auth-alert.info{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:var(--gray-3);}
+.auth-alert.info{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);color:var(--gray-3);}
+
+/* Button */
 .auth-btn{
-  width:100%;padding:14px;border-radius:2px;
+  width:100%;padding:15px;border-radius:4px;
   background:var(--red);color:#fff;border:none;
-  font-family:var(--font-display);font-size:16px;letter-spacing:2px;
-  cursor:pointer;transition:background .2s;
+  font-family:var(--font-display);font-size:15px;letter-spacing:2.5px;
+  cursor:pointer;transition:background .2s,transform .1s;
   display:flex;align-items:center;justify-content:center;gap:10px;
 }
 .auth-btn:hover{background:var(--red-light);}
-.auth-btn:disabled{background:#2A2A2A;color:#444;cursor:not-allowed;}
+.auth-btn:active{transform:scale(.99);}
+.auth-btn:disabled{background:#1A1A1A;color:#333;cursor:not-allowed;}
 .auth-btn .btn-loader{display:none;}
 .auth-btn.loading .btn-text{display:none;}
 .auth-btn.loading .btn-loader{display:flex;gap:4px;}
-.ld{width:6px;height:6px;background:#555;border-radius:50%;animation:sDot 1.2s infinite;}
+.ld{width:6px;height:6px;background:#444;border-radius:50%;animation:sDot 1.2s infinite;}
 .ld:nth-child(2){animation-delay:.15s;}
 .ld:nth-child(3){animation-delay:.3s;}
 @keyframes sDot{0%,80%,100%{transform:scale(.4);opacity:.3}40%{transform:scale(1);opacity:1}}
-.auth-extra{text-align:center;margin-top:4px;}
-.auth-link{font-family:var(--font-cond);font-size:11px;color:var(--gray);text-decoration:none;letter-spacing:.04em;cursor:pointer;background:none;border:none;transition:color .2s;}
+
+/* Extras */
+.auth-extra{text-align:center;margin-top:2px;}
+.auth-link{
+  font-family:var(--font-cond);font-size:11px;color:#333;text-decoration:none;
+  letter-spacing:.04em;cursor:pointer;background:none;border:none;
+  transition:color .2s;
+}
 .auth-link:hover{color:var(--red);}
-.auth-legal{font-family:var(--font-body);font-size:11px;color:#333;text-align:center;line-height:1.6;}
-.auth-legal a{color:#444;text-decoration:none;}
+.auth-legal{
+  font-family:var(--font-body);font-size:11px;color:#2A2A2A;
+  text-align:center;line-height:1.6;
+}
+.auth-legal a{color:#333;text-decoration:none;}
 .auth-legal a:hover{color:var(--gray);}
+
+/* Success state */
 .auth-success-state{display:none;text-align:center;padding:8px 0;}
 .auth-success-state.show{display:block;}
 .success-icon{font-size:48px;margin-bottom:16px;}
 .success-title{font-family:var(--font-display);font-size:24px;letter-spacing:1px;margin-bottom:8px;}
 .success-sub{font-family:var(--font-cond);font-size:13px;color:var(--gray-3);letter-spacing:.04em;line-height:1.6;}
+
+/* Footer */
 footer{
-  text-align:center;padding:1.5rem;
-  font-family:var(--font-cond);font-size:11px;color:#2A2A2A;letter-spacing:.04em;
-  border-top:1px solid rgba(255,255,255,.03);position:relative;z-index:1;
+  margin-top:28px;
+  font-family:var(--font-cond);font-size:10px;color:#1E1E1E;letter-spacing:.06em;
+  text-align:center;position:relative;z-index:1;
+  animation:fadeUp .7s .15s ease both;
 }
 </style>
 </head>
 <body>
 <div class="bg-glow"></div>
-<nav>
-  <a href="/" class="nav-logo">WIN<span>AI</span></a>
-  <a href="/" class="nav-back">← Retour</a>
-</nav>
-<main>
-  <div class="auth-card">
-    <div class="auth-header">
-      <div class="auth-header-dots">
-        <div class="auth-dot"></div>
-        <div class="auth-dot"></div>
-        <div class="auth-dot"></div>
-      </div>
-    </div>
-    <div class="auth-tabs">
-      <button class="auth-tab active" id="tabLogin" onclick="switchTab('login')">Connexion</button>
-      <button class="auth-tab" id="tabSignup" onclick="switchTab('signup')">Inscription</button>
-    </div>
-    <div class="auth-body">
-      <div class="auth-alert" id="authAlert"></div>
+<a href="/" class="back-link">← Retour</a>
 
-      <!-- CONNEXION -->
-      <div id="formLogin">
-        <form class="auth-form" onsubmit="handleLogin(event)">
-          <div class="field-group">
-            <label class="field-label">Email</label>
-            <input class="field-input" id="loginEmail" type="email" placeholder="ton@email.com" autocomplete="email" required>
-          </div>
-          <div class="field-group">
-            <label class="field-label">Mot de passe</label>
-            <div class="field-wrap">
-              <input class="field-input" id="loginPwd" type="password" placeholder="••••••••" autocomplete="current-password" required>
-              <button type="button" class="pw-toggle" onclick="togglePw('loginPwd',this)">👁</button>
-            </div>
-          </div>
-          <button type="submit" class="auth-btn" id="loginBtn">
-            <span class="btn-text">⚡ SE CONNECTER</span>
-            <span class="btn-loader"><div class="ld"></div><div class="ld"></div><div class="ld"></div></span>
-          </button>
-          <div class="auth-extra">
-            <button type="button" class="auth-link" onclick="showReset()">Mot de passe oublié ?</button>
-          </div>
-        </form>
-      </div>
-
-      <!-- INSCRIPTION -->
-      <div id="formSignup" style="display:none">
-        <div class="auth-success-state" id="signupSuccess">
-          <div class="success-icon">📬</div>
-          <div class="success-title">Vérifie ta boîte mail</div>
-          <div class="success-sub">Un lien de confirmation a été envoyé à <strong id="signupEmailConfirm"></strong>.<br>Clique dessus pour activer ton compte.</div>
-          <br>
-          <a href="/" class="auth-link">← Retour à l'accueil</a>
-        </div>
-        <form class="auth-form" id="signupForm" onsubmit="handleSignup(event)">
-          <div class="field-group">
-            <label class="field-label">Email</label>
-            <input class="field-input" id="signupEmail" type="email" placeholder="ton@email.com" autocomplete="email" required>
-          </div>
-          <div class="field-group">
-            <label class="field-label">Mot de passe</label>
-            <div class="field-wrap">
-              <input class="field-input" id="signupPwd" type="password" placeholder="8 caractères minimum" autocomplete="new-password" minlength="8" required>
-              <button type="button" class="pw-toggle" onclick="togglePw('signupPwd',this)">👁</button>
-            </div>
-          </div>
-          <div class="field-group">
-            <label class="field-label">Confirmer le mot de passe</label>
-            <div class="field-wrap">
-              <input class="field-input" id="signupPwd2" type="password" placeholder="••••••••" autocomplete="new-password" required>
-              <button type="button" class="pw-toggle" onclick="togglePw('signupPwd2',this)">👁</button>
-            </div>
-            <span class="field-error" id="pwMatchError">Les mots de passe ne correspondent pas.</span>
-          </div>
-          <button type="submit" class="auth-btn" id="signupBtn">
-            <span class="btn-text">🚀 CRÉER MON COMPTE</span>
-            <span class="btn-loader"><div class="ld"></div><div class="ld"></div><div class="ld"></div></span>
-          </button>
-          <div class="auth-legal">
-            En créant un compte, tu acceptes les <a href="/cgu.html">CGU</a> et la <a href="/confidentialite.html">Politique de confidentialité</a>.
-          </div>
-        </form>
-      </div>
-
-      <!-- RESET -->
-      <div id="formReset" style="display:none">
-        <form class="auth-form" onsubmit="handleReset(event)">
-          <div style="font-family:var(--font-cond);font-size:12px;color:var(--gray-3);letter-spacing:.04em;line-height:1.7;padding-bottom:4px;">
-            Entre ton email et on t'envoie un lien pour réinitialiser ton mot de passe.
-          </div>
-          <div class="field-group">
-            <label class="field-label">Email</label>
-            <input class="field-input" id="resetEmail" type="email" placeholder="ton@email.com" autocomplete="email" required>
-          </div>
-          <button type="submit" class="auth-btn" id="resetBtn">
-            <span class="btn-text">Envoyer le lien →</span>
-            <span class="btn-loader"><div class="ld"></div><div class="ld"></div><div class="ld"></div></span>
-          </button>
-          <div class="auth-extra">
-            <button type="button" class="auth-link" onclick="showLogin()">← Retour à la connexion</button>
-          </div>
-        </form>
-      </div>
-
-    </div>
+<div class="hero">
+  <div class="hero-logo">WIN<span>AI</span></div>
+  <div class="hero-sep">
+    <span class="hero-tagline">Pronostics · Intelligence Artificielle</span>
   </div>
-</main>
+</div>
 
-<footer>⚠️ WinAI — Outil d'aide à la décision. Interdit aux mineurs.</footer>
+<div class="auth-card">
+  <div class="auth-tabs">
+    <button class="auth-tab active" id="tabLogin" onclick="switchTab('login')">Connexion</button>
+    <button class="auth-tab" id="tabSignup" onclick="switchTab('signup')">Inscription</button>
+  </div>
+  <div class="auth-body">
+    <div class="auth-alert" id="authAlert"></div>
+
+    <!-- CONNEXION -->
+    <div id="formLogin">
+      <form class="auth-form" onsubmit="handleLogin(event)">
+        <div class="field-group">
+          <label class="field-label">Email</label>
+          <input class="field-input" id="loginEmail" type="email" placeholder="ton@email.com" autocomplete="email" required>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Mot de passe</label>
+          <div class="field-wrap">
+            <input class="field-input" id="loginPwd" type="password" placeholder="••••••••" autocomplete="current-password" required>
+            <button type="button" class="pw-toggle" onclick="togglePw('loginPwd',this)">👁</button>
+          </div>
+        </div>
+        <button type="submit" class="auth-btn" id="loginBtn">
+          <span class="btn-text">⚡ SE CONNECTER</span>
+          <span class="btn-loader"><div class="ld"></div><div class="ld"></div><div class="ld"></div></span>
+        </button>
+        <div class="auth-extra">
+          <button type="button" class="auth-link" onclick="showReset()">Mot de passe oublié ?</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- INSCRIPTION -->
+    <div id="formSignup" style="display:none">
+      <div class="auth-success-state" id="signupSuccess">
+        <div class="success-icon">📬</div>
+        <div class="success-title">Vérifie ta boîte mail</div>
+        <div class="success-sub">Un lien de confirmation a été envoyé à <strong id="signupEmailConfirm"></strong>.<br>Clique dessus pour activer ton compte.</div>
+        <br>
+        <a href="/" class="auth-link">← Retour à l'accueil</a>
+      </div>
+      <form class="auth-form" id="signupForm" onsubmit="handleSignup(event)">
+        <div class="benefits">
+          <div class="benefit">
+            <div class="benefit-icon">⚡</div>
+            <div class="benefit-text">10 analyses offertes</div>
+          </div>
+          <div class="benefit">
+            <div class="benefit-icon">🎁</div>
+            <div class="benefit-text">Sans carte bancaire</div>
+          </div>
+          <div class="benefit">
+            <div class="benefit-icon">🚀</div>
+            <div class="benefit-text">Résultats en 30s</div>
+          </div>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Email</label>
+          <input class="field-input" id="signupEmail" type="email" placeholder="ton@email.com" autocomplete="email" required>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Mot de passe</label>
+          <div class="field-wrap">
+            <input class="field-input" id="signupPwd" type="password" placeholder="8 caractères minimum" autocomplete="new-password" minlength="8" required>
+            <button type="button" class="pw-toggle" onclick="togglePw('signupPwd',this)">👁</button>
+          </div>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Confirmer le mot de passe</label>
+          <div class="field-wrap">
+            <input class="field-input" id="signupPwd2" type="password" placeholder="••••••••" autocomplete="new-password" required>
+            <button type="button" class="pw-toggle" onclick="togglePw('signupPwd2',this)">👁</button>
+          </div>
+          <span class="field-error" id="pwMatchError">Les mots de passe ne correspondent pas.</span>
+        </div>
+        <button type="submit" class="auth-btn" id="signupBtn">
+          <span class="btn-text">🚀 CRÉER MON COMPTE</span>
+          <span class="btn-loader"><div class="ld"></div><div class="ld"></div><div class="ld"></div></span>
+        </button>
+        <div class="auth-legal">
+          En créant un compte, tu acceptes les <a href="/cgu.html">CGU</a> et la <a href="/confidentialite.html">Politique de confidentialité</a>.
+        </div>
+      </form>
+    </div>
+
+    <!-- RESET -->
+    <div id="formReset" style="display:none">
+      <form class="auth-form" onsubmit="handleReset(event)">
+        <div style="font-family:var(--font-cond);font-size:12px;color:#444;letter-spacing:.04em;line-height:1.7;padding-bottom:4px;">
+          Entre ton email pour recevoir un lien de réinitialisation.
+        </div>
+        <div class="field-group">
+          <label class="field-label">Email</label>
+          <input class="field-input" id="resetEmail" type="email" placeholder="ton@email.com" autocomplete="email" required>
+        </div>
+        <button type="submit" class="auth-btn" id="resetBtn">
+          <span class="btn-text">Envoyer le lien →</span>
+          <span class="btn-loader"><div class="ld"></div><div class="ld"></div><div class="ld"></div></span>
+        </button>
+        <div class="auth-extra">
+          <button type="button" class="auth-link" onclick="showLogin()">← Retour à la connexion</button>
+        </div>
+      </form>
+    </div>
+
+  </div>
+</div>
+
+<footer>⚠️ WinAI — Outil d'aide à la décision uniquement. Interdit aux mineurs.</footer>
 
 <script src="/auth.js"></script>
 <script>
