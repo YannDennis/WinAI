@@ -475,10 +475,6 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,.04);paddin
   <div class="sport-filters">
     <button class="sport-filter active" onclick="filterSport(this,'Tous')"><span class="sport-filter-icon">🏆</span> Tous</button>
     <button class="sport-filter" onclick="filterSport(this,'Football')"><span class="sport-filter-icon">⚽</span> Football</button>
-    <button class="sport-filter soon" onclick="showSoon()"><span class="sport-filter-icon">🏀</span> Basketball</button>
-    <button class="sport-filter soon" onclick="showSoon()"><span class="sport-filter-icon">🎾</span> Tennis</button>
-    <button class="sport-filter soon" onclick="showSoon()"><span class="sport-filter-icon">🏉</span> Rugby</button>
-    <button class="sport-filter soon" onclick="showSoon()"><span class="sport-filter-icon">🥊</span> MMA</button>
   </div>
   <div id="allMatchesGrid"></div>
 </section>
@@ -623,13 +619,6 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,.04);paddin
         </div>
         <div style="display:flex;align-items:center;gap:8px;"><span style="background:#FF9800;color:#000;font-family:var(--font-cond);font-size:7px;font-weight:800;letter-spacing:.08em;padding:2px 8px;border-radius:10px;">STARTER</span><div class="p2-check" style="width:18px;height:18px;border-radius:50%;border:1px solid #333;flex-shrink:0;"></div></div>
       </div>
-      <div class="p2-opt" onclick="setChip(this,'marche','btts')" style="background:#111;border:1px solid rgba(255,255,255,.06);border-radius:6px;padding:10px 14px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:all .2s;">
-        <div style="display:flex;align-items:center;gap:10px;">
-          <div style="width:30px;height:30px;border-radius:6px;background:rgba(255,152,0,.1);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;">🥅</div>
-          <div><div style="font-size:13px;font-weight:800;color:#666;">BTTS</div><div style="font-size:9px;color:#444;margin-top:1px;">Les deux équipes marquent</div></div>
-        </div>
-        <div style="display:flex;align-items:center;gap:8px;"><span style="background:#FF9800;color:#000;font-family:var(--font-cond);font-size:7px;font-weight:800;letter-spacing:.08em;padding:2px 8px;border-radius:10px;">STARTER</span><div class="p2-check" style="width:18px;height:18px;border-radius:50%;border:1px solid #333;flex-shrink:0;"></div></div>
-      </div>
       <div class="p2-opt" onclick="setChip(this,'marche','score')" style="background:#111;border:1px solid rgba(255,255,255,.06);border-radius:6px;padding:10px 14px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:all .2s;">
         <div style="display:flex;align-items:center;gap:10px;">
           <div style="width:30px;height:30px;border-radius:6px;background:rgba(232,24,44,.06);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;">🎰</div>
@@ -653,8 +642,8 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,.04);paddin
     <div style="display:flex;gap:6px;">
       <div class="p2-style active" onclick="setChip(this,'style','neutre')" style="flex:1;background:#111;border:1px solid rgba(232,24,44,.5);border-radius:6px;padding:10px;text-align:center;cursor:pointer;transition:all .2s;">
         <div style="font-size:20px;margin-bottom:4px;">⚖️</div>
-        <div style="font-size:12px;font-weight:800;color:#F0EEE8;letter-spacing:.04em;">Neutre</div>
-        <div style="font-size:9px;color:#666;margin-top:2px;">Équilibré</div>
+        <div style="font-size:12px;font-weight:800;color:#F0EEE8;letter-spacing:.04em;">Équilibré</div>
+        <div style="font-size:9px;color:#666;margin-top:2px;">Risque modéré</div>
       </div>
       <div class="p2-style" onclick="setChip(this,'style','prudent')" style="flex:1;background:#111;border:1px solid rgba(255,255,255,.06);border-radius:6px;padding:10px;text-align:center;cursor:pointer;transition:all .2s;">
         <div style="font-size:20px;margin-bottom:4px;">🛡️</div>
@@ -674,10 +663,10 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,.04);paddin
   <div class="config-row">
     <div class="config-label">Contexte</div>
     <div style="display:flex;flex-direction:column;gap:4px;">
-      <div class="p2-ctx" onclick="setChip(this,'contexte','enjeux')" style="background:#111;border:1px solid rgba(255,255,255,.06);border-radius:6px;padding:10px 14px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:all .2s;">
+      <div class="p2-ctx" onclick="setChip(this,'contexte','confrontations')" style="background:#111;border:1px solid rgba(255,255,255,.06);border-radius:6px;padding:10px 14px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:all .2s;">
         <div style="display:flex;align-items:center;gap:10px;">
-          <div style="width:30px;height:30px;border-radius:6px;background:rgba(255,152,0,.1);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;">🏆</div>
-          <div><div style="font-size:13px;font-weight:800;color:#666;">Match à enjeux</div><div style="font-size:9px;color:#444;margin-top:1px;">Finale, relégation, titre</div></div>
+          <div style="width:30px;height:30px;border-radius:6px;background:rgba(255,152,0,.1);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;">⚔️</div>
+          <div><div style="font-size:13px;font-weight:800;color:#666;">Confrontations directes</div><div style="font-size:9px;color:#444;margin-top:1px;">Historique face-à-face</div></div>
         </div>
         <div style="display:flex;align-items:center;gap:8px;"><span style="background:#FF9800;color:#000;font-family:var(--font-cond);font-size:7px;font-weight:800;letter-spacing:.08em;padding:2px 8px;border-radius:10px;">STARTER</span><div class="p2-check" style="width:18px;height:18px;border-radius:50%;border:1px solid #333;flex-shrink:0;"></div></div>
       </div>
@@ -685,13 +674,6 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,.04);paddin
         <div style="display:flex;align-items:center;gap:10px;">
           <div style="width:30px;height:30px;border-radius:6px;background:rgba(232,24,44,.06);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;">🤕</div>
           <div><div style="font-size:13px;font-weight:800;color:#666;">Blessures/Absences</div><div style="font-size:9px;color:#444;margin-top:1px;">Joueurs clés indisponibles</div></div>
-        </div>
-        <div style="display:flex;align-items:center;gap:8px;"><span style="background:#E8182C;color:#fff;font-family:var(--font-cond);font-size:7px;font-weight:800;letter-spacing:.08em;padding:2px 8px;border-radius:10px;">EXPERT</span><div class="p2-check" style="width:18px;height:18px;border-radius:50%;border:1px solid #333;flex-shrink:0;"></div></div>
-      </div>
-      <div class="p2-ctx" onclick="setChip(this,'contexte','retour')" style="background:#111;border:1px solid rgba(255,255,255,.06);border-radius:6px;padding:10px 14px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:all .2s;">
-        <div style="display:flex;align-items:center;gap:10px;">
-          <div style="width:30px;height:30px;border-radius:6px;background:rgba(232,24,44,.06);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;">🔄</div>
-          <div><div style="font-size:13px;font-weight:800;color:#666;">Match retour</div><div style="font-size:9px;color:#444;margin-top:1px;">Résultat aller à considérer</div></div>
         </div>
         <div style="display:flex;align-items:center;gap:8px;"><span style="background:#E8182C;color:#fff;font-family:var(--font-cond);font-size:7px;font-weight:800;letter-spacing:.08em;padding:2px 8px;border-radius:10px;">EXPERT</span><div class="p2-check" style="width:18px;height:18px;border-radius:50%;border:1px solid #333;flex-shrink:0;"></div></div>
       </div>
@@ -707,13 +689,6 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,.04);paddin
       <div class="hist-pill" onclick="setChip(this,'hist',20)" style="position:relative;">20 matchs<span style="position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:#FF9800;color:#000;font-family:var(--font-cond);font-size:7px;font-weight:800;letter-spacing:.06em;padding:1px 6px;border-radius:2px;white-space:nowrap;">STARTER</span></div>
       <div class="hist-pill" onclick="setChip(this,'hist',30)" style="position:relative;">30 matchs<span style="position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:#E8182C;color:#fff;font-family:var(--font-cond);font-size:7px;font-weight:800;letter-spacing:.06em;padding:1px 6px;border-radius:2px;white-space:nowrap;">EXPERT</span></div>
       <div class="hist-pill" onclick="setChip(this,'hist',0)" style="position:relative;">Saison<span style="position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:#E8182C;color:#fff;font-family:var(--font-cond);font-size:7px;font-weight:800;letter-spacing:.06em;padding:1px 6px;border-radius:2px;white-space:nowrap;">EXPERT</span></div>
-    </div>
-    <div class="detail-card" id="dc" onclick="toggleDetail()">
-      <div>
-        <div class="detail-title">Détail match par match</div>
-        <div class="detail-sub">Score, adversaire et résultat V/N/D pour chaque match</div>
-      </div>
-      <div class="sw" id="sw"><div class="sw-k"></div></div>
     </div>
   </div>
 
@@ -1054,7 +1029,7 @@ function updateHero(filtered){
 
 function selectAndScroll(i){selectMatch(i);document.getElementById('prono').scrollIntoView({behavior:'smooth'});}
 
-let selHome='',selAway='',selLeague='',selIdx=-1,mode='court',hist=10,detail=false,selHomeKey=0,selAwayKey=0,marche='1x2',styleMise='',contexte=[];
+let selHome='',selAway='',selLeague='',selIdx=-1,mode='court',hist=10,selHomeKey=0,selAwayKey=0,marche='1x2',styleMise='',contexte=[];
 
 function selectMatch(i){
   const m=matches[i];selHome=m.home;selAway=m.away;selLeague=m.league;selIdx=i;selHomeKey=m.homeKey||0;selAwayKey=m.awayKey||0;
@@ -1175,7 +1150,7 @@ let bestOdd=2.1;
   setTimeout(() => msg.remove(), 3000);
 }
 function setChip(btn,type,val){
-  const planLimits={'detail':'starter','buts':'starter','btts':'starter','score':'expert','buteur':'expert','agressif':'expert','enjeux':'starter','blessures':'expert','retour':'expert',20:'starter',30:'expert',0:'expert'};
+  const planLimits={'buts':'starter','score':'expert','buteur':'expert','agressif':'expert','confrontations':'starter','blessures':'expert',20:'starter',30:'expert',0:'expert'};
   
   if(planLimits[val]){
     WinAuth.getProfile().then(profile=>{
@@ -1229,7 +1204,6 @@ function _applyChip(btn,type,val){
     if(contexte.includes(val)) contexte=contexte.filter(c=>c!==val);else contexte.push(val);
   }
 }
-function toggleDetail(){detail=!detail;document.getElementById('sw').classList.toggle('on',detail);document.getElementById('dc').classList.toggle('on',detail);}
 function updateGain(v,odd){if(odd) bestOdd=odd;const n=parseFloat(v)||0;document.getElementById('gainVal').textContent=n>0?`~€${Math.round(n*bestOdd)}`:'~€0';}
 
 async function launch(){
@@ -1255,30 +1229,26 @@ const userPlan = userProfile?.plan || 'free';
 const planOrder = ['free','starter','expert'];
 
 if(planOrder.indexOf(userPlan) < planOrder.indexOf('starter')) {
-  if(mode === 'detail') mode = 'court';
-  if(['buts','btts','enjeux'].includes(marche)) marche = '1x2';
+  if(['buts'].includes(marche)) marche = '1x2';
   styleMise = '';
-  contexte = contexte.filter(c => !['enjeux','blessures','retour'].includes(c));
+  contexte = contexte.filter(c => !['confrontations','blessures'].includes(c));
 }
 if(planOrder.indexOf(userPlan) < planOrder.indexOf('expert')) {
   if(['score','buteur'].includes(marche)) marche = '1x2';
   if(styleMise === 'agressif') styleMise = '';
-  contexte = contexte.filter(c => !['blessures','retour'].includes(c));
+  contexte = contexte.filter(c => !['blessures'].includes(c));
 }
   const histLabel=hist===0?'toute la saison':`les ${hist} derniers matchs`;
-  
-  const detailInstr=detail?`Pour chaque match, donne : date, adversaire, score, résultat V/N/D.`:`Résume la forme globale en 2 lignes.`;
-  const marcheLabel={'1x2':'le résultat final (1X2)','buts':'les paris plus/moins de buts (2.5 et 3.5)','btts':'les deux équipes marquent (BTTS)','score':'le score exact','buteur':'le buteur probable'}[marche]||'le résultat final (1X2)';
+  const marcheLabel={'1x2':'le résultat final (1X2)','buts':'les paris plus/moins de buts (2.5 et 3.5)','score':'le score exact','buteur':'le buteur probable'}[marche]||'le résultat final (1X2)';
   const styleLabel=styleMise==='agressif'?'MODE AGRESSIF : propose des cotes élevées (>2.0), des combinés, des paris risqués mais très rentables.':styleMise==='prudent'?'MODE PRUDENT : propose uniquement des cotes basses (<1.80), sûres et des mises minimales.':'';
   const contexteLabel=[];
-  if(contexte.includes('enjeux')) contexteLabel.push('Ce match est à fort enjeu (finale, relégation ou titre).');
+  if(contexte.includes('confrontations')) contexteLabel.push('Analyse les confrontations directes récentes entre les deux équipes.');
   if(contexte.includes('blessures')) contexteLabel.push('Mentionne les blessures et absences connues des joueurs clés.');
-  if(contexte.includes('retour')) contexteLabel.push('Il s\'agit d\'un match retour — analyse le résultat aller et son impact.');
   let prompt='';
   if(mode==='court'){
-    prompt=`Pronostic court — Football : ${selHome} vs ${selAway} (${selLeague}). Mise : ${miseVal}€.\nBase-toi sur ${histLabel}. ${detailInstr}\nAnalyse spécifiquement : ${marcheLabel}.\n${styleLabel}\n${contexteLabel.join(' ')}\n\nDonne exactement :\n🎯 MISE : [pari conseillé] @ [cote] → sur ${miseVal}€ misés = [gain potentiel calculé]\n🔀 SÉCURISÉ : [pari alternatif] @ [cote] → [justification en 1 ligne]\n📊 Confiance : [X]/10\n\n⚠️ Outil d'aide à la décision uniquement.`;
+    prompt=`Pronostic court — Football : ${selHome} vs ${selAway} (${selLeague}). Mise : ${miseVal}€.\nBase-toi sur ${histLabel}.\nAnalyse spécifiquement : ${marcheLabel}.\n${styleLabel}\n${contexteLabel.join(' ')}\n\nDonne exactement ces sections :\n\nFORME RÉCENTE :\n[${selHome} → derniers résultats V/N/D] | [${selAway} → derniers résultats V/N/D]\n\nANALYSE :\n[Analyse factuelle courte en 2-3 phrases]\n\nCOTES CONSEILLÉES :\n🎯 PRINCIPALE : [pari] @ [cote]\n🔀 SÉCURISÉE : [pari alternatif] @ [cote]\n📊 OUTSIDER : [pari risqué] @ [cote]\n\nCONCLUSION :\n✅ [mise conseillée] @ [cote] → ${miseVal}€ × [cote] = [gain]€ | [pari sécurisé]\n📊 Confiance : [X]/10\n\n⚠️ Outil d'aide à la décision uniquement.`;
   }else{
-    prompt=`Analyse complète — Football : ${selHome} vs ${selAway} (${selLeague}). Mise : ${miseVal}€.\nAnalyse spécifiquement : ${marcheLabel}.\n${styleLabel}\n${contexteLabel.join(' ')}\n\n**1. HISTORIQUE (${histLabel} par équipe)**\n${detailInstr}\n\n**2. FORME & STATS**\nSérie, buts marqués/encaissés, forces et faiblesses.\n\n**3. CONFRONTATIONS DIRECTES**\nDerniers face-à-face.\n\n**4. PRONOSTIC PRINCIPAL**\n🎯 MISE : [pari conseillé] @ [cote] → sur ${miseVal}€ misés = [gain potentiel calculé]\n\n**5. PARI ALTERNATIF**\n🔀 SÉCURISÉ : [pari alternatif] @ [cote] → [justification courte]\n\n**6. CONFIANCE & RISQUES**\n📊 Confiance : [X]/10 + facteurs de risque.\n\n⚠️ Outil d'aide à la décision uniquement.`;
+    prompt=`Analyse complète — Football : ${selHome} vs ${selAway} (${selLeague}). Mise : ${miseVal}€.\nBase-toi sur ${histLabel}.\nAnalyse spécifiquement : ${marcheLabel}.\n${styleLabel}\n${contexteLabel.join(' ')}\n\nDonne exactement ces sections :\n\nFORME RÉCENTE :\n[${selHome} → derniers résultats V/N/D sur ${histLabel}] | [${selAway} → derniers résultats V/N/D sur ${histLabel}]\n\nANALYSE :\n[Analyse approfondie : forme, buts marqués/encaissés, forces et faiblesses de chaque équipe. 4-5 phrases.]\n\nCOTES CONSEILLÉES :\n🎯 PRINCIPALE : [pari] @ [cote]\n🔀 SÉCURISÉE : [pari alternatif] @ [cote]\n📊 OUTSIDER : [pari risqué mais intéressant] @ [cote]\n\nCONCLUSION :\n✅ [mise conseillée] @ [cote] → ${miseVal}€ × [cote] = [gain]€ | [pari sécurisé]\n📊 Confiance : [X]/10 — [facteurs de risque en 1 phrase]\n\n⚠️ Outil d'aide à la décision uniquement.`;
   }
   document.getElementById('si2').classList.remove('active');document.getElementById('si2').classList.add('done');document.getElementById('si3').classList.add('active');
   showResultLoading();
@@ -1338,72 +1308,106 @@ function renderMatchTable(lines){
   </table>`;
 }
 
+function parseFormeRecente(line){
+  // Extrait V/N/D depuis "TeamName → V V N D V" ou "TeamName → V V N D V | ..."
+  const pills=[];
+  const matches=line.match(/[VND]/g)||[];
+  matches.forEach(r=>{
+    const color=r==='V'?'#4CAF50':r==='D'?'#E8182C':'#FF9800';
+    const bg=r==='V'?'rgba(76,175,80,.15)':r==='D'?'rgba(232,24,44,.15)':'rgba(255,152,0,.15)';
+    pills.push(`<span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:4px;background:${bg};font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:800;color:${color};letter-spacing:.04em;">${r}</span>`);
+  });
+  return pills.join('');
+}
+
 function parseResultToHTML(text){
-  const lines=text.split('\n');let html='';let i=0;
-  while(i<lines.length){
-    const line=lines[i].trim();
-    if(!line){i++;continue;}
-    if(/^(🎯 MISE|🔀 SÉCURISÉ|📊 Confiance|✅ CONCLUSION|⚠️)/.test(line)){i++;continue;}
-    if(/^---+$/.test(line)){html+=`<div style="height:1px;background:rgba(255,255,255,.05);margin:12px 0;"></div>`;i++;continue;}
-    // Lignes de match : - DD/MM/YYYY | ...
-    if(/^[-•]\s*\d{2}\/\d{2}\/\d{4}\s*\|/.test(line)){
-      let tableLines=[];
-      while(i<lines.length&&/^[-•]\s*\d{2}\/\d{2}\/\d{4}\s*\|/.test(lines[i].trim())){tableLines.push(lines[i].trim());i++;}
-      html+=renderMatchTable(tableLines);continue;
-    }
-    // Bilan
-    if(/^Bilan\s+/i.test(line)){
-      html+=`<div style="background:rgba(255,255,255,.03);border-left:2px solid #E8182C;padding:8px 12px;margin:4px 0 14px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:#AAA;">${line.replace(/\*\*/g,'')}</div>`;
-      i++;continue;
-    }
-    // Titre markdown ### ou ##
-    if(/^#{1,3}\s+/.test(line)){
-      const t=line.replace(/^#{1,3}\s+/,'').replace(/[🔍📊⚽🎯🔀📈]/g,'').trim();
-      html+=`<div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:800;color:#E8182C;letter-spacing:.16em;text-transform:uppercase;margin:16px 0 8px;display:flex;align-items:center;gap:8px;">■ ${t}<div style="flex:1;height:1px;background:rgba(232,24,44,.15);"></div></div>`;
-      i++;continue;
-    }
-    // Titre texte + deux-points en fin de ligne
-    if(/^[A-ZÀ-Ÿa-zà-ÿ].{2,}\s*:\s*$/.test(line)&&!line.startsWith('-')){
-      const t=line.replace(/^#{1,3}\s*/,'').replace(/[🔍📊⚽🎯🔀📈]/g,'').replace(/\s*:\s*$/,'').trim();
-      html+=`<div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:800;color:#E8182C;letter-spacing:.16em;text-transform:uppercase;margin:16px 0 8px;display:flex;align-items:center;gap:8px;">■ ${t}<div style="flex:1;height:1px;background:rgba(232,24,44,.15);"></div></div>`;
-      i++;continue;
-    }
-    // Texte normal
-    const cleaned=line.replace(/\*\*(.*?)\*\*/g,'<strong style="color:#F0EEE8;">$1</strong>');
-    html+=`<p style="font-family:'Barlow',sans-serif;font-size:13px;color:#888;line-height:1.8;margin:4px 0;">${cleaned}</p>`;
-    i++;
+  const sections={forme:'',analyse:'',cotes:[],conclusion:'',conf:'—'};
+  const confMatch=text.match(/📊\s*Confiance\s*:\s*(\d+)\/10/);
+  if(confMatch) sections.conf=confMatch[1];
+  // Forme récente
+  const formeMatch=text.match(/FORME\s*RÉCENTE\s*:?\s*\n([\s\S]*?)(?=\n\s*ANALYSE|\n\s*COTES|$)/i);
+  if(formeMatch) sections.forme=formeMatch[1].trim();
+  // Analyse
+  const analyseMatch=text.match(/ANALYSE\s*:?\s*\n([\s\S]*?)(?=\n\s*COTES|\n\s*CONCLUSION|$)/i);
+  if(analyseMatch) sections.analyse=analyseMatch[1].trim();
+  // Cotes
+  const cotesMatch=text.match(/COTES\s*CONSEILLÉES?\s*:?\s*\n([\s\S]*?)(?=\n\s*CONCLUSION|$)/i);
+  if(cotesMatch){
+    const cotesText=cotesMatch[1];
+    const principale=cotesText.match(/🎯\s*PRINCIPALE\s*:\s*(.+)/);
+    const securisee=cotesText.match(/🔀\s*SÉCURISÉE?\s*:\s*(.+)/);
+    const outsider=cotesText.match(/📊\s*OUTSIDER\s*:\s*(.+)/);
+    if(principale) sections.cotes.push({icon:'🎯',label:'PRINCIPALE',color:'#E8182C',bg:'rgba(232,24,44,.08)',val:principale[1].trim()});
+    if(securisee) sections.cotes.push({icon:'🔀',label:'SÉCURISÉE',color:'#4CAF50',bg:'rgba(76,175,80,.08)',val:securisee[1].trim()});
+    if(outsider) sections.cotes.push({icon:'📊',label:'OUTSIDER',color:'#FF9800',bg:'rgba(255,152,0,.08)',val:outsider[1].trim()});
   }
-  return html;
+  // Conclusion
+  const concMatch=text.match(/CONCLUSION\s*:?\s*\n([\s\S]*?)(?=\n\s*⚠️|$)/i);
+  if(concMatch) sections.conclusion=concMatch[1].trim();
+  return sections;
+}
+
+function buildFormeCards(formeText){
+  const parts=formeText.split('|').map(p=>p.trim()).filter(Boolean);
+  if(parts.length<2) parts.push('');
+  return`<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">
+    ${parts.slice(0,2).map((p,idx)=>{
+      const teamName=idx===0?selHome:selAway;
+      const pills=parseFormeRecente(p);
+      return`<div style="background:#111;border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:12px;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:800;color:#555;letter-spacing:.14em;text-transform:uppercase;margin-bottom:8px;">${teamName}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:4px;">${pills||'<span style="font-family:Barlow,sans-serif;font-size:11px;color:#333;">—</span>'}</div>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+function buildCoteCards(cotes){
+  if(!cotes.length) return'';
+  return`<div style="display:grid;grid-template-columns:repeat(${cotes.length},1fr);gap:8px;margin-bottom:14px;">
+    ${cotes.map(c=>`<div style="background:${c.bg};border:1px solid ${c.color}22;border-radius:8px;padding:12px;text-align:center;">
+      <div style="font-size:16px;margin-bottom:4px;">${c.icon}</div>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:8px;font-weight:800;color:${c.color};letter-spacing:.14em;text-transform:uppercase;margin-bottom:6px;">${c.label}</div>
+      <div style="font-family:'Barlow',sans-serif;font-size:12px;font-weight:600;color:#F0EEE8;line-height:1.4;">${c.val}</div>
+    </div>`).join('')}
+  </div>`;
 }
 
 function showResult(text){
   const box=getOrCreateResultBox();
-  const confMatch=text.match(/(\d+)\/10/);const conf=confMatch?confMatch[1]:'—';
-  const conclusionMatch=text.match(/✅ CONCLUSION\s*:\s*(.+?)(?:\n|$)/);const conclusion=conclusionMatch?conclusionMatch[1].trim():'';
-  const miseMatch=text.match(/🎯 MISE\s*:\s*(.+?)(?:\n|$)/);const mise=miseMatch?miseMatch[1].trim().replace(/\*\*/g,''):'';
-  const secMatch=text.match(/🔀 SÉCURISÉ\s*:\s*(.+?)(?:\n|$)/);const sec=secMatch?secMatch[1].trim().replace(/\*\*/g,''):'';
-  const bodyHTML=parseResultToHTML(text);
+  const sections=parseResultToHTML(text);
+  const conf=sections.conf;
+  const confColor=parseInt(conf)>=7?'#4CAF50':parseInt(conf)>=5?'#FF9800':'#E8182C';
+  const conclusionLines=sections.conclusion.split('\n').filter(Boolean);
+  const mainConc=conclusionLines.find(l=>l.includes('✅'))||conclusionLines[0]||'';
+  const safeConc=conclusionLines.find(l=>l.includes('📊'))||conclusionLines[1]||'';
   box.innerHTML=`
     <div style="background:rgba(232,24,44,.06);padding:10px 16px;border-bottom:1px solid rgba(255,255,255,.04);display:flex;align-items:center;justify-content:space-between;">
-      <div style="display:flex;align-items:center;gap:8px;"><div style="width:6px;height:6px;background:#4CAF50;border-radius:50%;"></div><span style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:800;color:#E8182C;letter-spacing:.12em;text-transform:uppercase;">⚡ BetMind — ${selHome} vs ${selAway}</span></div>
+      <div style="display:flex;align-items:center;gap:8px;"><div style="width:6px;height:6px;background:#4CAF50;border-radius:50%;animation:livePulse 2s infinite;"></div><span style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:800;color:#E8182C;letter-spacing:.12em;text-transform:uppercase;">⚡ BetMind — ${selHome} vs ${selAway}</span></div>
       <button onclick="resetProno()" style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;color:#444;background:none;border:none;cursor:pointer;letter-spacing:.06em;text-transform:uppercase;" onmouseover="this.style.color='#E8182C'" onmouseout="this.style.color='#444'">Nouveau →</button>
     </div>
     <div style="padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.04);display:flex;align-items:center;justify-content:space-between;">
       <div>
-        <div style="font-family:'Russo One',sans-serif;font-size:16px;color:#F0EEE8;letter-spacing:.5px;">${selHome} vs ${selAway}</div>
+        <div style="font-family:'Russo One',sans-serif;font-size:16px;color:#F0EEE8;letter-spacing:.5px;">${selHome} <span style="color:#333;font-size:12px;">vs</span> ${selAway}</div>
         <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:800;color:#E8182C;letter-spacing:.14em;text-transform:uppercase;margin-top:3px;">${selLeague}</div>
       </div>
       <div style="text-align:right;">
-        <div style="font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:800;color:${parseInt(conf)>=7?'#4CAF50':parseInt(conf)>=5?'#FF9800':'#E8182C'};">${conf}/10</div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;color:${confColor};line-height:1;">${conf}/10</div>
         <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;color:#444;letter-spacing:.1em;text-transform:uppercase;">Confiance</div>
       </div>
     </div>
-    <div style="padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.03);">${bodyHTML}</div>
-    ${parseInt(conf)<=4?`<div style="margin:0 16px 8px;background:rgba(232,24,44,.08);border-left:3px solid #E8182C;border-radius:0 4px 4px 0;padding:10px 14px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:#E8182C;letter-spacing:.04em;">🚨 Match très incertain — mise déconseillée</div>`:''}
-    ${parseInt(conf)===5||parseInt(conf)===6?`<div style="margin:0 16px 8px;background:rgba(255,152,0,.08);border-left:3px solid #FF9800;border-radius:0 4px 4px 0;padding:10px 14px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:#FF9800;letter-spacing:.04em;">⚠️ Match serré — mise prudente conseillée</div>`:''}
-    ${mise?`<div style="margin:12px 16px 8px;background:rgba(232,24,44,.06);border-left:3px solid #E8182C;border-radius:0 4px 4px 0;padding:12px 14px;"><div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:800;color:#E8182C;letter-spacing:.16em;text-transform:uppercase;margin-bottom:6px;">🎯 Mise conseillée</div><div style="font-family:'Barlow',sans-serif;font-size:14px;font-weight:500;color:#F0EEE8;letter-spacing:.02em;line-height:1.5;">${mise}</div></div>`:''}
-    ${sec?`<div style="margin:0 16px 8px;background:rgba(255,255,255,.02);border-left:3px solid #444;border-radius:0 4px 4px 0;padding:12px 14px;"><div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:800;color:#555;letter-spacing:.16em;text-transform:uppercase;margin-bottom:6px;">🔀 Pari sécurisé</div><div style="font-family:'Barlow',sans-serif;font-size:13px;font-weight:400;color:#888;letter-spacing:.02em;line-height:1.5;">${sec}</div></div>`:''}
-    ${conclusion?`<div style="margin:0 16px 12px;background:rgba(76,175,80,.08);border:1px solid rgba(76,175,80,.25);border-radius:4px;padding:12px 14px;"><div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:800;color:#4CAF50;letter-spacing:.16em;text-transform:uppercase;margin-bottom:4px;">✅ Conclusion</div><div style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:800;color:#4CAF50;letter-spacing:.04em;">${conclusion}</div></div>`:''}
+    <div style="padding:14px 16px;">
+      ${sections.forme?`<div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:800;color:#E8182C;letter-spacing:.16em;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:8px;">■ Forme récente<div style="flex:1;height:1px;background:rgba(232,24,44,.15);"></div></div>${buildFormeCards(sections.forme)}`:''}
+      ${sections.analyse?`<div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:800;color:#E8182C;letter-spacing:.16em;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:8px;">■ Analyse<div style="flex:1;height:1px;background:rgba(232,24,44,.15);"></div></div><p style="font-family:'Barlow',sans-serif;font-size:13px;color:#999;line-height:1.8;margin:0 0 14px;">${sections.analyse.replace(/\*\*(.*?)\*\*/g,'<strong style="color:#F0EEE8;">$1</strong>')}</p>`:''}
+      ${sections.cotes.length?`<div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:800;color:#E8182C;letter-spacing:.16em;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:8px;">■ Cotes conseillées<div style="flex:1;height:1px;background:rgba(232,24,44,.15);"></div></div>${buildCoteCards(sections.cotes)}`:''}
+      ${parseInt(conf)<=4?`<div style="background:rgba(232,24,44,.08);border-left:3px solid #E8182C;border-radius:0 4px 4px 0;padding:10px 14px;margin-bottom:14px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:#E8182C;letter-spacing:.04em;">🚨 Match très incertain — mise déconseillée</div>`:''}
+      ${parseInt(conf)>=5&&parseInt(conf)<=6?`<div style="background:rgba(255,152,0,.08);border-left:3px solid #FF9800;border-radius:0 4px 4px 0;padding:10px 14px;margin-bottom:14px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:#FF9800;letter-spacing:.04em;">⚠️ Match serré — mise prudente conseillée</div>`:''}
+      ${mainConc||safeConc?`<div style="border:2px solid rgba(232,24,44,.5);border-radius:8px;padding:14px 16px;background:rgba(232,24,44,.04);">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:800;color:#E8182C;letter-spacing:.16em;text-transform:uppercase;margin-bottom:10px;">Conclusion</div>
+        ${mainConc?`<div style="font-family:'Barlow',sans-serif;font-size:14px;font-weight:700;color:#F0EEE8;line-height:1.5;margin-bottom:8px;">${mainConc.replace(/✅\s*/,'')}</div>`:''}
+        ${safeConc?`<div style="font-family:'Barlow',sans-serif;font-size:12px;color:#888;line-height:1.5;">${safeConc.replace(/📊\s*/,'📊 ')}</div>`:''}
+      </div>`:''}
+    </div>
     <div style="padding:8px 16px;font-family:'Barlow Condensed',sans-serif;font-size:10px;color:#2A2A2A;letter-spacing:.04em;text-align:center;">⚠️ Outil d'aide à la décision uniquement. Pariez de manière responsable.</div>
   `;
   box.scrollIntoView({behavior:'smooth',block:'nearest'});
