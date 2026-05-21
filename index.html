@@ -1481,13 +1481,15 @@ function showToast(msg, type) {
 }
 
 async function updatePlanAfterPayment(sessionId) {
+  console.log('[update-plan] Appel avec sessionId:', sessionId);
   try {
     const session = await WinAuth.getSession();
     const token = session?.access_token;
     if (!token) {
-      console.warn('[update-plan] Pas de token, mise a jour ignoree');
+      console.warn('[update-plan] Pas de token — utilisateur non connecte ?');
       return;
     }
+    console.log('[update-plan] Token OK, envoi vers /api/update-plan...');
 
     const res = await fetch('/api/update-plan', {
       method: 'POST',
@@ -1500,7 +1502,7 @@ async function updatePlanAfterPayment(sessionId) {
 
     const data = await res.json();
     if (data.success) {
-      console.log('[update-plan] Plan mis a jour:', data.plan);
+      console.log('[update-plan] Plan mis a jour avec succes:', data.plan);
     } else {
       console.error('[update-plan] Erreur serveur:', data.error);
     }
@@ -1509,17 +1511,22 @@ async function updatePlanAfterPayment(sessionId) {
   }
 }
 
-(function handleUrlParams() {
+function handleUrlParams() {
   const params = new URLSearchParams(window.location.search);
+  console.log('[handleUrlParams] URL params:', window.location.search);
+
   if (params.get('success') === 'true') {
     const plan = params.get('plan') || '';
     const sessionId = params.get('session_id') || '';
     const label = plan === 'expert' ? 'Expert' : 'Starter';
 
+    console.log('[handleUrlParams] Paiement reussi — plan:', plan, '| session_id:', sessionId);
     window.history.replaceState({}, '', window.location.pathname);
 
     if (sessionId) {
       updatePlanAfterPayment(sessionId);
+    } else {
+      console.warn('[handleUrlParams] session_id absent — update-plan non appele');
     }
 
     showToast('Paiement confirme ! Bienvenue sur le plan ' + label + ' ✓', 'success');
@@ -1528,15 +1535,17 @@ async function updatePlanAfterPayment(sessionId) {
       if (tarifs) tarifs.scrollIntoView({ behavior: 'smooth' });
     }, 300);
   } else if (params.get('canceled') === 'true') {
+    console.log('[handleUrlParams] Paiement annule');
     showToast('Paiement annule. Tu peux reessayer quand tu veux.', 'error');
     window.history.replaceState({}, '', window.location.pathname);
   }
-})();
+}
 </script>
   <script src="/auth.js"></script>
 <script>
   WinAuth.updateNavAuth();
   WinAuth.onAuthChange(() => WinAuth.updateNavAuth());
+  handleUrlParams();
 </script>
   <script src="/animations.js"></script>
 </body>
