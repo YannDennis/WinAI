@@ -105,12 +105,6 @@ section{padding:7rem 5%;position:relative;z-index:1;}
 .s-sub{font-size:15px;color:var(--gray-3);max-width:480px;line-height:1.8;}
 .divider{height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.06),transparent);margin:0 5%;}
 #matchs{background:var(--black-2);}
-.sport-filters{display:flex;gap:8px;flex-wrap:wrap;margin-top:2rem;}
-.sport-filter{display:flex;align-items:center;gap:8px;padding:8px 16px;border:1px solid rgba(255,255,255,.06);border-radius:2px;background:transparent;font-family:var(--font-cond);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gray);cursor:pointer;transition:all .2s;position:relative;}
-.sport-filter.active{border-color:var(--red);color:var(--white);background:rgba(232,24,44,.08);}
-.sport-filter.soon{opacity:.4;cursor:default;}
-.sport-filter.soon::before{content:'Bientôt';position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-size:8px;color:var(--red);letter-spacing:.06em;white-space:nowrap;font-family:var(--font-cond);}
-.sport-filter-icon{font-size:16px;}
 .day-section{margin-top:2rem;}
 .day-header{font-family:var(--font-display);font-size:32px;letter-spacing:1px;color:var(--white);margin-bottom:1rem;display:flex;align-items:center;gap:12px;}
 .day-count{font-family:var(--font-cond);font-size:12px;color:var(--gray);letter-spacing:.08em;font-weight:600;}
@@ -1247,16 +1241,12 @@ if(planOrder.indexOf(userPlan) < planOrder.indexOf('expert')) {
   const contexteLabel=[];
   if(contexte.includes('confrontations')) contexteLabel.push('Analyse les confrontations directes récentes entre les deux équipes.');
   if(contexte.includes('blessures')) contexteLabel.push('Mentionne les blessures et absences connues des joueurs clés.');
-  let prompt='';
-  if(mode==='court'){
-    prompt=`Pronostic court — Football : ${selHome} vs ${selAway} (${selLeague}). Mise : ${miseVal}€.\nBase-toi sur ${histLabel}.\nAnalyse spécifiquement : ${marcheLabel}.\n${styleLabel}\n${contexteLabel.join(' ')}\n\nDonne exactement ces sections :\n\nFORME RÉCENTE :\n[${selHome} → derniers résultats V/N/D] | [${selAway} → derniers résultats V/N/D]\n\nANALYSE :\n[Analyse factuelle courte en 2-3 phrases]\n\nCOTES CONSEILLÉES :\n🎯 PRINCIPALE : [pari] @ [cote]\n🔀 SÉCURISÉE : [pari alternatif] @ [cote]\n📊 OUTSIDER : [pari risqué] @ [cote]\n\nCONCLUSION :\n✅ [mise conseillée] @ [cote] → ${miseVal}€ × [cote] = [gain]€ | [pari sécurisé]\n📊 Confiance : [X]/10\n\n⚠️ Outil d'aide à la décision uniquement.`;
-  }else{
-    prompt=`Analyse complète — Football : ${selHome} vs ${selAway} (${selLeague}). Mise : ${miseVal}€.\nBase-toi sur ${histLabel}.\nAnalyse spécifiquement : ${marcheLabel}.\n${styleLabel}\n${contexteLabel.join(' ')}\n\nDonne exactement ces sections :\n\nFORME RÉCENTE :\n[${selHome} → derniers résultats V/N/D sur ${histLabel}] | [${selAway} → derniers résultats V/N/D sur ${histLabel}]\n\nANALYSE :\n[Analyse approfondie : forme, buts marqués/encaissés, forces et faiblesses de chaque équipe. 4-5 phrases.]\n\nCOTES CONSEILLÉES :\n🎯 PRINCIPALE : [pari] @ [cote]\n🔀 SÉCURISÉE : [pari alternatif] @ [cote]\n📊 OUTSIDER : [pari risqué mais intéressant] @ [cote]\n\nCONCLUSION :\n✅ [mise conseillée] @ [cote] → ${miseVal}€ × [cote] = [gain]€ | [pari sécurisé]\n📊 Confiance : [X]/10 — [facteurs de risque en 1 phrase]\n\n⚠️ Outil d'aide à la décision uniquement.`;
-  }
+  const baseCtx=`Football : ${selHome} vs ${selAway} (${selLeague}). Mise : ${miseVal}€.\nBase-toi sur ${histLabel}. Analyse : ${marcheLabel}.\n${styleLabel}\n${contexteLabel.join(' ')}\n\nRéponds avec EXACTEMENT ces 7 sections :\n\nACCROCHE :\n[1 phrase percutante sur ce match]\n\nVALUE BET :\n[OUI — raison | ou NON]\n\nFORME RÉCENTE :\n[${selHome} → V N D... | buts/match: X.X | CS: N | série: ...]\n[${selAway} → V N D... | buts/match: X.X | CS: N | série: ...]\n\nSTATS CLÉS :\nButs dom: X.X/match | Buts enc ext: X.X/match | +2.5 buts: X% | Série: ...\n\nANALYSE :\n[${mode==='court'?'2-3':'4-5'} phrases basées sur les données réelles]\n\nCOTES CONSEILLÉES :\n🎯 PRINCIPALE : [pari] @ [cote][ — VALUE BET]\n🔀 SÉCURISÉE : [pari] @ [cote]\n📊 COMBINÉ : [combiné pertinent] @ [cote]\n\nCONCLUSION :\n✅ [pari] @ [cote] → ${miseVal}€ × [cote] = [gain]€\n🔀 SÉCURISÉ : [pari sécurisé]\n📊 VERDICT : [Recommandé|Neutre|Déconseillé] — [raison]\n🔥 [phrase accroche]\n\n⚠️ Outil d'aide à la décision uniquement.`;
+  const prompt=baseCtx;
   document.getElementById('si2').classList.remove('active');document.getElementById('si2').classList.add('done');document.getElementById('si3').classList.add('active');
   showResultLoading();
   try{
-    const res=await fetch('/api/pronostic',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt,homeTeamKey:selHomeKey,awayTeamKey:selAwayKey,hist,leagueId:selLeagueId})});
+    const res=await fetch('/api/pronostic',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt,homeTeamKey:selHomeKey,awayTeamKey:selAwayKey,hist,leagueId:selLeagueId,homeTeamName:selHome,awayTeamName:selAway})});
     const data=await res.json();
     if(!res.ok||data.error){showResultError(data.error||'Erreur inconnue.');return;}
     showResult(data.result);
@@ -1311,162 +1301,215 @@ function renderMatchTable(lines){
   </table>`;
 }
 
-function parseFormeRecente(line){
-  // Extrait V/N/D depuis "TeamName → V V N D V" ou "TeamName → V V N D V | ..."
-  const pills=[];
-  const matches=line.match(/[VND]/g)||[];
-  matches.forEach(r=>{
-    const color=r==='V'?'#4CAF50':r==='D'?'#E8182C':'#FF9800';
-    const bg=r==='V'?'rgba(76,175,80,.15)':r==='D'?'rgba(232,24,44,.15)':'rgba(255,152,0,.15)';
-    pills.push(`<span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:4px;background:${bg};font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:800;color:${color};letter-spacing:.04em;">${r}</span>`);
-  });
-  return pills.join('');
+function pillsHtml(resultsArr){
+  return resultsArr.map(r=>{
+    const c=r==='V'?'#00FF87':r==='D'?'#E8182C':'#FF9800';
+    const bg=r==='V'?'rgba(0,255,135,.15)':r==='D'?'rgba(232,24,44,.15)':'rgba(255,152,0,.15)';
+    return`<span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:4px;background:${bg};font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:800;color:${c};">${r}</span>`;
+  }).join('');
 }
 
 function parseResultToHTML(text){
-  const sections={forme:'',analyse:'',cotes:[],conclusion:'',conf:'—'};
-  const confMatch=text.match(/📊\s*Confiance\s*:\s*(\d+)\/10/);
-  if(confMatch) sections.conf=confMatch[1];
-  // Forme récente
-  const formeMatch=text.match(/FORME\s*RÉCENTE\s*:?\s*\n([\s\S]*?)(?=\n\s*ANALYSE|\n\s*COTES|$)/i);
-  if(formeMatch) sections.forme=formeMatch[1].trim();
-  // Analyse
-  const analyseMatch=text.match(/ANALYSE\s*:?\s*\n([\s\S]*?)(?=\n\s*COTES|\n\s*CONCLUSION|$)/i);
-  if(analyseMatch) sections.analyse=analyseMatch[1].trim();
-  // Cotes
-  const cotesMatch=text.match(/COTES\s*CONSEILLÉES?\s*:?\s*\n([\s\S]*?)(?=\n\s*CONCLUSION|$)/i);
-  if(cotesMatch){
-    const cotesText=cotesMatch[1];
-    const principale=cotesText.match(/🎯\s*PRINCIPALE\s*:\s*(.+)/);
-    const securisee=cotesText.match(/🔀\s*SÉCURISÉE?\s*:\s*(.+)/);
-    const outsider=cotesText.match(/📊\s*OUTSIDER\s*:\s*(.+)/);
-    if(principale) sections.cotes.push({icon:'🎯',label:'PRINCIPALE',color:'#E8182C',bg:'rgba(232,24,44,.08)',val:principale[1].trim()});
-    if(securisee) sections.cotes.push({icon:'🔀',label:'SÉCURISÉE',color:'#4CAF50',bg:'rgba(76,175,80,.08)',val:securisee[1].trim()});
-    if(outsider) sections.cotes.push({icon:'📊',label:'OUTSIDER',color:'#FF9800',bg:'rgba(255,152,0,.08)',val:outsider[1].trim()});
+  const s={accroche:'',valueBet:null,forme:'',statsClés:'',analyse:'',cotes:[],conclusion:{main:'',safe:'',verdict:'',teaser:'',betCote:null}};
+  const m=(re)=>text.match(re);
+
+  const accr=m(/ACCROCHE\s*:\s*\n([\s\S]*?)(?=\n\s*VALUE BET|\n\s*FORME|\n\s*STATS|\n\s*ANALYSE|$)/i);
+  if(accr) s.accroche=accr[1].trim();
+
+  const vb=m(/VALUE BET\s*:\s*\n?(OUI|NON)(.*?)(?=\n\s*FORME|\n\s*STATS|\n\s*ANALYSE|$)/is);
+  if(vb) s.valueBet={isYes:vb[1].toUpperCase()==='OUI',reason:vb[2].replace(/^[\s—–-]+/,'').trim()};
+
+  const fr=m(/FORME\s*R[EÉ]CENTE\s*:\s*\n([\s\S]*?)(?=\n\s*STATS\s*CL[EÉ]S|\n\s*ANALYSE|\n\s*COTES|$)/i);
+  if(fr) s.forme=fr[1].trim();
+
+  const sk=m(/STATS\s*CL[EÉ]S\s*:\s*\n?([\s\S]*?)(?=\n\s*ANALYSE|\n\s*COTES|$)/i);
+  if(sk) s.statsClés=sk[1].trim();
+
+  const an=m(/ANALYSE\s*:\s*\n([\s\S]*?)(?=\n\s*COTES|\n\s*CONCLUSION|$)/i);
+  if(an) s.analyse=an[1].trim();
+
+  const co=m(/COTES\s*CONSEILL[EÉ]ES?\s*:\s*\n([\s\S]*?)(?=\n\s*CONCLUSION|$)/i);
+  if(co){
+    const ct=co[1];
+    const P=ct.match(/🎯\s*PRINCIPALE\s*:\s*(.+)/);
+    const S=ct.match(/🔀\s*S[EÉ]CURIS[EÉ]E?\s*:\s*(.+)/);
+    const C=ct.match(/📊\s*COMBIN[EÉ]\s*:\s*(.+)/);
+    if(P) s.cotes.push({icon:'🎯',label:'PRINCIPALE',color:'#E8182C',val:P[1].trim(),isValue:/VALUE BET/i.test(P[1])});
+    if(S) s.cotes.push({icon:'🔀',label:'SÉCURISÉE',color:'#00FF87',val:S[1].trim(),isValue:false});
+    if(C) s.cotes.push({icon:'📊',label:'COMBINÉ',color:'#FF9800',val:C[1].trim(),isValue:false});
   }
-  // Conclusion
-  const concMatch=text.match(/CONCLUSION\s*:?\s*\n([\s\S]*?)(?=\n\s*⚠️|$)/i);
-  if(concMatch) sections.conclusion=concMatch[1].trim();
-  return sections;
+
+  const cc=m(/CONCLUSION\s*:\s*\n([\s\S]*?)(?=\n\s*⚠️|$)/i);
+  if(cc){
+    const ct=cc[1];
+    const mainLine=(ct.match(/✅\s*(.+)/)||[])[1]?.trim()||'';
+    const coteM=mainLine.match(/@\s*([\d]{1,2}[.,]\d{1,3})/);
+    s.conclusion={
+      main:mainLine,
+      safe:(ct.match(/🔀\s*S[EÉ]CURIS[EÉ]\s*:\s*(.+)/)||[])[1]?.trim()||'',
+      verdict:(ct.match(/📊\s*VERDICT\s*:\s*(.+)/)||[])[1]?.trim()||'',
+      teaser:(ct.match(/🔥\s*(.+)/)||[])[1]?.trim()||'',
+      betCote:coteM?parseFloat(coteM[1].replace(',','.')):null,
+    };
+  }
+  return s;
 }
 
 function buildFormeCards(formeText){
-  const parts=formeText.split('|').map(p=>p.trim()).filter(Boolean);
-  if(parts.length<2) parts.push('');
+  const lines=formeText.split('\n').map(l=>l.trim()).filter(Boolean).slice(0,2);
+  while(lines.length<2) lines.push('');
   return`<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">
-    ${parts.slice(0,2).map((p,idx)=>{
-      const teamName=idx===0?selHome:selAway;
-      const pills=parseFormeRecente(p);
-      const results=p.match(/[VND]/g)||[];
-      const wins=results.filter(r=>r==='V').length;
-      const draws=results.filter(r=>r==='N').length;
-      const losses=results.filter(r=>r==='D').length;
-      const total=results.length||1;
-      const winPct=Math.round(wins/total*100);
-      return`<div style="background:#111;border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:12px;">
-        <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:800;color:#555;letter-spacing:.14em;text-transform:uppercase;margin-bottom:6px;">${teamName}</div>
-        <div style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:8px;">${pills||'<span style="font-family:Barlow,sans-serif;font-size:11px;color:#333;">—</span>'}</div>
-        <div style="display:flex;gap:10px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:800;letter-spacing:.04em;">
-          <span style="color:#4CAF50;">${wins}V</span><span style="color:#FF9800;">${draws}N</span><span style="color:#E8182C;">${losses}D</span>
-          <span style="color:#333;margin-left:auto;">${winPct}% win</span>
-        </div>
+  ${lines.map((line,idx)=>{
+    const teamName=idx===0?selHome:selAway;
+    const results=(line.match(/\b[VND]\b/g)||[]);
+    const wins=results.filter(r=>r==='V').length,draws=results.filter(r=>r==='N').length,losses=results.filter(r=>r==='D').length;
+    const total=results.length||1;
+    const butsM=(line.match(/buts\/match:\s*([\d.]+)/i)||[])[1]||'—';
+    const csM=(line.match(/CS:\s*(\d+)/i)||[])[1]||'—';
+    const serieM=(line.match(/s[eé]rie:\s*([^|]+)/i)||[])[1]?.trim()||'—';
+    return`<div style="background:#0D0D0D;border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:12px;">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:800;color:#00D4FF;letter-spacing:.14em;text-transform:uppercase;margin-bottom:8px;">${teamName}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:8px;">${pillsHtml(results)||'<span style="color:#333;font-size:11px;">—</span>'}</div>
+      <div style="display:flex;gap:8px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:800;margin-bottom:6px;">
+        <span style="color:#00FF87;">${wins}V</span><span style="color:#FF9800;">${draws}N</span><span style="color:#E8182C;">${losses}D</span>
+        <span style="color:#333;margin-left:auto;">${Math.round(wins/total*100)}% win</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:3px;font-family:'Barlow Condensed',sans-serif;font-size:10px;color:#555;">
+        <span>⚽ ${butsM} buts/match</span>
+        <span>🧤 ${csM} clean sheet${csM!=='1'?'s':''}</span>
+        <span>📈 ${serieM}</span>
+      </div>
+    </div>`;
+  }).join('')}
+  </div>`;
+}
+
+function buildStatsCards(statsText){
+  const items=[
+    {re:/Buts\s*dom:\s*([\d.]+)/i,label:'Buts dom/match',icon:'🏠'},
+    {re:/Buts\s*enc\s*ext:\s*([\d.]+)/i,label:'Enc. ext/match',icon:'🚌'},
+    {re:/\+2\.5\s*buts:\s*(\d+)%/i,label:'+2.5 buts',icon:'📈',suffix:'%'},
+    {re:/S[eé]rie:\s*([^\n|]+)/i,label:'Série',icon:'🔥',raw:true},
+  ];
+  const cards=items.map(item=>{
+    const m=statsText.match(item.re);
+    const val=m?m[1].trim():'—';
+    return`<div style="background:#0D0D0D;border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:10px;text-align:center;">
+      <div style="font-size:18px;margin-bottom:4px;">${item.icon}</div>
+      <div style="font-family:'Russo One',sans-serif;font-size:${item.raw?'12':'18'}px;color:#F0EEE8;line-height:1.2;margin-bottom:3px;">${val}${item.suffix||''}</div>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;color:#444;letter-spacing:.1em;text-transform:uppercase;">${item.label}</div>
+    </div>`;
+  }).join('');
+  return`<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:14px;">${cards}</div>`;
+}
+
+function buildOddsCards(){
+  const o=selOddsStored;
+  const minCote=Math.min(...[o.h,o.d,o.a].filter(v=>parseFloat(v)>0).map(v=>parseFloat(v)));
+  const teams=[{lbl:'1',name:selHome.split(' ')[0],cote:o.h,pct:o.ph},{lbl:'X',name:'Nul',cote:o.d,pct:o.pd},{lbl:'2',name:selAway.split(' ')[0],cote:o.a,pct:o.pa}];
+  return`<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:14px;">
+    ${teams.map(t=>{
+      const isFav=parseFloat(t.cote)===minCote&&minCote>0;
+      return`<div style="background:#0D0D0D;border:1px solid ${isFav?'rgba(232,24,44,.4)':'rgba(255,255,255,.06)'};border-radius:8px;padding:10px;text-align:center;${isFav?'box-shadow:0 0 12px rgba(232,24,44,.15);':''}>
+        ${isFav?`<div style="font-family:'Barlow Condensed',sans-serif;font-size:7px;font-weight:800;color:#E8182C;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;">FAVORI</div>`:''}
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;color:${isFav?'#E8182C':'#555'};text-shadow:${isFav?'0 0 8px rgba(232,24,44,.5)':'none'};letter-spacing:.1em;margin-bottom:2px;">${t.lbl}</div>
+        <div style="font-family:'Russo One',sans-serif;font-size:20px;color:#F0EEE8;margin-bottom:2px;">${t.cote}</div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;color:#444;margin-bottom:2px;">${t.name}</div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:800;color:#555;">${t.pct}%</div>
       </div>`;
     }).join('')}
   </div>`;
 }
 
-function buildOddsCards(){
-  const o=selOddsStored;
-  const teams=[{lbl:'1',name:selHome.split(' ')[0],cote:o.h,pct:o.ph},{lbl:'X',name:'Nul',cote:o.d,pct:o.pd},{lbl:'2',name:selAway.split(' ')[0],cote:o.a,pct:o.pa}];
-  return`<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:14px;">
-    ${teams.map(t=>`<div style="background:#111;border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:10px;text-align:center;">
-      <div style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;color:#E8182C;letter-spacing:.1em;margin-bottom:2px;">${t.lbl}</div>
-      <div style="font-family:'Russo One',sans-serif;font-size:20px;color:#F0EEE8;margin-bottom:2px;">${t.cote}</div>
-      <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;color:#444;margin-bottom:2px;">${t.name}</div>
-      <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:800;color:#555;">${t.pct}%</div>
-    </div>`).join('')}
+function buildCotesCards(cotes){
+  return`<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;">
+  ${cotes.map(c=>`<div style="background:#0D0D0D;border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span style="font-size:16px;">${c.icon}</span>
+      <div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:800;color:${c.color};letter-spacing:.12em;text-transform:uppercase;margin-bottom:2px;">${c.label}</div>
+        <div style="font-family:'Barlow',sans-serif;font-size:13px;color:#CCC;">${c.val.replace(/\s*—\s*VALUE BET/i,'').replace(/@\s*[\d.,]+/,'').trim()}</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
+      ${c.isValue?`<span style="background:rgba(0,255,135,.15);border:1px solid rgba(0,255,135,.4);color:#00FF87;font-family:'Barlow Condensed',sans-serif;font-size:8px;font-weight:800;letter-spacing:.1em;padding:2px 8px;border-radius:4px;text-shadow:0 0 6px rgba(0,255,135,.5);">VALUE</span>`:''}
+      <div style="font-family:'Russo One',sans-serif;font-size:18px;color:${c.color};text-shadow:0 0 10px ${c.color}55;">${(c.val.match(/@\s*([\d.,]+)/)||[])[1]||'—'}</div>
+    </div>
+  </div>`).join('')}
   </div>`;
 }
 
 function showResult(text){
   const box=getOrCreateResultBox();
-  const sections=parseResultToHTML(text);
-  const conf=sections.conf;
-  const confNum=parseInt(conf)||0;
-  const confColor=confNum>=7?'#4CAF50':confNum>=5?'#FF9800':'#E8182C';
+  const S=parseResultToHTML(text);
   const miseVal=parseFloat(document.getElementById('miseInput').value)||0;
-
-  // Parse conclusion
-  const conclusionLines=sections.conclusion.split('\n').filter(Boolean);
-  const mainConc=conclusionLines.find(l=>l.includes('✅'))||conclusionLines[0]||'';
-  const safeConc=conclusionLines.find(l=>l.includes('🔀')||l.includes('safe')||l.toLowerCase().includes('sécurisé'))||'';
-  const confLine=conclusionLines.find(l=>l.includes('📊'))||'';
-
-  // Extract cote from main bet line ("@ 1.75")
-  const coteMatch=mainConc.match(/@\s*([\d]{1,2}[.,]\d{1,3})/);
-  const betCote=coteMatch?parseFloat(coteMatch[1].replace(',','.')):null;
-  const gainTotal=betCote&&miseVal?(miseVal*betCote).toFixed(2):null;
+  const betCote=S.conclusion.betCote;
   const gainNet=betCote&&miseVal?((miseVal*betCote)-miseVal).toFixed(2):null;
 
-  // Extract bet description (before "@")
-  const betDesc=mainConc.replace(/✅\s*/,'').replace(/@\s*[\d.,]+.*/,'').replace(/→.*/,'').trim();
+  const verdictMap={'Recommandé':'#00FF87','Neutre':'#FF9800','Déconseillé':'#E8182C'};
+  const verdictKey=Object.keys(verdictMap).find(k=>S.conclusion.verdict?.startsWith(k))||'';
+  const vColor=verdictMap[verdictKey]||'#AAA';
 
-  const sectionTitle=(t)=>`<div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:800;color:#E8182C;letter-spacing:.16em;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:8px;">■ ${t}<div style="flex:1;height:1px;background:rgba(232,24,44,.15);"></div></div>`;
+  const T=(label)=>`<div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:800;color:#00D4FF;text-shadow:0 0 6px rgba(0,212,255,.4);letter-spacing:.16em;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:8px;">■ ${label}<div style="flex:1;height:1px;background:rgba(0,212,255,.15);"></div></div>`;
 
   box.innerHTML=`
     <div style="background:rgba(232,24,44,.06);padding:10px 16px;border-bottom:1px solid rgba(255,255,255,.04);display:flex;align-items:center;justify-content:space-between;">
       <div style="display:flex;align-items:center;gap:8px;">
-        <div style="width:6px;height:6px;background:#4CAF50;border-radius:50%;animation:livePulse 2s infinite;"></div>
+        <div style="width:6px;height:6px;background:#00FF87;border-radius:50%;box-shadow:0 0 6px rgba(0,255,135,.6);animation:livePulse 2s infinite;"></div>
         <span style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:800;color:#E8182C;letter-spacing:.12em;text-transform:uppercase;">⚡ BetMind — ${selHome} vs ${selAway}</span>
       </div>
       <button onclick="resetProno()" style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;color:#444;background:none;border:none;cursor:pointer;letter-spacing:.06em;text-transform:uppercase;" onmouseover="this.style.color='#E8182C'" onmouseout="this.style.color='#444'">Nouveau →</button>
     </div>
 
-    <!-- Match header -->
-    <div style="padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.04);display:flex;align-items:center;justify-content:space-between;">
-      <div>
-        <div style="font-family:'Russo One',sans-serif;font-size:16px;color:#F0EEE8;letter-spacing:.5px;">${selHome} <span style="color:#333;font-size:12px;">vs</span> ${selAway}</div>
-        <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:800;color:#E8182C;letter-spacing:.14em;text-transform:uppercase;margin-top:3px;">${selLeague}</div>
-      </div>
-      <div style="text-align:right;">
-        <div style="font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:800;color:${confColor};text-shadow:0 0 14px ${confColor};line-height:1;">${conf}/10</div>
-        <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;color:#444;letter-spacing:.1em;text-transform:uppercase;">Confiance</div>
-      </div>
-    </div>
+    ${S.accroche?`<div style="padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.04);background:linear-gradient(135deg,rgba(232,24,44,.04) 0%,transparent 60%);">
+      <div style="font-family:'Russo One',sans-serif;font-size:14px;color:#F0EEE8;line-height:1.5;letter-spacing:.3px;">"${S.accroche}"</div>
+    </div>`:''}
+
+    ${S.valueBet?.isYes?`<div style="margin:12px 16px 0;background:rgba(0,255,135,.06);border:1px solid rgba(0,255,135,.3);border-radius:8px;padding:10px 14px;display:flex;align-items:center;gap:10px;">
+      <div style="font-size:20px;">💎</div>
+      <div><div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:800;color:#00FF87;letter-spacing:.14em;text-transform:uppercase;text-shadow:0 0 8px rgba(0,255,135,.5);">VALUE BET DÉTECTÉ</div>
+      <div style="font-family:'Barlow',sans-serif;font-size:12px;color:#666;margin-top:2px;">${S.valueBet.reason}</div></div>
+    </div>`:''}
 
     <div style="padding:14px 16px;">
-      ${sections.forme?sectionTitle('Forme récente')+buildFormeCards(sections.forme):''}
 
-      ${sectionTitle('Cotes estimées')}
-      ${buildOddsCards()}
+    ${S.forme?T('Forme récente')+buildFormeCards(S.forme):''}
 
-      ${sections.analyse?sectionTitle('Analyse')+`<p style="font-family:'Barlow',sans-serif;font-size:13px;color:#999;line-height:1.9;margin:0 0 14px;">${sections.analyse.replace(/\*\*(.*?)\*\*/g,'<strong style="color:#F0EEE8;">$1</strong>')}</p>`:''}
+    ${S.statsClés?T('Stats clés')+buildStatsCards(S.statsClés):''}
 
-      ${confNum<=4?`<div style="background:rgba(232,24,44,.08);border-left:3px solid #E8182C;border-radius:0 4px 4px 0;padding:10px 14px;margin-bottom:14px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:#E8182C;letter-spacing:.04em;">🚨 Match très incertain — mise déconseillée</div>`:''}
-      ${confNum>=5&&confNum<=6?`<div style="background:rgba(255,152,0,.08);border-left:3px solid #FF9800;border-radius:0 4px 4px 0;padding:10px 14px;margin-bottom:14px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:#FF9800;letter-spacing:.04em;">⚠️ Match serré — mise prudente conseillée</div>`:''}
+    ${T('Cotes')}${buildOddsCards()}
 
-      <!-- CONCLUSION -->
-      ${mainConc?`<div style="border:2px solid rgba(232,24,44,.55);border-radius:10px;overflow:hidden;background:linear-gradient(135deg,rgba(232,24,44,.06) 0%,transparent 60%);">
-        <div style="background:rgba(232,24,44,.1);padding:10px 16px;border-bottom:1px solid rgba(232,24,44,.2);display:flex;align-items:center;gap:8px;">
-          <span style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:800;color:#E8182C;letter-spacing:.16em;text-transform:uppercase;">🎯 Conclusion BetMind</span>
-        </div>
-        <div style="padding:14px 16px;">
-          ${betDesc?`<div style="font-family:'Barlow',sans-serif;font-size:15px;font-weight:700;color:#F0EEE8;margin-bottom:10px;">${betDesc}</div>`:''}
-          ${betCote?`<div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
-            <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:800;color:#555;letter-spacing:.1em;text-transform:uppercase;">Cote</div>
-            <div style="font-family:'Russo One',sans-serif;font-size:36px;color:#E8182C;text-shadow:0 0 18px rgba(232,24,44,.7);line-height:1;">@ ${betCote.toFixed(2)}</div>
-          </div>`:''}
-          ${gainNet&&miseVal?`<div style="background:rgba(0,255,135,.06);border:1px solid rgba(0,255,135,.2);border-radius:6px;padding:10px 14px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;">
-            <div style="font-family:'Barlow Condensed',sans-serif;font-size:12px;color:#888;letter-spacing:.04em;">${miseVal}€ × ${betCote.toFixed(2)}</div>
-            <div>
-              <div style="font-family:'Russo One',sans-serif;font-size:20px;color:#00FF87;text-shadow:0 0 12px rgba(0,255,135,.6);text-align:right;">+${gainNet}€</div>
-              <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;color:#00FF87;letter-spacing:.06em;text-align:right;">GAIN NET</div>
-            </div>
-          </div>`:''}
-          ${safeConc?`<div style="font-family:'Barlow',sans-serif;font-size:12px;color:#666;margin-bottom:6px;line-height:1.5;">🔀 ${safeConc.replace(/🔀\s*/,'')}</div>`:''}
-          ${confLine?`<div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;color:#444;letter-spacing:.04em;">${confLine}</div>`:''}
-        </div>
-      </div>`:''}
+    ${S.analyse?T('Analyse')+`<p style="font-family:'Barlow',sans-serif;font-size:13px;color:#999;line-height:1.9;margin:0 0 14px;">${S.analyse.replace(/\*\*(.*?)\*\*/g,'<strong style="color:#F0EEE8;">$1</strong>')}</p>`:''}
+
+    ${S.cotes.length?T('Recommandations')+buildCotesCards(S.cotes):''}
+
+    ${S.conclusion.main?`<div style="border:2px solid rgba(232,24,44,.5);border-radius:10px;overflow:hidden;background:linear-gradient(135deg,rgba(232,24,44,.06) 0%,transparent 60%);">
+      <div style="background:rgba(232,24,44,.1);padding:10px 16px;border-bottom:1px solid rgba(232,24,44,.2);">
+        <span style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:800;color:#E8182C;letter-spacing:.16em;text-transform:uppercase;">🎯 Conclusion BetMind</span>
+      </div>
+      <div style="padding:14px 16px;">
+        <div style="font-family:'Barlow',sans-serif;font-size:14px;font-weight:700;color:#F0EEE8;margin-bottom:10px;">${S.conclusion.main.replace(/@[\d.,]+.*/,'').trim()}</div>
+        ${betCote?`<div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:800;color:#555;letter-spacing:.1em;text-transform:uppercase;">Cote</div>
+          <div style="font-family:'Russo One',sans-serif;font-size:36px;color:#E8182C;text-shadow:0 0 18px rgba(232,24,44,.7);line-height:1;">@ ${betCote.toFixed(2)}</div>
+        </div>`:''}
+        ${gainNet&&miseVal?`<div style="background:rgba(0,255,135,.06);border:1px solid rgba(0,255,135,.2);border-radius:6px;padding:10px 14px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:12px;color:#888;">${miseVal}€ × ${betCote.toFixed(2)}</div>
+          <div>
+            <div style="font-family:'Russo One',sans-serif;font-size:20px;color:#00FF87;text-shadow:0 0 12px rgba(0,255,135,.6);text-align:right;">+${gainNet}€</div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;color:#00FF87;letter-spacing:.06em;text-align:right;">GAIN NET</div>
+          </div>
+        </div>`:''}
+        ${S.conclusion.safe?`<div style="font-family:'Barlow',sans-serif;font-size:12px;color:#666;margin-bottom:8px;">🔀 ${S.conclusion.safe}</div>`:''}
+        ${S.conclusion.verdict?`<div style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:6px;padding:8px 12px;margin-bottom:8px;">
+          <div style="width:8px;height:8px;border-radius:50%;background:${vColor};box-shadow:0 0 6px ${vColor};flex-shrink:0;"></div>
+          <span style="font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:800;color:${vColor};letter-spacing:.04em;">${verdictKey}</span>
+          <span style="font-family:'Barlow',sans-serif;font-size:11px;color:#555;">— ${S.conclusion.verdict.replace(/^(Recommand[eé]|Neutre|D[eé]conseill[eé])\s*—\s*/i,'')}</span>
+        </div>`:''}
+        ${S.conclusion.teaser?`<div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;color:#333;letter-spacing:.04em;font-style:italic;">${S.conclusion.teaser}</div>`:''}
+      </div>
+    </div>`:''}
+
     </div>
     <div style="padding:8px 16px;font-family:'Barlow Condensed',sans-serif;font-size:10px;color:#2A2A2A;letter-spacing:.04em;text-align:center;">⚠️ Outil d'aide à la décision uniquement. Pariez de manière responsable.</div>
   `;
