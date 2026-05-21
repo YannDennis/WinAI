@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WinAI — Mon compte</title>
+<meta name="theme-color" content="#E8182C">
+<link href="https://fonts.googleapis.com/css2?family=Russo+One&family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --red:#E8182C;--red-light:#FF3347;--red-2:#C01020;
+  --black:#060606;--black-2:#0F0F0F;--black-3:#161616;--black-4:#1E1E1E;--black-5:#2A2A2A;
+  --gray:#555;--gray-2:#777;--gray-3:#AAA;--white:#F0EEE8;
+  --starter:#FF9800;--expert:#E8182C;
+  --font-display:'Russo One',sans-serif;
+  --font-cond:'Barlow Condensed',sans-serif;
+  --font-body:'Barlow',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--black);color:var(--white);
+  font-family:var(--font-body);font-size:16px;line-height:1.6;
+  min-height:100vh;overflow-x:hidden;
+}
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;opacity:.025;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size:200px;
+}
+
+/* NAV */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:500;height:60px;
+  display:flex;align-items:center;justify-content:space-between;padding:0 5%;
+  background:rgba(6,6,6,.95);backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(255,255,255,.04);
+}
+.nav-logo{font-family:var(--font-display);font-size:22px;letter-spacing:2px;color:var(--white);text-decoration:none;position:relative;}
+.nav-logo::after{content:'';position:absolute;bottom:-2px;left:0;width:100%;height:1.5px;background:var(--red);}
+.nav-logo span{color:var(--red);}
+.nav-back{
+  font-family:var(--font-cond);font-size:12px;font-weight:700;letter-spacing:.08em;
+  color:var(--gray-3);text-decoration:none;text-transform:uppercase;
+  padding:7px 16px;border:1px solid rgba(255,255,255,.08);border-radius:2px;
+  transition:all .2s;display:flex;align-items:center;gap:6px;
+}
+.nav-back:hover{border-color:rgba(255,255,255,.2);color:var(--white);}
+.nav-signout{
+  font-family:var(--font-cond);font-size:12px;font-weight:700;letter-spacing:.08em;
+  color:var(--gray);text-decoration:none;text-transform:uppercase;
+  background:none;border:none;cursor:pointer;padding:7px 16px;
+  transition:color .2s;
+}
+.nav-signout:hover{color:var(--red);}
+
+/* LAYOUT */
+main{max-width:1000px;margin:0 auto;padding:88px 5% 4rem;position:relative;z-index:1;}
+
+/* PAGE HEADER */
+.page-header{margin-bottom:2rem;animation:fadeUp .5s ease both;}
+.page-label{font-family:var(--font-cond);font-size:11px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:var(--red);margin-bottom:.5rem;}
+.page-title{font-family:var(--font-display);font-size:clamp(2rem,5vw,3.5rem);line-height:1;letter-spacing:1px;}
+
+/* HERO PROFILE CARD */
+.profile-card{
+  background:var(--black-3);border:1px solid rgba(255,255,255,.06);
+  border-radius:8px;padding:2rem;margin-bottom:1.5rem;
+  animation:fadeUp .5s .1s ease both;position:relative;overflow:hidden;
+}
+.profile-card::before{
+  content:'';position:absolute;top:0;right:0;width:300px;height:300px;
+  background:radial-gradient(circle at top right,rgba(232,24,44,.06) 0%,transparent 65%);
+  pointer-events:none;
+}
+.profile-top{display:flex;align-items:flex-start;gap:1.5rem;margin-bottom:2rem;}
+.avatar{
+  width:64px;height:64px;border-radius:50%;background:var(--red-2);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-display);font-size:22px;letter-spacing:1px;
+  color:#fff;flex-shrink:0;position:relative;
+}
+.avatar::after{
+  content:'';position:absolute;inset:-2px;border-radius:50%;
+  border:2px solid rgba(232,24,44,.4);
+}
+.profile-info{flex:1;}
+.profile-email{font-family:var(--font-cond);font-size:18px;font-weight:700;letter-spacing:.04em;margin-bottom:.5rem;}
+.plan-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:var(--font-cond);font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;
+  padding:4px 12px;border-radius:2px;
+}
+.badge-free{background:rgba(85,85,85,.2);border:1px solid rgba(85,85,85,.3);color:var(--gray-3);}
+.badge-starter{background:rgba(255,152,0,.12);border:1px solid rgba(255,152,0,.3);color:var(--starter);}
+.badge-expert{background:rgba(232,24,44,.12);border:1px solid rgba(232,24,44,.3);color:var(--red-light);}
+.badge-dot{width:5px;height:5px;border-radius:50%;background:currentColor;}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,.04);border-radius:4px;overflow:hidden;margin-bottom:1.5rem;}
+.stat-item{background:var(--black-4);padding:1.25rem 1rem;text-align:center;}
+.stat-value{font-family:var(--font-display);font-size:2rem;letter-spacing:1px;line-height:1;margin-bottom:.25rem;}
+.stat-value.unlimited{font-size:2.5rem;}
+.stat-label{font-family:var(--font-cond);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gray-2);}
+
+/* PROGRESS */
+.quota-section{margin-bottom:.5rem;}
+.quota-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem;}
+.quota-title{font-family:var(--font-cond);font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--gray-2);}
+.quota-pct{font-family:var(--font-display);font-size:13px;color:var(--white);}
+.progress-track{height:6px;background:var(--black-5);border-radius:3px;overflow:hidden;}
+.progress-fill{height:100%;border-radius:3px;transition:width 1s ease;background:var(--red);}
+.progress-fill.safe{background:linear-gradient(90deg,#4CAF50,#8BC34A);}
+.progress-fill.warn{background:linear-gradient(90deg,var(--starter),#FFB74D);}
+.progress-fill.danger{background:linear-gradient(90deg,var(--red-2),var(--red));}
+
+/* PLANS GRID */
+.section-head{margin:2rem 0 1rem;}
+.section-head h2{font-family:var(--font-display);font-size:1.5rem;letter-spacing:1px;margin-bottom:.25rem;}
+.section-head p{font-family:var(--font-cond);font-size:13px;color:var(--gray-2);letter-spacing:.04em;}
+.plans-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem;animation:fadeUp .5s .2s ease both;}
+.plan-card{
+  background:var(--black-3);border:1px solid rgba(255,255,255,.06);
+  border-radius:6px;padding:1.5rem;position:relative;transition:border-color .2s;
+}
+.plan-card.current{border-color:var(--red);}
+.plan-card.current::before{
+  content:'ACTUEL';position:absolute;top:-10px;left:50%;transform:translateX(-50%);
+  font-family:var(--font-cond);font-size:9px;font-weight:800;letter-spacing:.14em;
+  background:var(--red);color:#fff;padding:3px 12px;border-radius:2px;white-space:nowrap;
+}
+.plan-card.current-starter{border-color:var(--starter);}
+.plan-card.current-starter::before{background:var(--starter);color:#000;}
+.plan-name{font-family:var(--font-cond);font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--gray-2);margin-bottom:.75rem;}
+.plan-price{font-family:var(--font-display);font-size:2rem;letter-spacing:1px;line-height:1;margin-bottom:.25rem;}
+.plan-price sup{font-family:var(--font-cond);font-size:1rem;vertical-align:super;}
+.plan-period{font-family:var(--font-cond);font-size:11px;color:var(--gray);letter-spacing:.04em;margin-bottom:1.25rem;}
+.plan-features{list-style:none;display:flex;flex-direction:column;gap:.5rem;}
+.plan-features li{font-family:var(--font-body);font-size:13px;color:var(--gray-3);display:flex;align-items:center;gap:8px;}
+.feat-check{color:var(--red);font-size:12px;font-weight:800;flex-shrink:0;}
+.feat-check.ok-starter{color:var(--starter);}
+.feat-cross{color:#333;font-size:12px;flex-shrink:0;}
+
+/* ACTIONS */
+.actions-row{display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:2.5rem;animation:fadeUp .5s .3s ease both;}
+.btn-upgrade{
+  font-family:var(--font-display);font-size:15px;letter-spacing:1px;
+  background:var(--red);color:#fff;border:none;
+  padding:14px 28px;border-radius:4px;cursor:pointer;
+  transition:background .2s,transform .1s;text-decoration:none;display:inline-block;
+}
+.btn-upgrade:hover{background:var(--red-light);transform:translateY(-1px);}
+.btn-upgrade:disabled{background:var(--black-5);color:var(--gray);cursor:not-allowed;transform:none;}
+.btn-manage{
+  font-family:var(--font-cond);font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+  background:transparent;color:var(--gray-3);
+  border:1px solid rgba(255,255,255,.1);
+  padding:14px 24px;border-radius:4px;cursor:pointer;
+  transition:all .2s;text-decoration:none;display:inline-block;
+}
+.btn-manage:hover{border-color:rgba(255,255,255,.25);color:var(--white);}
+
+/* HISTORY */
+.history-section{animation:fadeUp .5s .4s ease both;}
+.history-list{display:flex;flex-direction:column;gap:2px;}
+.history-item{
+  background:var(--black-3);border:1px solid rgba(255,255,255,.04);
+  border-radius:4px;padding:1rem 1.25rem;
+  display:flex;align-items:center;justify-content:space-between;
+  transition:background .15s;
+}
+.history-item:hover{background:var(--black-4);}
+.history-left{display:flex;align-items:center;gap:12px;}
+.history-sport{
+  width:32px;height:32px;border-radius:4px;
+  background:rgba(232,24,44,.1);border:1px solid rgba(232,24,44,.15);
+  display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;
+}
+.history-match{font-family:var(--font-cond);font-size:15px;font-weight:700;letter-spacing:.04em;}
+.history-meta{font-family:var(--font-cond);font-size:11px;color:var(--gray-2);letter-spacing:.04em;}
+.history-date{font-family:var(--font-cond);font-size:11px;color:var(--gray);letter-spacing:.04em;}
+.history-empty{
+  background:var(--black-3);border:1px solid rgba(255,255,255,.04);border-radius:4px;
+  padding:2.5rem;text-align:center;
+  font-family:var(--font-cond);font-size:13px;color:var(--gray);letter-spacing:.06em;text-transform:uppercase;
+}
+
+/* SKELETON */
+.skeleton{background:linear-gradient(90deg,var(--black-4) 25%,var(--black-5) 50%,var(--black-4) 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:3px;}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:640px){
+  .stats-grid{grid-template-columns:1fr 1fr;}
+  .stats-grid .stat-item:last-child{grid-column:1/-1;}
+  .plans-grid{grid-template-columns:1fr;}
+  .actions-row{flex-direction:column;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">WIN<span>AI</span></a>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <button class="nav-signout" id="btnSignout">Déconnexion</button>
+    <a href="/" class="nav-back">← Retour</a>
+  </div>
+</nav>
+
+<main>
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div class="page-label">Tableau de bord</div>
+    <h1 class="page-title">MON COMPTE</h1>
+  </div>
+
+  <!-- PROFILE CARD -->
+  <div class="profile-card">
+    <div class="profile-top">
+      <div class="avatar" id="avatar">--</div>
+      <div class="profile-info">
+        <div class="profile-email" id="profileEmail">
+          <span class="skeleton" style="display:inline-block;width:220px;height:20px;"></span>
+        </div>
+        <div style="margin-top:.5rem;">
+          <span class="plan-badge badge-free" id="planBadge">
+            <span class="badge-dot"></span> Chargement...
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-grid">
+      <div class="stat-item">
+        <div class="stat-value" id="statUsed">—</div>
+        <div class="stat-label">Analyses utilisées</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" id="statLeft">—</div>
+        <div class="stat-label">Analyses restantes</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" id="statReset" style="font-size:1.3rem;">—</div>
+        <div class="stat-label">Renouvellement</div>
+      </div>
+    </div>
+
+    <!-- QUOTA BAR -->
+    <div class="quota-section">
+      <div class="quota-header">
+        <span class="quota-title">Quota mensuel</span>
+        <span class="quota-pct" id="quotaPct">—</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill safe" id="progressFill" style="width:0%"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PLANS -->
+  <div class="section-head">
+    <h2>PLANS</h2>
+    <p>Compare les offres et évolue selon tes besoins</p>
+  </div>
+
+  <div class="plans-grid" id="plansGrid">
+    <!-- Free -->
+    <div class="plan-card" id="cardFree">
+      <div class="plan-name">Gratuit</div>
+      <div class="plan-price"><sup>€</sup>0</div>
+      <div class="plan-period">pour toujours</div>
+      <ul class="plan-features">
+        <li><span class="feat-check">✓</span> 10 analyses / mois</li>
+        <li><span class="feat-check">✓</span> Football uniquement</li>
+        <li><span class="feat-check">✓</span> Historique 5 matchs</li>
+        <li><span class="feat-cross">✗</span> <span style="color:#333">Analyse complète</span></li>
+        <li><span class="feat-cross">✗</span> <span style="color:#333">Multi-sports</span></li>
+      </ul>
+    </div>
+    <!-- Starter -->
+    <div class="plan-card" id="cardStarter">
+      <div class="plan-name" style="color:var(--starter)">Starter</div>
+      <div class="plan-price"><sup>€</sup>6<span style="font-size:1.2rem">.99</span></div>
+      <div class="plan-period">par mois · sans engagement</div>
+      <ul class="plan-features">
+        <li><span class="feat-check ok-starter">✓</span> 50 analyses / mois</li>
+        <li><span class="feat-check ok-starter">✓</span> 5 sports couverts</li>
+        <li><span class="feat-check ok-starter">✓</span> Analyse courte & complète</li>
+        <li><span class="feat-check ok-starter">✓</span> Historique jusqu'à 20 matchs</li>
+        <li><span class="feat-cross">✗</span> <span style="color:#333">Historique saison</span></li>
+      </ul>
+    </div>
+    <!-- Expert -->
+    <div class="plan-card" id="cardExpert">
+      <div class="plan-name" style="color:var(--red-light)">Expert</div>
+      <div class="plan-price"><sup>€</sup>14<span style="font-size:1.2rem">.99</span></div>
+      <div class="plan-period">par mois · sans engagement</div>
+      <ul class="plan-features">
+        <li><span class="feat-check">✓</span> Analyses illimitées</li>
+        <li><span class="feat-check">✓</span> 5 sports couverts</li>
+        <li><span class="feat-check">✓</span> Analyse complète avancée</li>
+        <li><span class="feat-check">✓</span> Historique toute la saison</li>
+        <li><span class="feat-check">✓</span> Détail match par match</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ACTIONS -->
+  <div class="actions-row" id="actionsRow">
+    <button class="btn-upgrade" id="btnUpgrade" onclick="goUpgrade()">⚡ Passer à Expert</button>
+    <button class="btn-manage" id="btnManage" onclick="goManage()">Gérer l'abonnement →</button>
+  </div>
+
+  <!-- HISTORY -->
+  <div class="history-section">
+    <div class="section-head">
+      <h2>HISTORIQUE</h2>
+      <p>Tes 5 dernières analyses</p>
+    </div>
+    <div class="history-list" id="historyList">
+      <div class="skeleton" style="height:64px;border-radius:4px;margin-bottom:2px;"></div>
+      <div class="skeleton" style="height:64px;border-radius:4px;margin-bottom:2px;"></div>
+      <div class="skeleton" style="height:64px;border-radius:4px;"></div>
+    </div>
+  </div>
+</main>
+
+<script src="/auth.js"></script>
+<script>
+const PLAN_LIMITS = { free: 10, starter: 50, expert: Infinity };
+const PLAN_LABELS = { free: 'Gratuit', starter: 'Starter', expert: 'Expert' };
+const SPORT_ICONS = { football: '⚽', basketball: '🏀', tennis: '🎾', rugby: '🏉', mma: '🥊' };
+
+let currentPlan = 'free';
+
+(async () => {
+  // Redirection si non connecté
+  let user;
+  try {
+    user = await WinAuth.getUser();
+  } catch (e) {}
+
+  if (!user) {
+    window.location.href = '/login.html?redirect=dashboard.html';
+    return;
+  }
+
+  // Initiales avatar
+  const initials = user.email.slice(0, 2).toUpperCase();
+  document.getElementById('avatar').textContent = initials;
+  document.getElementById('profileEmail').textContent = user.email;
+
+  // Profil Supabase
+  let profile;
+  try {
+    profile = await WinAuth.getProfile();
+  } catch (e) {}
+
+  if (!profile) {
+    profile = { plan: 'free', analyses_count: 0, analyses_reset_date: new Date().toISOString() };
+  }
+
+  currentPlan = profile.plan || 'free';
+  const count = profile.analyses_count || 0;
+  const limit = PLAN_LIMITS[currentPlan];
+  const left = limit === Infinity ? '∞' : Math.max(0, limit - count);
+  const pct = limit === Infinity ? 0 : Math.min(100, Math.round(count / limit * 100));
+
+  // Reset date → mois suivant
+  const resetDate = profile.analyses_reset_date
+    ? new Date(profile.analyses_reset_date)
+    : new Date();
+  const nextReset = new Date(resetDate.getFullYear(), resetDate.getMonth() + 1, 1);
+  const resetLabel = nextReset.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+
+  // Badge plan
+  const badge = document.getElementById('planBadge');
+  badge.className = 'plan-badge badge-' + currentPlan;
+  badge.innerHTML = `<span class="badge-dot"></span> ${PLAN_LABELS[currentPlan]}`;
+
+  // Stats
+  document.getElementById('statUsed').textContent = count;
+  document.getElementById('statLeft').innerHTML = left === '∞'
+    ? '<span class="unlimited">∞</span>'
+    : left;
+  document.getElementById('statReset').textContent = resetLabel;
+
+  // Progress bar
+  document.getElementById('quotaPct').textContent = limit === Infinity ? 'Illimité' : pct + '%';
+  const fill = document.getElementById('progressFill');
+  fill.className = 'progress-fill ' + (pct < 60 ? 'safe' : pct < 85 ? 'warn' : 'danger');
+  requestAnimationFrame(() => { fill.style.width = (limit === Infinity ? 0 : pct) + '%'; });
+
+  // Plans — mettre en évidence le plan actuel
+  document.getElementById('cardFree').classList.toggle('current', currentPlan === 'free');
+  const cardStarter = document.getElementById('cardStarter');
+  cardStarter.classList.toggle('current', currentPlan === 'starter');
+  if (currentPlan === 'starter') cardStarter.classList.add('current-starter');
+  document.getElementById('cardExpert').classList.toggle('current', currentPlan === 'expert');
+
+  // Actions
+  updateActions();
+
+  // Historique
+  await loadHistory(user.id);
+})();
+
+function updateActions() {
+  const btnUpgrade = document.getElementById('btnUpgrade');
+  const btnManage = document.getElementById('btnManage');
+
+  if (currentPlan === 'expert') {
+    btnUpgrade.disabled = true;
+    btnUpgrade.textContent = '✓ Plan Expert actif';
+    btnManage.style.display = 'inline-block';
+  } else if (currentPlan === 'starter') {
+    btnUpgrade.textContent = '⚡ Passer à Expert';
+    btnManage.style.display = 'inline-block';
+  } else {
+    btnUpgrade.textContent = '⚡ Passer à Starter';
+    btnManage.style.display = 'none';
+  }
+}
+
+async function goUpgrade() {
+  const plan = currentPlan === 'starter' ? 'expert' : 'starter';
+  if (typeof subscribe === 'function') {
+    subscribe(plan);
+  } else {
+    window.location.href = '/#abonnement';
+  }
+}
+
+async function goManage() {
+  // Ouvre le portail Stripe si disponible, sinon renvoie vers la section abonnement
+  window.location.href = '/#abonnement';
+}
+
+async function loadHistory(userId) {
+  const list = document.getElementById('historyList');
+  try {
+    const sb = window.supabase?.createClient
+      ? null
+      : await (async () => {
+          // Utilise le client Supabase déjà initialisé dans auth.js via WinAuth
+          return null;
+        })();
+
+    // Tente de récupérer les analyses depuis Supabase
+    const client = await getSupabaseClient();
+    if (!client) throw new Error('no client');
+
+    const { data, error } = await client
+      .from('analyses')
+      .select('sport, team1, team2, created_at')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+      .limit(5);
+
+    if (error || !data || data.length === 0) throw new Error('empty');
+
+    list.innerHTML = data.map(a => {
+      const sport = (a.sport || 'football').toLowerCase();
+      const icon = SPORT_ICONS[sport] || '🎯';
+      const match = a.team1 && a.team2 ? `${a.team1} vs ${a.team2}` : 'Analyse';
+      const date = new Date(a.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+      return `<div class="history-item">
+        <div class="history-left">
+          <div class="history-sport">${icon}</div>
+          <div>
+            <div class="history-match">${match}</div>
+            <div class="history-meta">${sport.charAt(0).toUpperCase() + sport.slice(1)}</div>
+          </div>
+        </div>
+        <div class="history-date">${date}</div>
+      </div>`;
+    }).join('');
+  } catch {
+    list.innerHTML = '<div class="history-empty">Aucune analyse enregistrée</div>';
+  }
+}
+
+async function getSupabaseClient() {
+  // Récupère le client Supabase exposé par auth.js
+  if (window._sbClient) return window._sbClient;
+  try {
+    await new Promise(r => setTimeout(r, 100));
+    // Reconstruit un client léger pour les lectures
+    if (!window.supabase) return null;
+    const client = window.supabase.createClient(
+      'https://pxzdqfbvqhcicduizhgh.supabase.co',
+      'sb_publishable_yycrblTyJ3S26nvqcro54Q_3C1fCDWs'
+    );
+    window._sbClient = client;
+    // Restaure la session active
+    const session = await WinAuth.getSession();
+    if (session) await client.auth.setSession(session);
+    return client;
+  } catch { return null; }
+}
+
+document.getElementById('btnSignout').addEventListener('click', async () => {
+  await WinAuth.signOut();
+  window.location.href = '/';
+});
+</script>
+</body>
+</html>
