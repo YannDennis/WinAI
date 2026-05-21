@@ -6,7 +6,6 @@ const supabase = createClient(
   process.env.SUPABASE_ANON_KEY
 );
 
-// Mapping price_id → nom du plan (source de vérité côté serveur)
 const PLAN_BY_PRICE_ID = {
   [process.env.STRIPE_STARTER_PRICE_ID]: 'starter',
   [process.env.STRIPE_EXPERT_PRICE_ID]: 'expert',
@@ -27,12 +26,16 @@ module.exports = async (req, res) => {
   }
 
   const sig = req.headers['stripe-signature'];
-  if (!sig) return res.status(400).send('Missing stripe-signature header');
+  if (!sig) {
+    console.error('[webhook] stripe-signature header manquant');
+    return res.status(400).send('Missing stripe-signature header');
+  }
 
   let rawBody;
   try {
     rawBody = await readRawBody(req);
   } catch (err) {
+    console.error('[webhook] Erreur lecture body:', err.message);
     return res.status(400).send('Could not read body');
   }
 
@@ -44,36 +47,51 @@ module.exports = async (req, res) => {
       process.env.STRIPE_WEBHOOK_SECRET
     );
   } catch (err) {
-    console.error('Webhook signature error:', err.message);
+    console.error('[webhook] Signature invalide:', err.message);
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
+  console.log(`[webhook] Event recu: ${event.type} id=${event.id}`);
+
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object;
+    console.log(`[webhook] session.id=${session.id} payment_status=${session.payment_status}`);
+    console.log(`[webhook] metadata=`, JSON.stringify(session.metadata));
+
     const supabaseUserId = session.metadata?.supabase_user_id;
 
     if (!supabaseUserId) {
-      console.error('Webhook: supabase_user_id absent des metadata');
+      console.error('[webhook] supabase_user_id absent des metadata — session ignoree');
       return res.status(200).json({ received: true });
     }
 
-    // Récupère le price_id réel depuis Stripe pour déterminer le plan
+    if (session.payment_status !== 'paid') {
+      console.warn(`[webhook] payment_status=${session.payment_status} — pas encore paye, attente`);
+      return res.status(200).json({ received: true });
+    }
+
+    // Determine le plan via le price_id reel (expand line_items)
     let plan;
     try {
       const sessionWithItems = await stripe.checkout.sessions.retrieve(session.id, {
         expand: ['line_items'],
       });
       const priceId = sessionWithItems.line_items?.data[0]?.price?.id;
+      console.log(`[webhook] price_id recupere: ${priceId}`);
+      console.log(`[webhook] PLAN_BY_PRICE_ID keys:`, Object.keys(PLAN_BY_PRICE_ID));
+
       plan = PLAN_BY_PRICE_ID[priceId];
 
       if (!plan) {
-        console.error('Webhook: price_id inconnu:', priceId);
+        console.error(`[webhook] price_id "${priceId}" non reconnu dans PLAN_BY_PRICE_ID`);
         return res.status(200).json({ received: true });
       }
     } catch (err) {
-      console.error('Webhook: erreur retrieve session:', err.message);
+      console.error('[webhook] Erreur retrieve session Stripe:', err.message);
       return res.status(200).json({ received: true });
     }
+
+    console.log(`[webhook] Mise a jour Supabase: user=${supabaseUserId} plan=${plan}`);
 
     const { error } = await supabase
       .from('profiles')
@@ -81,29 +99,36 @@ module.exports = async (req, res) => {
       .eq('id', supabaseUserId);
 
     if (error) {
-      console.error('Supabase update error:', error.message);
+      console.error('[webhook] Supabase update error:', error.message, error.details);
     } else {
-      console.log(`Plan mis a jour : user=${supabaseUserId} plan=${plan}`);
+      console.log(`[webhook] OK — profiles.plan="${plan}" pour user=${supabaseUserId}`);
     }
   }
 
   if (event.type === 'customer.subscription.deleted') {
     const subscription = event.data.object;
     const customerId = subscription.customer;
+    console.log(`[webhook] Resiliation subscription customer=${customerId}`);
 
     try {
-      // Retrouve l'user via le customer Stripe pour remettre le plan à free
       const customer = await stripe.customers.retrieve(customerId);
       const email = customer.email;
+      console.log(`[webhook] Customer email=${email}`);
 
       if (email) {
-        await supabase
+        const { error } = await supabase
           .from('profiles')
           .update({ plan: 'free' })
           .eq('email', email);
+
+        if (error) {
+          console.error('[webhook] Supabase downgrade error:', error.message);
+        } else {
+          console.log(`[webhook] Plan remis a free pour email=${email}`);
+        }
       }
     } catch (err) {
-      console.error('Subscription cancellation error:', err.message);
+      console.error('[webhook] Erreur resiliation:', err.message);
     }
   }
 

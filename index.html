@@ -1480,13 +1480,49 @@ function showToast(msg, type) {
   setTimeout(() => toast.classList.remove('show'), 5000);
 }
 
+async function updatePlanAfterPayment(sessionId) {
+  try {
+    const session = await WinAuth.getSession();
+    const token = session?.access_token;
+    if (!token) {
+      console.warn('[update-plan] Pas de token, mise a jour ignoree');
+      return;
+    }
+
+    const res = await fetch('/api/update-plan', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token,
+      },
+      body: JSON.stringify({ session_id: sessionId }),
+    });
+
+    const data = await res.json();
+    if (data.success) {
+      console.log('[update-plan] Plan mis a jour:', data.plan);
+    } else {
+      console.error('[update-plan] Erreur serveur:', data.error);
+    }
+  } catch (err) {
+    console.error('[update-plan] Erreur fetch:', err.message);
+  }
+}
+
 (function handleUrlParams() {
   const params = new URLSearchParams(window.location.search);
   if (params.get('success') === 'true') {
     const plan = params.get('plan') || '';
+    const sessionId = params.get('session_id') || '';
     const label = plan === 'expert' ? 'Expert' : 'Starter';
-    showToast('Paiement confirme ! Bienvenue sur le plan ' + label + ' ✓', 'success');
+
     window.history.replaceState({}, '', window.location.pathname);
+
+    if (sessionId) {
+      updatePlanAfterPayment(sessionId);
+    }
+
+    showToast('Paiement confirme ! Bienvenue sur le plan ' + label + ' ✓', 'success');
     setTimeout(() => {
       const tarifs = document.getElementById('tarifs') || document.getElementById('abonnement');
       if (tarifs) tarifs.scrollIntoView({ behavior: 'smooth' });
