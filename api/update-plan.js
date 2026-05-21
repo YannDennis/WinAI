@@ -3,7 +3,7 @@ const { createClient } = require('@supabase/supabase-js');
 
 const supabase = createClient(
   'https://pxzdqfbvqhcicduizhgh.supabase.co',
-  process.env.SUPABASE_ANON_KEY
+  process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
 const PLAN_BY_PRICE_ID = {
@@ -34,7 +34,7 @@ module.exports = async (req, res) => {
   // Verification env vars au demarrage de chaque requete
   console.log('[update-plan] ENV check — STRIPE_STARTER_PRICE_ID:', process.env.STRIPE_STARTER_PRICE_ID || 'MANQUANT');
   console.log('[update-plan] ENV check — STRIPE_EXPERT_PRICE_ID:', process.env.STRIPE_EXPERT_PRICE_ID || 'MANQUANT');
-  console.log('[update-plan] ENV check — SUPABASE_ANON_KEY:', process.env.SUPABASE_ANON_KEY ? 'OK' : 'MANQUANT');
+  console.log('[update-plan] ENV check — SUPABASE_SERVICE_ROLE_KEY:', process.env.SUPABASE_SERVICE_ROLE_KEY ? 'OK' : 'MANQUANT');
   console.log('[update-plan] PLAN_BY_PRICE_ID:', JSON.stringify(PLAN_BY_PRICE_ID));
 
   // Valider le JWT Supabase
