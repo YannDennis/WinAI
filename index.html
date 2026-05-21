@@ -1442,9 +1442,15 @@ async function subscribe(plan) {
   btn.textContent = 'Chargement...';
 
   try {
+    const session = await WinAuth.getSession();
+    const token = session?.access_token;
+
     const res = await fetch('/api/stripe-checkout', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': 'Bearer ' + token } : {}),
+      },
       body: JSON.stringify({ plan }),
     });
 

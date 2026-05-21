@@ -6,6 +6,12 @@ const supabase = createClient(
   process.env.SUPABASE_ANON_KEY
 );
 
+// Mapping price_id → nom du plan (source de vérité côté serveur)
+const PLAN_BY_PRICE_ID = {
+  [process.env.STRIPE_STARTER_PRICE_ID]: 'starter',
+  [process.env.STRIPE_EXPERT_PRICE_ID]: 'expert',
+};
+
 async function readRawBody(req) {
   return new Promise((resolve, reject) => {
     const chunks = [];
@@ -44,18 +50,40 @@ module.exports = async (req, res) => {
 
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object;
-    const email = session.customer_details?.email;
-    const plan = session.metadata?.plan;
+    const supabaseUserId = session.metadata?.supabase_user_id;
 
-    if (email && plan) {
-      const { error } = await supabase
-        .from('profiles')
-        .update({ plan })
-        .eq('email', email);
+    if (!supabaseUserId) {
+      console.error('Webhook: supabase_user_id absent des metadata');
+      return res.status(200).json({ received: true });
+    }
 
-      if (error) {
-        console.error('Supabase update error:', error.message);
+    // Récupère le price_id réel depuis Stripe pour déterminer le plan
+    let plan;
+    try {
+      const sessionWithItems = await stripe.checkout.sessions.retrieve(session.id, {
+        expand: ['line_items'],
+      });
+      const priceId = sessionWithItems.line_items?.data[0]?.price?.id;
+      plan = PLAN_BY_PRICE_ID[priceId];
+
+      if (!plan) {
+        console.error('Webhook: price_id inconnu:', priceId);
+        return res.status(200).json({ received: true });
       }
+    } catch (err) {
+      console.error('Webhook: erreur retrieve session:', err.message);
+      return res.status(200).json({ received: true });
+    }
+
+    const { error } = await supabase
+      .from('profiles')
+      .update({ plan })
+      .eq('id', supabaseUserId);
+
+    if (error) {
+      console.error('Supabase update error:', error.message);
+    } else {
+      console.log(`Plan mis a jour : user=${supabaseUserId} plan=${plan}`);
     }
   }
 
@@ -64,6 +92,7 @@ module.exports = async (req, res) => {
     const customerId = subscription.customer;
 
     try {
+      // Retrouve l'user via le customer Stripe pour remettre le plan à free
       const customer = await stripe.customers.retrieve(customerId);
       const email = customer.email;
 
