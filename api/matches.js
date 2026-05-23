@@ -3,6 +3,38 @@ const https = require('https');
 module.exports = async function(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
 
+  // Test endpoint — ?debug=leagues
+  if (req.query?.debug === 'leagues') {
+    try {
+      const data = await new Promise((resolve) => {
+        https.get(
+          'https://apiv2.allsportsapi.com/football/?met=Leagues&APIkey=713c0b1dc923292c158451123c1e301c50ac2e09dba4b3bf6c6959c983510a2d',
+          (r) => {
+            let raw = '';
+            r.on('data', chunk => raw += chunk);
+            r.on('end', () => { try { resolve(JSON.parse(raw)); } catch(e) { resolve(null); } });
+          }
+        ).on('error', () => resolve(null));
+      });
+
+      if (data?.result) {
+        console.log('=== ALLSPORTS LEAGUES ===');
+        data.result.forEach(l => {
+          console.log(`ID: ${l.league_key} | ${l.league_name} | Pays: ${l.country_name}`);
+        });
+        console.log(`=== TOTAL: ${data.result.length} ligues ===`);
+      } else {
+        console.log('AllSports Leagues: pas de résultat', data);
+      }
+
+      return res.status(200).json(data);
+    } catch (e) {
+      console.error('Debug leagues error:', e);
+      return res.status(500).json({ error: e.message });
+    }
+  }
+
+
   const SPORTS_KEY = process.env.ALL_SPORTS_KEY;
   const today = new Date();
   const from = today.toISOString().split('T')[0];
