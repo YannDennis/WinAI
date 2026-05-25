@@ -37,7 +37,7 @@ module.exports = async function(req, res) {
 
   const SPORTS_KEY = process.env.ALL_SPORTS_KEY;
   const today = new Date();
-  const from = today.toISOString().split('T')[0];
+  const from = new Date(today.getTime() - 24*60*60*1000).toISOString().split('T')[0];
   const to = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
 
   function fetchUrl(url) {
