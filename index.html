@@ -922,6 +922,8 @@ function makeCard(m){
   const idx=matches.indexOf(m);
   const isLive=m.status==='1H'||m.status==='2H'||m.status==='HT'||m.status==='Live';
   const liveBadge=isLive?`<span class="mc-live">🔴 LIVE</span>`:'';
+  const _s=(m.status||'').toLowerCase();
+  const statusLabel=isLive?'🔴 LIVE':(!_s||_s.includes('final')||_s==='ft'?`🕐 ${m.time||'TBD'}`:m.status);
   const margin=0.90;
   const coteH=m.w>0?(1/(m.w/100)*margin).toFixed(2):'—';
   const leagueLogoImg=m.leagueLogo?`<img src="${m.leagueLogo}" alt="" style="width:14px;height:14px;object-fit:contain;margin-right:5px;vertical-align:middle;opacity:.8;">`:'';
@@ -937,7 +939,7 @@ function makeCard(m){
           <div style="font-family:var(--font-display);font-size:12px;color:var(--white);text-align:center;">${m.home.length>12?m.home.substring(0,12)+'…':m.home}</div>
         </div>
         <div style="display:flex;flex-direction:column;align-items:center;gap:3px;">
-          <div style="font-family:var(--font-cond);font-size:10px;color:#222;letter-spacing:2px;font-weight:700;">VS</div>
+          <div style="font-family:var(--font-cond);font-size:10px;color:${isLive?'#ff4444':'#00D4FF'};letter-spacing:2px;font-weight:700;">${statusLabel}</div>
         </div>
         <div class="mc-team">
           ${m.awayLogo?`<img src="${m.awayLogo}" alt="${m.away}" style="width:40px;height:40px;object-fit:contain;filter:drop-shadow(0 0 8px rgba(255,255,255,.15)) drop-shadow(0 2px 6px rgba(0,0,0,.7));">`:`<div style="width:40px;height:40px;background:#1A1A1A;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-cond);font-size:10px;font-weight:700;color:#555;">${m.away.substring(0,3).toUpperCase()}</div>`}
