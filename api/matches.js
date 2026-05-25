@@ -54,11 +54,14 @@ module.exports = async function(req, res) {
   }
 
   const LEAGUES = [
-    { id: 168 }, // Ligue 1
-    { id: 152 }, // Premier League
-    { id: 175 }, // Champions League
-    { id: 302 }, // La Liga
-    { id: 207 }, // Serie A
+    { id: 164 }, // Ligue 2
+{ id: 153 }, // Championship
+{ id: 4 },   // Europa League
+{ id: 683 },  // Conference League
+{ id: 171 }, // Bundesliga 2
+{ id: 206 }, // Serie B
+{ id: 301 }, // Segunda Division
+{ id: 266 }, // Liga Portugal
   ];
 
   // Fetch fixtures + standings for all leagues in one shot
@@ -79,7 +82,10 @@ module.exports = async function(req, res) {
 
     if (fixtures?.result) {
       fixtures.result
-        .filter(m => !['FT', 'AET', 'PEN', 'ABD', 'CANC'].includes(m.event_status))
+        .filter(m => {
+  const s = (m.event_status || '').toLowerCase();
+  return !['ft','aet','pen','abd','canc','finished','final','postponed','suspended','interrupted','cancelled'].some(x => s.includes(x));
+})
         .forEach(m => rawMatches.push({ ...m, league_id: l.id }));
     }
   });
