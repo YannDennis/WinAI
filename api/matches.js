@@ -112,8 +112,11 @@ module.exports = async function(req, res) {
     if (fixtures?.result) {
       fixtures.result
         .filter(m => {
-          const s = (m.event_status || '').toLowerCase();
-          return !['ft','aet','pen','abd','canc','finished','final','postponed','suspended','interrupted','cancelled'].some(x => s.includes(x));
+          // Exclure UNIQUEMENT si score réel présent (ex: "2-1") ET statut non vide
+          // Un match avec event_status="" et event_final_result="-" est un match à venir → inclus
+          const hasScore = /\d+\s*-\s*\d+/.test(m.event_final_result || '');
+          const hasStatus = (m.event_status || '').trim() !== '';
+          return !(hasScore && hasStatus);
         })
         .forEach(m => rawMatches.push({ ...m, league_id: l.id }));
     }
