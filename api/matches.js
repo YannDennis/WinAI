@@ -79,10 +79,18 @@ module.exports = async function(req, res) {
 
   const LEAGUES = [
     { id: 168 }, // Ligue 1
+    { id: 164 }, // Ligue 2
     { id: 152 }, // Premier League
+    { id: 153 }, // Championship anglais
     { id: 175 }, // Champions League
+    { id: 4   }, // Europa League
+    { id: 683 }, // Europa Conference League
     { id: 302 }, // La Liga
+    { id: 301 }, // Segunda Division
     { id: 207 }, // Serie A
+    { id: 206 }, // Serie B
+    { id: 171 }, // Bundesliga 2
+    { id: 266 }, // Liga Portugal
   ];
 
   // Fetch fixtures + standings for all leagues in one shot
