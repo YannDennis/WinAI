@@ -61,12 +61,8 @@ module.exports = async function(req, res) {
 
   const SPORTS_KEY = process.env.ALL_SPORTS_KEY;
   const today = new Date();
-  const from = new Date(today.getTime() - 1 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]; // hier
+  const from = new Date(today.getTime() - 24*60*60*1000).toISOString().split('T')[0]; // hier
   const to   = new Date(today.getTime() + 10 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]; // +10 jours
-
-  // Statuts AllSportsAPI considérés comme "match terminé" à exclure
-  const FINISHED_STATUSES = new Set(['FT', 'AET', 'PEN', 'ABD', 'CANC', 'Finished', 'Final', 'WO']);
-  const isFinished = s => !s || FINISHED_STATUSES.has(s) || s.toLowerCase().includes('final');
 
   function fetchUrl(url) {
     return new Promise((resolve) => {
@@ -115,7 +111,10 @@ module.exports = async function(req, res) {
 
     if (fixtures?.result) {
       fixtures.result
-        .filter(m => !isFinished(m.event_status))
+        .filter(m => {
+          const s = (m.event_status || '').toLowerCase();
+          return !['ft','aet','pen','abd','canc','finished','final','postponed','suspended','interrupted','cancelled'].some(x => s.includes(x));
+        })
         .forEach(m => rawMatches.push({ ...m, league_id: l.id }));
     }
   });
