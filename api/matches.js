@@ -1,5 +1,29 @@
 const https = require('https');
 
+// Log the first 50 AllSports leagues at cold-start
+(function logLeagues() {
+  https.get(
+    'https://apiv2.allsportsapi.com/football/?met=Leagues&APIkey=713c0b1dc923292c158451123c1e301c50ac2e09dba4b3bf6c6959c983510a2d',
+    (r) => {
+      let raw = '';
+      r.on('data', chunk => raw += chunk);
+      r.on('end', () => {
+        try {
+          const data = JSON.parse(raw);
+          const leagues = (data?.result || []).slice(0, 50);
+          console.log('=== ALLSPORTS — 50 premières ligues ===');
+          leagues.forEach((l, i) => {
+            console.log(`[${String(i + 1).padStart(2, '0')}] ID: ${l.league_key} | ${l.league_name} | ${l.country_name}`);
+          });
+          console.log('=== FIN LISTE LIGUES ===');
+        } catch (e) {
+          console.error('logLeagues parse error:', e.message);
+        }
+      });
+    }
+  ).on('error', e => console.error('logLeagues fetch error:', e.message));
+})();
+
 module.exports = async function(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
 
