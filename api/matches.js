@@ -79,17 +79,18 @@ module.exports = async function(req, res) {
 
   const LEAGUES = [
     { id: 168 }, // Ligue 1
-    { id: 164 }, // Ligue 2
     { id: 152 }, // Premier League
-    { id: 153 }, // Championship anglais
-    { id: 175 }, // Champions League
-    { id: 4   }, // Europa League
-    { id: 683 }, // Europa Conference League
+    { id: 3 },   // Champions League
     { id: 302 }, // La Liga
-    { id: 301 }, // Segunda Division
     { id: 207 }, // Serie A
-    { id: 206 }, // Serie B
+    { id: 175 }, // Bundesliga
+    { id: 164 }, // Ligue 2
+    { id: 153 }, // Championship
+    { id: 4 },   // Europa League
+    { id: 683 }, // Conference League
     { id: 171 }, // Bundesliga 2
+    { id: 206 }, // Serie B
+    { id: 301 }, // Segunda Division
     { id: 266 }, // Liga Portugal
   ];
 
@@ -112,11 +113,9 @@ module.exports = async function(req, res) {
     if (fixtures?.result) {
       fixtures.result
         .filter(m => {
-          // Exclure UNIQUEMENT si score réel présent (ex: "2-1") ET statut non vide
-          // Un match avec event_status="" et event_final_result="-" est un match à venir → inclus
-          const hasScore = /\d+\s*-\s*\d+/.test(m.event_final_result || '');
-          const hasStatus = (m.event_status || '').trim() !== '';
-          return !(hasScore && hasStatus);
+          const s = (m.event_status || '').toLowerCase();
+          if (!s) return true;
+          return !['ft','aet','pen','abd','canc','finished','postponed','suspended','interrupted','cancelled'].some(x => s === x || s.startsWith(x));
         })
         .forEach(m => rawMatches.push({ ...m, league_id: l.id }));
     }
