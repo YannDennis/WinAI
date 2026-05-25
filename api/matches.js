@@ -134,5 +134,6 @@ module.exports = async function(req, res) {
     h2h: h2hMap[`${m.home_team_key}_${m.away_team_key}`] || [],
   }));
 
+  console.log('LEAGUES TEST:', JSON.stringify(allMatches.slice(0,3).map(m=>({league:m.league_name, leagueId:m.league_key}))));
   res.json({ football: { result: allMatches }, odds: [] });
 };
