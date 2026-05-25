@@ -61,8 +61,12 @@ module.exports = async function(req, res) {
 
   const SPORTS_KEY = process.env.ALL_SPORTS_KEY;
   const today = new Date();
-  const from = today.toISOString().split('T')[0];
-  const to = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+  const from = new Date(today.getTime() - 1 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]; // hier
+  const to   = new Date(today.getTime() + 10 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]; // +10 jours
+
+  // Statuts AllSportsAPI considérés comme "match terminé" à exclure
+  const FINISHED_STATUSES = new Set(['FT', 'AET', 'PEN', 'ABD', 'CANC', 'Finished', 'Final', 'WO']);
+  const isFinished = s => !s || FINISHED_STATUSES.has(s) || s.toLowerCase().includes('final');
 
   function fetchUrl(url) {
     return new Promise((resolve) => {
@@ -111,15 +115,23 @@ module.exports = async function(req, res) {
 
     if (fixtures?.result) {
       fixtures.result
-        .filter(m => !['FT', 'AET', 'PEN', 'ABD', 'CANC'].includes(m.event_status))
+        .filter(m => !isFinished(m.event_status))
         .forEach(m => rawMatches.push({ ...m, league_id: l.id }));
     }
+  });
+
+  // Dédoublonnage par event_key
+  const seenEvents = new Set();
+  const uniqueMatches = rawMatches.filter(m => {
+    if (seenEvents.has(m.event_key)) return false;
+    seenEvents.add(m.event_key);
+    return true;
   });
 
   // Fetch H2H for each unique match pair in parallel
   const seen = new Set();
   const h2hMap = {};
-  const h2hCalls = rawMatches
+  const h2hCalls = uniqueMatches
     .filter(m => {
       const key = `${m.home_team_key}_${m.away_team_key}`;
       if (seen.has(key)) return false;
@@ -136,7 +148,7 @@ module.exports = async function(req, res) {
 
   await Promise.all(h2hCalls);
 
-  const allMatches = rawMatches.map(m => ({
+  const allMatches = uniqueMatches.map(m => ({
     ...m,
     standings: standingsMap[m.league_id] || [],
     h2h: h2hMap[`${m.home_team_key}_${m.away_team_key}`] || [],
