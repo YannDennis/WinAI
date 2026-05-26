@@ -931,7 +931,7 @@ function makeCard(m){
   const defaultBanners=['https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=800&q=60','https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=800&q=60','https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&q=60'];
   const pool=leagueBanners[m.leagueId]||defaultBanners;
   const banner=pool[m.event_key%pool.length];
-  const cardBg=`background:linear-gradient(rgba(0,0,0,.72),rgba(0,0,0,.72)),url('${banner}') center/cover no-repeat,#0D0D0D;`;
+  const cardBg=`background:linear-gradient(rgba(0,0,0,.45),rgba(0,0,0,.45)),url('${banner}') center/cover no-repeat,#0D0D0D;`;
   return`<div class="match-card" onclick="selectAndScroll(${idx})" style="${cardBg}">
     <div style="padding:8px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.04);">
       <span style="font-family:var(--font-cond);font-size:9px;font-weight:800;color:#00D4FF;text-shadow:0 0 6px rgba(0,212,255,.4);letter-spacing:.14em;text-transform:uppercase;display:flex;align-items:center;">${leagueLogoImg}${m.league}${liveBadge}</span>
