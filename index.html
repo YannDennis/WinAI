@@ -918,45 +918,53 @@ function useFallback(){
 
 function getDayLabel(m){return m.dayLabel||'Cette semaine';}
 
-function makeCard(m){
-  const idx=matches.indexOf(m);
-  const isLive=m.status==='1H'||m.status==='2H'||m.status==='HT'||m.status==='Live';
-  const liveBadge=isLive?`<span class="mc-live">🔴 LIVE</span>`:'';
-  const _s=(m.status||'').toLowerCase();
-  const statusLabel=isLive?'🔴 LIVE':(!_s||_s.includes('final')||_s==='ft'?`🕐 ${m.time||'TBD'}`:m.status);
-  const margin=0.90;
-  const coteH=m.w>0?(1/(m.w/100)*margin).toFixed(2):'—';
-  const leagueLogoImg=m.leagueLogo?`<img src="${m.leagueLogo}" alt="" style="width:14px;height:14px;object-fit:contain;margin-right:5px;vertical-align:middle;opacity:.8;">`:'';
-  const leagueBanners={168:['https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=800&q=60','https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=800&q=60','https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=800&q=60'],152:['https://images.unsplash.com/photo-1540747913346-19378e0a3f81?w=800&q=60','https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&q=60','https://images.unsplash.com/photo-1553778263-73a83bab9b0c?w=800&q=60'],3:['https://images.unsplash.com/photo-1569517282132-25d22f4573e6?w=800&q=60','https://images.unsplash.com/photo-1551854838-212c50b4c184?w=800&q=60','https://images.unsplash.com/photo-1563209259-2a4e8a8c8b6e?w=800&q=60'],175:['https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=800&q=60','https://images.unsplash.com/photo-1486286701208-1d58e9338013?w=800&q=60','https://images.unsplash.com/photo-1521537634581-0dced2fee2ef?w=800&q=60'],207:['https://images.unsplash.com/photo-1551854838-212c50b4c184?w=800&q=60','https://images.unsplash.com/photo-1560272564-c83b66b1ad12?w=800&q=60','https://images.unsplash.com/photo-1484482340112-e1e2682b4856?w=800&q=60']};
-  const defaultBanners=['https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=800&q=60','https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=800&q=60','https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&q=60'];
-  const pool=leagueBanners[m.leagueId]||defaultBanners;
-  const banner=pool[m.event_key%pool.length];
-  const cardBg=`background:linear-gradient(rgba(0,0,0,.35),rgba(0,0,0,.35)),url('${banner}') center/cover no-repeat,#0D0D0D;`;
-  return`<div class="match-card" onclick="selectAndScroll(${idx})" style="${cardBg}">
-    <div style="padding:8px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.04);">
-      <span style="font-family:var(--font-cond);font-size:9px;font-weight:800;color:#00D4FF;text-shadow:0 0 6px rgba(0,212,255,.4);letter-spacing:.14em;text-transform:uppercase;display:flex;align-items:center;">${leagueLogoImg}${m.league}${liveBadge}</span>
-      <span style="font-family:var(--font-cond);font-size:9px;color:#333;letter-spacing:.04em;">${m.date} · ${m.time}</span>
-    </div>
-    <div style="padding:14px 12px 10px;">
-      <div class="mc-teams">
-        <div class="mc-team">
-          <img src="${m.homeLogo}" alt="${m.home}" onerror="this.innerText='${m.home.slice(0,3).toUpperCase()}'" style="width:60px;height:60px;border-radius:50%;object-fit:contain;background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.12);padding:5px;">
-          <div style="font-family:var(--font-display);font-size:12px;color:var(--white);text-align:center;">${m.home.length>12?m.home.substring(0,12)+'…':m.home}</div>
+function makeCard(m) {
+  const idx = matches.indexOf(m);
+
+  const leagueColors = {168:'#E8182C',152:'#A855F7',3:'#60A5FA',302:'#F97316',207:'#3B82F6',175:'#EF4444',4:'#F59E0B',683:'#10B981',164:'#E8182C',171:'#EF4444',206:'#3B82F6',301:'#F97316',266:'#10B981',153:'#A855F7'};
+  const color = leagueColors[m.leagueId] || '#888';
+
+  const pool = {
+    168:['https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=800&q=60','https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=800&q=60','https://images.unsplash.com/photo-1489944440615-453fc2b6a9a9?w=800&q=60'],
+    152:['https://images.unsplash.com/photo-1540747913346-19378e0a3f81?w=800&q=60','https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&q=60','https://images.unsplash.com/photo-1553778263-73a83bab9b0c?w=800&q=60'],
+    3:['https://images.unsplash.com/photo-1569517282132-25d22f4573e6?w=800&q=60','https://images.unsplash.com/photo-1551854838-212c50b4c184?w=800&q=60','https://images.unsplash.com/photo-1521537634581-0dced2fee2ef?w=800&q=60'],
+    175:['https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=800&q=60','https://images.unsplash.com/photo-1486286701208-1d58e9338013?w=800&q=60','https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=800&q=60'],
+    207:['https://images.unsplash.com/photo-1551854838-212c50b4c184?w=800&q=60','https://images.unsplash.com/photo-1560272564-c83b66b1ad12?w=800&q=60','https://images.unsplash.com/photo-1484482340112-e1e2682b4856?w=800&q=60'],
+    302:['https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&q=60','https://images.unsplash.com/photo-1489944440615-453fc2b6a9a9?w=800&q=60','https://images.unsplash.com/photo-1521537634581-0dced2fee2ef?w=800&q=60'],
+  };
+  const defaults = ['https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=800&q=60','https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=800&q=60','https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&q=60','https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=800&q=60'];
+  const imgs = pool[m.leagueId] || defaults;
+  const bg = imgs[m.event_key % imgs.length];
+
+  const cote = m.w > 0 ? (1/(m.w/100)*0.9).toFixed(2) : '—';
+
+  return `<div class="match-card" onclick="selectAndScroll(${idx})" style="border-radius:14px;overflow:hidden;cursor:pointer;margin-bottom:12px;border:1px solid rgba(255,255,255,.07);transition:transform .15s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+    <div style="height:160px;position:relative;background:url('${bg}') center/cover no-repeat;">
+      <div style="position:absolute;inset:0;background:rgba(0,0,0,.4);"></div>
+      <div style="position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.9) 100%);"></div>
+      <div style="position:absolute;top:12px;left:14px;right:14px;display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-size:9px;font-weight:800;color:rgba(255,255,255,.6);letter-spacing:.14em;text-transform:uppercase;font-family:'Barlow Condensed',sans-serif;background:rgba(0,0,0,.3);padding:3px 8px;border-radius:4px;">${m.league}</span>
+        <span style="font-family:'Russo One',sans-serif;font-size:16px;color:#fff;background:rgba(0,0,0,.3);padding:3px 10px;border-radius:4px;">${m.time}</span>
+      </div>
+      <div style="position:absolute;bottom:0;left:0;right:0;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <img src="${m.homeLogo}" onerror="this.style.display='none'" style="width:48px;height:48px;border-radius:50%;object-fit:contain;background:rgba(255,255,255,.1);border:2px solid rgba(255,255,255,.25);padding:4px;">
+          <div style="font-family:'Russo One',sans-serif;font-size:15px;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.9);">${m.home}</div>
         </div>
-        <div style="display:flex;flex-direction:column;align-items:center;gap:3px;">
-          <div style="font-family:var(--font-cond);font-size:10px;color:${isLive?'#ff4444':'#00D4FF'};letter-spacing:2px;font-weight:700;">${statusLabel}</div>
-        </div>
-        <div class="mc-team">
-          <img src="${m.awayLogo}" alt="${m.away}" onerror="this.innerText='${m.away.slice(0,3).toUpperCase()}'" style="width:60px;height:60px;border-radius:50%;object-fit:contain;background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.12);padding:5px;">
-          <div style="font-family:var(--font-display);font-size:12px;color:var(--white);text-align:center;">${m.away.length>12?m.away.substring(0,12)+'…':m.away}</div>
+        <div style="font-family:'Russo One',sans-serif;font-size:20px;color:rgba(255,255,255,.2);">VS</div>
+        <div style="display:flex;align-items:center;gap:10px;flex-direction:row-reverse;">
+          <img src="${m.awayLogo}" onerror="this.style.display='none'" style="width:48px;height:48px;border-radius:50%;object-fit:contain;background:rgba(255,255,255,.1);border:2px solid rgba(255,255,255,.25);padding:4px;">
+          <div style="font-family:'Russo One',sans-serif;font-size:15px;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.9);">${m.away}</div>
         </div>
       </div>
-      <div class="mc-bars" style="margin-top:10px;"><div class="mc-bar mc-w" style="flex:${m.w}"></div><div class="mc-bar mc-d" style="flex:${m.d}"></div><div class="mc-bar mc-l" style="flex:${m.l}"></div></div>
-      <div class="mc-probs"><span class="mc-prob">${m.home.split(' ')[0]} ${m.w}%</span><span class="mc-prob">Nul ${m.d}%</span><span class="mc-prob">${m.away.split(' ')[0]} ${m.l}%</span></div>
     </div>
-    <div style="background:#0D0D0D;padding:7px 12px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(255,255,255,.03);">
-      <span style="font-family:var(--font-cond);font-size:10px;color:#555;letter-spacing:.04em;">Favori : <span style="color:var(--red);font-weight:800;text-shadow:0 0 8px rgba(232,24,44,.5);">${coteH}</span></span>
-      <span style="font-family:var(--font-cond);font-size:9px;font-weight:800;color:var(--red);letter-spacing:.1em;text-transform:uppercase;">Analyser →</span>
+    <div style="background:#111;padding:12px 16px;border-top:1px solid rgba(255,255,255,.05);">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px;">
+        <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:6px;padding:6px;text-align:center;"><div style="font-size:7px;color:#444;letter-spacing:.08em;text-transform:uppercase;font-family:'Barlow Condensed',sans-serif;margin-bottom:2px;">${m.home}</div><div style="font-family:'Russo One',sans-serif;font-size:17px;color:#888;">${(1/(m.w/100)*0.9).toFixed(2)}</div></div>
+        <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:6px;padding:6px;text-align:center;"><div style="font-size:7px;color:#444;letter-spacing:.08em;text-transform:uppercase;font-family:'Barlow Condensed',sans-serif;margin-bottom:2px;">Nul</div><div style="font-family:'Russo One',sans-serif;font-size:17px;color:#888;">${(1/(m.d/100)*0.9).toFixed(2)}</div></div>
+        <div style="background:rgba(${color.replace('#','').match(/../g).map(x=>parseInt(x,16)).join(',')}, .1);border:1px solid rgba(${color.replace('#','').match(/../g).map(x=>parseInt(x,16)).join(',')}, .25);border-radius:6px;padding:6px;text-align:center;"><div style="font-size:7px;color:${color};letter-spacing:.08em;text-transform:uppercase;font-family:'Barlow Condensed',sans-serif;margin-bottom:2px;">${m.away}</div><div style="font-family:'Russo One',sans-serif;font-size:17px;color:${color};">${(1/(m.l/100)*0.9).toFixed(2)}</div></div>
+      </div>
+      <div style="width:100%;background:rgba(${color.replace('#','').match(/../g).map(x=>parseInt(x,16)).join(',')}, .1);border:1px solid rgba(${color.replace('#','').match(/../g).map(x=>parseInt(x,16)).join(',')}, .2);border-radius:6px;padding:8px;text-align:center;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:800;color:${color};letter-spacing:.12em;text-transform:uppercase;cursor:pointer;">⚡ Lancer l'analyse →</div>
     </div>
   </div>`;
 }
