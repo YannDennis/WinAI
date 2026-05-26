@@ -110,7 +110,7 @@ section{padding:7rem 5%;position:relative;z-index:1;}
 .day-count{font-family:var(--font-cond);font-size:12px;color:var(--gray);letter-spacing:.08em;font-weight:600;}
 .day-live-dot{width:8px;height:8px;background:var(--red);border-radius:50%;animation:livePulse 1.5s infinite;}
 .matches-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1px;background:rgba(255,255,255,.04);border-radius:4px;overflow:hidden;}
-.match-card{background:var(--black-3);padding:1rem 1rem 1.75rem;cursor:pointer;transition:background .2s;position:relative;overflow:hidden;}
+.match-card{background:var(--black-3);padding:1rem 1rem 1.75rem;cursor:pointer;transition:background .2s;position:relative;overflow:hidden;min-height:180px;}
 .match-card::before{content:'';position:absolute;left:0;top:0;width:2px;height:0;background:var(--red);transition:height .3s;}
 .match-card:hover::before{height:100%;}
 .match-card:hover{background:var(--black-4);}
@@ -931,7 +931,7 @@ function makeCard(m){
   const defaultBanners=['https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=800&q=60','https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=800&q=60','https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&q=60'];
   const pool=leagueBanners[m.leagueId]||defaultBanners;
   const banner=pool[m.event_key%pool.length];
-  const cardBg=`background:linear-gradient(rgba(0,0,0,.45),rgba(0,0,0,.45)),url('${banner}') center/cover no-repeat,#0D0D0D;`;
+  const cardBg=`background:linear-gradient(rgba(0,0,0,.35),rgba(0,0,0,.35)),url('${banner}') center/cover no-repeat,#0D0D0D;`;
   return`<div class="match-card" onclick="selectAndScroll(${idx})" style="${cardBg}">
     <div style="padding:8px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.04);">
       <span style="font-family:var(--font-cond);font-size:9px;font-weight:800;color:#00D4FF;text-shadow:0 0 6px rgba(0,212,255,.4);letter-spacing:.14em;text-transform:uppercase;display:flex;align-items:center;">${leagueLogoImg}${m.league}${liveBadge}</span>
@@ -940,14 +940,14 @@ function makeCard(m){
     <div style="padding:14px 12px 10px;">
       <div class="mc-teams">
         <div class="mc-team">
-          <img src="${m.homeLogo}" alt="${m.home}" onerror="this.innerText='${m.home.slice(0,3).toUpperCase()}'" style="width:52px;height:52px;border-radius:50%;object-fit:contain;background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.12);padding:5px;">
+          <img src="${m.homeLogo}" alt="${m.home}" onerror="this.innerText='${m.home.slice(0,3).toUpperCase()}'" style="width:60px;height:60px;border-radius:50%;object-fit:contain;background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.12);padding:5px;">
           <div style="font-family:var(--font-display);font-size:12px;color:var(--white);text-align:center;">${m.home.length>12?m.home.substring(0,12)+'…':m.home}</div>
         </div>
         <div style="display:flex;flex-direction:column;align-items:center;gap:3px;">
           <div style="font-family:var(--font-cond);font-size:10px;color:${isLive?'#ff4444':'#00D4FF'};letter-spacing:2px;font-weight:700;">${statusLabel}</div>
         </div>
         <div class="mc-team">
-          <img src="${m.awayLogo}" alt="${m.away}" onerror="this.innerText='${m.away.slice(0,3).toUpperCase()}'" style="width:52px;height:52px;border-radius:50%;object-fit:contain;background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.12);padding:5px;">
+          <img src="${m.awayLogo}" alt="${m.away}" onerror="this.innerText='${m.away.slice(0,3).toUpperCase()}'" style="width:60px;height:60px;border-radius:50%;object-fit:contain;background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.12);padding:5px;">
           <div style="font-family:var(--font-display);font-size:12px;color:var(--white);text-align:center;">${m.away.length>12?m.away.substring(0,12)+'…':m.away}</div>
         </div>
       </div>
