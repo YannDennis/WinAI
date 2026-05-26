@@ -129,19 +129,24 @@ module.exports = async function(req, res) {
     return true;
   });
 
-  // Fetch player photos from TheSportsDB (1 requête par équipe unique)
+  // Fetch player photos + team banners from TheSportsDB (en parallèle, 1 paire par équipe unique)
   const teamPhotoMap = {};
+  const teamBannerMap = {};
   const uniqueTeams = new Set();
   uniqueMatches.forEach(m => {
     if (m.event_home_team) uniqueTeams.add(m.event_home_team);
     if (m.event_away_team) uniqueTeams.add(m.event_away_team);
   });
   await Promise.all([...uniqueTeams].map(async team => {
-    const data = await fetchUrl(
-      `https://www.thesportsdb.com/api/v1/json/3/searchplayers.php?t=${encodeURIComponent(team)}`
-    );
-    const photo = data?.player?.[0]?.strThumb || null;
+    const enc = encodeURIComponent(team);
+    const [playerData, teamData] = await Promise.all([
+      fetchUrl(`https://www.thesportsdb.com/api/v1/json/3/searchplayers.php?t=${enc}`),
+      fetchUrl(`https://www.thesportsdb.com/api/v1/json/3/searchteams.php?t=${enc}`),
+    ]);
+    const photo = playerData?.player?.[0]?.strThumb || null;
     if (photo) teamPhotoMap[team] = photo;
+    const banner = teamData?.teams?.[0]?.strStadiumThumb || teamData?.teams?.[0]?.strTeamBanner || null;
+    if (banner) teamBannerMap[team] = banner;
   }));
 
   // Fetch H2H for each unique match pair in parallel
@@ -170,6 +175,8 @@ module.exports = async function(req, res) {
     h2h: h2hMap[`${m.home_team_key}_${m.away_team_key}`] || [],
     home_player_photo: teamPhotoMap[m.event_home_team] || null,
     away_player_photo: teamPhotoMap[m.event_away_team] || null,
+    home_team_banner: teamBannerMap[m.event_home_team] || null,
+    away_team_banner: teamBannerMap[m.event_away_team] || null,
   }));
 
   console.log('LEAGUES TEST:', JSON.stringify(allMatches.slice(0,3).map(m=>({league:m.league_name, leagueId:m.league_key}))));

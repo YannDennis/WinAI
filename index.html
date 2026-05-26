@@ -927,8 +927,8 @@ function makeCard(m){
   const margin=0.90;
   const coteH=m.w>0?(1/(m.w/100)*margin).toFixed(2):'—';
   const leagueLogoImg=m.leagueLogo?`<img src="${m.leagueLogo}" alt="" style="width:14px;height:14px;object-fit:contain;margin-right:5px;vertical-align:middle;opacity:.8;">`:'';
-  const hp=m.home_player_photo||'';const ap=m.away_player_photo||'';
-  const cardBg=(hp||ap)?`background:linear-gradient(to right,rgba(10,10,10,.95) 0%,rgba(10,10,10,.6) 30%,rgba(10,10,10,.6) 70%,rgba(10,10,10,.95) 100%)${hp?`,url('${hp}') left center/auto 120% no-repeat`:''}${ap?`,url('${ap}') right center/auto 120% no-repeat`:''},#0D0D0D;`:'';
+  const banner=m.home_team_banner||'';
+  const cardBg=banner?`background:linear-gradient(rgba(0,0,0,.65),rgba(0,0,0,.65)),url('${banner}') center/cover no-repeat,#0D0D0D;`:'';
   return`<div class="match-card" onclick="selectAndScroll(${idx})" style="${cardBg}">
     <div style="padding:8px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.04);">
       <span style="font-family:var(--font-cond);font-size:9px;font-weight:800;color:#00D4FF;text-shadow:0 0 6px rgba(0,212,255,.4);letter-spacing:.14em;text-transform:uppercase;display:flex;align-items:center;">${leagueLogoImg}${m.league}${liveBadge}</span>
