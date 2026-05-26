@@ -927,8 +927,11 @@ function makeCard(m){
   const margin=0.90;
   const coteH=m.w>0?(1/(m.w/100)*margin).toFixed(2):'—';
   const leagueLogoImg=m.leagueLogo?`<img src="${m.leagueLogo}" alt="" style="width:14px;height:14px;object-fit:contain;margin-right:5px;vertical-align:middle;opacity:.8;">`:'';
-  const banner=m.home_team_banner||'';
-  const cardBg=banner?`background:linear-gradient(rgba(0,0,0,.65),rgba(0,0,0,.65)),url('${banner}') center/cover no-repeat,#0D0D0D;`:'';
+  const leagueBanners={168:['https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=800&q=60','https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=800&q=60','https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=800&q=60'],152:['https://images.unsplash.com/photo-1540747913346-19378e0a3f81?w=800&q=60','https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&q=60','https://images.unsplash.com/photo-1553778263-73a83bab9b0c?w=800&q=60'],3:['https://images.unsplash.com/photo-1569517282132-25d22f4573e6?w=800&q=60','https://images.unsplash.com/photo-1551854838-212c50b4c184?w=800&q=60','https://images.unsplash.com/photo-1563209259-2a4e8a8c8b6e?w=800&q=60'],175:['https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=800&q=60','https://images.unsplash.com/photo-1486286701208-1d58e9338013?w=800&q=60','https://images.unsplash.com/photo-1521537634581-0dced2fee2ef?w=800&q=60'],207:['https://images.unsplash.com/photo-1551854838-212c50b4c184?w=800&q=60','https://images.unsplash.com/photo-1560272564-c83b66b1ad12?w=800&q=60','https://images.unsplash.com/photo-1484482340112-e1e2682b4856?w=800&q=60']};
+  const defaultBanners=['https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=800&q=60','https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=800&q=60','https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&q=60'];
+  const pool=leagueBanners[m.leagueId]||defaultBanners;
+  const banner=pool[m.event_key%pool.length];
+  const cardBg=`background:linear-gradient(rgba(0,0,0,.72),rgba(0,0,0,.72)),url('${banner}') center/cover no-repeat,#0D0D0D;`;
   return`<div class="match-card" onclick="selectAndScroll(${idx})" style="${cardBg}">
     <div style="padding:8px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.04);">
       <span style="font-family:var(--font-cond);font-size:9px;font-weight:800;color:#00D4FF;text-shadow:0 0 6px rgba(0,212,255,.4);letter-spacing:.14em;text-transform:uppercase;display:flex;align-items:center;">${leagueLogoImg}${m.league}${liveBadge}</span>
