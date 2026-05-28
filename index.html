@@ -105,33 +105,12 @@ section{padding:7rem 5%;position:relative;z-index:1;}
 .s-title{font-family:var(--font-display);font-size:clamp(3rem,6vw,5.5rem);line-height:.92;margin-bottom:1.5rem;}
 .s-sub{font-size:15px;color:var(--gray-3);max-width:480px;line-height:1.8;}
 .divider{height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.06),transparent);margin:0 5%;}
-#matchs{background:var(--black-2);}
-.day-section{margin-top:2rem;}
-.day-header{font-family:var(--font-display);font-size:32px;letter-spacing:1px;color:var(--white);margin-bottom:1rem;display:flex;align-items:center;gap:12px;}
-.day-count{font-family:var(--font-cond);font-size:12px;color:var(--gray);letter-spacing:.08em;font-weight:600;}
+#matchs{background:#F8F8F8;padding:0;}
+.day-section{margin-top:0;padding-top:8px;}
+.day-header{font-family:var(--font-display);font-size:20px;letter-spacing:1px;margin-bottom:.75rem;display:flex;align-items:center;gap:10px;}
+.day-count{font-family:var(--font-cond);font-size:10px;letter-spacing:.08em;font-weight:700;padding:2px 10px;border-radius:10px;}
 .day-live-dot{width:8px;height:8px;background:var(--red);border-radius:50%;animation:livePulse 1.5s infinite;}
-.matches-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.match-card { border-radius: 12px; overflow: hidden; cursor: pointer; border: 1px solid rgba(255,255,255,.07); transition: all .2s; background: #111; }
-.match-card:hover { transform: translateY(-3px); border-color: rgba(255,255,255,.14); }
-.mc-photo { height: 170px; position: relative; overflow: hidden; }
-.mc-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.mc-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,.25) 0%, rgba(0,0,0,.88) 100%); }
-.mc-league { position: absolute; top: 10px; left: 12px; display: flex; align-items: center; gap: 5px; }
-.mc-league-dot { width: 5px; height: 5px; border-radius: 50%; }
-.mc-league-name { font-size: 8px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; background: rgba(0,0,0,.5); padding: 2px 7px; border-radius: 3px; }
-.mc-time { position: absolute; top: 8px; right: 12px; font-family: 'Russo One', sans-serif; font-size: 16px; color: #fff; background: rgba(0,0,0,.5); padding: 2px 8px; border-radius: 3px; }
-.mc-teams { position: absolute; bottom: 0; left: 0; right: 0; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; }
-.mc-team { display: flex; align-items: center; gap: 8px; }
-.mc-team-right { flex-direction: row-reverse; }
-.mc-logo { width: 40px; height: 40px; border-radius: 50%; object-fit: contain; background: rgba(255,255,255,.1); border: 2px solid rgba(255,255,255,.2); padding: 3px; flex-shrink: 0; }
-.mc-name { font-family: 'Russo One', sans-serif; font-size: 12px; color: #fff; text-shadow: 0 2px 6px rgba(0,0,0,.9); }
-.mc-vs { font-family: 'Russo One', sans-serif; font-size: 14px; color: rgba(255,255,255,.15); }
-.mc-bottom { background: #111; padding: 10px 14px; }
-.mc-odds { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; margin-bottom: 8px; }
-.mc-odd { border-radius: 5px; padding: 6px 4px; text-align: center; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.06); }
-.mc-odd-label { font-size: 7px; color: #444; letter-spacing: .08em; text-transform: uppercase; font-family: 'Barlow Condensed', sans-serif; margin-bottom: 2px; }
-.mc-odd-value { font-family: 'Russo One', sans-serif; font-size: 16px; color: #888; }
-.mc-cta { width: 100%; border-radius: 5px; padding: 8px; text-align: center; font-family: 'Barlow Condensed', sans-serif; font-size: 10px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; cursor: pointer; border: none; }
+.matches-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 #prono{background:var(--black);}
 .workflow-wrap{max-width:640px;margin:3rem auto 0;}
 .steps-bar{display:flex;align-items:center;margin-bottom:2.5rem;}
@@ -470,10 +449,21 @@ footer{background:var(--black);border-top:1px solid rgba(255,255,255,.04);paddin
 
 <!-- MATCHS -->
 <section id="matchs">
-  <div class="s-label">Live & À venir</div>
-  <div class="s-title reveal">MATCHS<br>DU JOUR</div>
-  <p class="s-sub reveal">Clique sur un match pour lancer l'analyse en un clic.</p>
-  <div id="allMatchesGrid"></div>
+  <div style="background:#E8182C;padding:28px 24px 20px;position:relative;overflow:hidden;">
+    <div style="position:absolute;right:-40px;top:-40px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.06);"></div>
+    <div style="font-size:9px;font-weight:800;color:rgba(255,255,255,.5);letter-spacing:.2em;text-transform:uppercase;margin-bottom:6px;">WinAI · Pronostics IA</div>
+    <div style="font-family:'Russo One',sans-serif;font-size:28px;color:#fff;line-height:1.1;margin-bottom:4px;">MATCHS<br>DU JOUR</div>
+    <div style="font-size:11px;color:rgba(255,255,255,.5);">Clique sur un match pour lancer l'analyse</div>
+  </div>
+  <div style="background:#fff;padding:12px 20px;border-bottom:1px solid #F0F0F0;display:flex;gap:8px;overflow-x:auto;">
+    <div style="padding:5px 14px;border-radius:20px;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;background:#E8182C;color:#fff;cursor:pointer;white-space:nowrap;border:none;">Tous</div>
+    <div style="padding:5px 14px;border-radius:20px;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;background:#F5F5F5;color:#AAA;cursor:pointer;white-space:nowrap;border:none;">🇫🇷 Ligue 1</div>
+    <div style="padding:5px 14px;border-radius:20px;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;background:#F5F5F5;color:#AAA;cursor:pointer;white-space:nowrap;border:none;">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League</div>
+    <div style="padding:5px 14px;border-radius:20px;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;background:#F5F5F5;color:#AAA;cursor:pointer;white-space:nowrap;border:none;">⭐ Champions League</div>
+    <div style="padding:5px 14px;border-radius:20px;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;background:#F5F5F5;color:#AAA;cursor:pointer;white-space:nowrap;border:none;">🇩🇪 Bundesliga</div>
+    <div style="padding:5px 14px;border-radius:20px;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;background:#F5F5F5;color:#AAA;cursor:pointer;white-space:nowrap;border:none;">🇮🇹 Serie A</div>
+  </div>
+  <div id="allMatchesGrid" style="padding:20px;"></div>
 </section>
 
 <div class="divider"></div>
@@ -923,9 +913,8 @@ function getDayLabel(m){return m.dayLabel||'Cette semaine';}
 
 function makeCard(m) {
   const idx = matches.indexOf(m);
-  const leagueColors = {168:'#E8182C',152:'#A855F7',3:'#60A5FA',302:'#F97316',207:'#3B82F6',175:'#EF4444',4:'#F59E0B',683:'#10B981',164:'#E8182C',171:'#EF4444',206:'#3B82F6',301:'#F97316',266:'#10B981',153:'#A855F7'};
-  const color = leagueColors[m.leagueId] || '#888888';
-  const r = parseInt(color.slice(1,3),16), g = parseInt(color.slice(3,5),16), b = parseInt(color.slice(5,7),16);
+  const leagueColors = {168:'#E8182C',152:'#7C3AED',3:'#1E40AF',302:'#EA580C',207:'#1D4ED8',175:'#DC2626',4:'#D97706',683:'#059669',164:'#E8182C',171:'#DC2626',206:'#1D4ED8',301:'#EA580C',266:'#059669',153:'#7C3AED'};
+  const color = leagueColors[m.leagueId] || '#E8182C';
 
   const pool = {
     168:['https://images.pexels.com/photos/274422/pexels-photo-274422.jpeg?auto=compress&cs=tinysrgb&w=600','https://images.pexels.com/photos/431991/pexels-photo-431991.jpeg?auto=compress&cs=tinysrgb&w=600'],
@@ -945,43 +934,46 @@ function makeCard(m) {
   const homeWins = m.w > m.l;
   const awayWins = m.l > m.w;
 
-  return `<div class="match-card" onclick="selectAndScroll(${idx})">
-    <div class="mc-photo">
-      <img src="${bg}" alt="match" loading="lazy">
-      <div class="mc-overlay"></div>
-      <div class="mc-league">
-        <div class="mc-league-dot" style="background:${color};"></div>
-        <div class="mc-league-name" style="color:${color};">${m.league}</div>
-      </div>
-      <div class="mc-time">${m.time}</div>
-      <div class="mc-teams">
-        <div class="mc-team">
-          <img class="mc-logo" src="${m.homeLogo}" onerror="this.style.display='none'">
-          <div class="mc-name">${m.home}</div>
+  const r = parseInt(color.slice(1,3),16);
+  const g = parseInt(color.slice(3,5),16);
+  const b = parseInt(color.slice(5,7),16);
+  const colorLight = `rgba(${r},${g},${b},.08)`;
+  const colorBorder = `rgba(${r},${g},${b},.25)`;
+
+  return `<div onclick="selectAndScroll(${idx})" style="background:#fff;border-radius:12px;overflow:hidden;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.06);transition:all .2s;border:1px solid #F0F0F0;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,.1)'" onmouseout="this.style.transform='none';this.style.boxShadow='0 1px 4px rgba(0,0,0,.06)'">
+    <div style="height:150px;position:relative;overflow:hidden;">
+      <img src="${bg}" alt="match" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;">
+      <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.1) 0%,rgba(0,0,0,.75) 100%);"></div>
+      <div style="position:absolute;top:10px;left:10px;background:${color};color:#fff;font-size:8px;font-weight:800;padding:3px 8px;border-radius:3px;letter-spacing:.1em;text-transform:uppercase;font-family:'Barlow Condensed',sans-serif;">${m.league}</div>
+      <div style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,.5);color:#fff;font-family:'Russo One',sans-serif;font-size:14px;padding:2px 8px;border-radius:3px;">${m.time}</div>
+      <div style="position:absolute;bottom:0;left:0;right:0;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:7px;">
+          <img src="${m.homeLogo}" onerror="this.style.display='none'" style="width:36px;height:36px;border-radius:50%;object-fit:contain;background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.3);padding:2px;flex-shrink:0;">
+          <div style="font-family:'Russo One',sans-serif;font-size:11px;color:#fff;text-shadow:0 2px 4px rgba(0,0,0,.8);">${m.home}</div>
         </div>
-        <div class="mc-vs">VS</div>
-        <div class="mc-team mc-team-right">
-          <img class="mc-logo" src="${m.awayLogo}" onerror="this.style.display='none'">
-          <div class="mc-name">${m.away}</div>
+        <div style="font-family:'Russo One',sans-serif;font-size:12px;color:rgba(255,255,255,.2);">VS</div>
+        <div style="display:flex;align-items:center;gap:7px;flex-direction:row-reverse;">
+          <img src="${m.awayLogo}" onerror="this.style.display='none'" style="width:36px;height:36px;border-radius:50%;object-fit:contain;background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.3);padding:2px;flex-shrink:0;">
+          <div style="font-family:'Russo One',sans-serif;font-size:11px;color:#fff;text-shadow:0 2px 4px rgba(0,0,0,.8);">${m.away}</div>
         </div>
       </div>
     </div>
-    <div class="mc-bottom">
-      <div class="mc-odds">
-        <div class="mc-odd" style="${homeWins ? `background:rgba(${r},${g},${b},.1);border-color:rgba(${r},${g},${b},.25);` : ''}">
-          <div class="mc-odd-label" style="${homeWins ? `color:${color};` : ''}">${m.home.slice(0,8)}</div>
-          <div class="mc-odd-value" style="${homeWins ? `color:${color};` : ''}">${homeCote}</div>
+    <div style="padding:10px 12px;background:#fff;">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;margin-bottom:8px;">
+        <div style="border-radius:6px;padding:6px 4px;text-align:center;background:${homeWins ? colorLight : '#F8F8F8'};border:1px solid ${homeWins ? colorBorder : '#EEE'};">
+          <div style="font-size:7px;color:${homeWins ? color : '#AAA'};letter-spacing:.08em;text-transform:uppercase;font-family:'Barlow Condensed',sans-serif;margin-bottom:2px;">${m.home.slice(0,7)}</div>
+          <div style="font-family:'Russo One',sans-serif;font-size:15px;color:${homeWins ? color : '#333'};">${homeCote}</div>
         </div>
-        <div class="mc-odd">
-          <div class="mc-odd-label">Nul</div>
-          <div class="mc-odd-value">${drawCote}</div>
+        <div style="border-radius:6px;padding:6px 4px;text-align:center;background:#F8F8F8;border:1px solid #EEE;">
+          <div style="font-size:7px;color:#AAA;letter-spacing:.08em;text-transform:uppercase;font-family:'Barlow Condensed',sans-serif;margin-bottom:2px;">Nul</div>
+          <div style="font-family:'Russo One',sans-serif;font-size:15px;color:#333;">${drawCote}</div>
         </div>
-        <div class="mc-odd" style="${awayWins ? `background:rgba(${r},${g},${b},.1);border-color:rgba(${r},${g},${b},.25);` : ''}">
-          <div class="mc-odd-label" style="${awayWins ? `color:${color};` : ''}">${m.away.slice(0,8)}</div>
-          <div class="mc-odd-value" style="${awayWins ? `color:${color};` : ''}">${awayCote}</div>
+        <div style="border-radius:6px;padding:6px 4px;text-align:center;background:${awayWins ? colorLight : '#F8F8F8'};border:1px solid ${awayWins ? colorBorder : '#EEE'};">
+          <div style="font-size:7px;color:${awayWins ? color : '#AAA'};letter-spacing:.08em;text-transform:uppercase;font-family:'Barlow Condensed',sans-serif;margin-bottom:2px;">${m.away.slice(0,7)}</div>
+          <div style="font-family:'Russo One',sans-serif;font-size:15px;color:${awayWins ? color : '#333'};">${awayCote}</div>
         </div>
       </div>
-      <button class="mc-cta" style="background:rgba(${r},${g},${b},.08);border:1px solid rgba(${r},${g},${b},.2);color:${color};">⚡ Lancer l'analyse →</button>
+      <button style="width:100%;background:${color};color:#fff;border:none;border-radius:6px;padding:8px;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;">⚡ Lancer l'analyse →</button>
     </div>
   </div>`;
 }
@@ -1001,10 +993,11 @@ function renderAll(){
     const leagueHTML=sortedLeagues.map(league=>{
       const lItems=leagueGroups[league];const featured=lItems.slice(0,3);const rest=lItems.slice(3);
       const uid=day.replace(/[^a-z0-9]/gi,'_')+league.replace(/[^a-z0-9]/gi,'_');
-      const restHTML=rest.length>0?`<div id="more_${uid}" style="display:none;grid-column:1/-1;"><div class="matches-grid">${rest.map(makeCard).join('')}</div></div><div style="grid-column:1/-1;"><button onclick="toggleMore('more_${uid}',this)" style="width:100%;padding:.6rem;background:transparent;border:1px solid rgba(255,255,255,.05);border-radius:2px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;color:#444;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .2s;margin-top:6px;">+ ${rest.length} autre${rest.length>1?'s':''} match${rest.length>1?'s':''} →</button></div>`:'';
-      return`<div style="margin-bottom:1.5rem;"><div style="display:flex;align-items:center;gap:8px;margin-bottom:.75rem;"><div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:800;color:#00D4FF;text-shadow:0 0 6px rgba(0,212,255,.4);letter-spacing:.16em;text-transform:uppercase;">${league}</div><div style="flex:1;height:1px;background:rgba(0,212,255,.1);"></div><div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;color:#333;font-weight:700;">${lItems.length} match${lItems.length>1?'s':''}</div></div><div class="matches-grid">${featured.map(makeCard).join('')}${restHTML}</div></div>`;
+      const restHTML=rest.length>0?`<div id="more_${uid}" style="display:none;grid-column:1/-1;"><div class="matches-grid">${rest.map(makeCard).join('')}</div></div><div style="grid-column:1/-1;"><button onclick="toggleMore('more_${uid}',this)" style="width:100%;padding:.6rem;background:#fff;border:1px solid #EEE;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;color:#AAA;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .2s;margin-top:6px;">+ ${rest.length} autre${rest.length>1?'s':''} match${rest.length>1?'s':''} →</button></div>`:'';
+      return`<div style="margin-bottom:1.5rem;"><div style="display:flex;align-items:center;gap:8px;margin-bottom:.75rem;"><div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:800;color:#E8182C;letter-spacing:.16em;text-transform:uppercase;">${league}</div><div style="flex:1;height:1px;background:#EEE;"></div><div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;color:#AAA;font-weight:700;">${lItems.length} match${lItems.length>1?'s':''}</div></div><div class="matches-grid">${featured.map(makeCard).join('')}${restHTML}</div></div>`;
     }).join('');
-    return`<div class="day-section"><div class="day-header">${isToday?'<div class="day-live-dot"></div>':''}${day}<span class="day-count">${dayItems.length} match${dayItems.length>1?'s':''}</span></div>${leagueHTML}</div>`;
+    const dayTextColor=isToday?'#111':'#AAA';const badgeBg=isToday?'#E8182C':'#EEE';const badgeColor=isToday?'#fff':'#AAA';
+    return`<div class="day-section"><div class="day-header" style="color:${dayTextColor};">${isToday?'<div class="day-live-dot"></div>':''}${day}<span class="day-count" style="background:${badgeBg};color:${badgeColor};">${dayItems.length} match${dayItems.length>1?'s':''}</span></div>${leagueHTML}</div>`;
   }).join('');
   updateHero(filtered);
   const todayM=filtered.filter(m=>getDayLabel(m)==="Aujourd'hui").slice(0,6);
