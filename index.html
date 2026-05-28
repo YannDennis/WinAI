@@ -899,12 +899,12 @@ async function fetchMatches(){
 
 function useFallback(){
   matches=[
-    {home:'Paris FC',away:'PSG',league:'Ligue 1',date:'Dim 18 mai',dayLabel:'Aujourd\'hui',time:'21:00',status:'NS',homeGoals:null,awayGoals:null,homeLogo:'https://media.api-sports.io/football/teams/569.png',awayLogo:'https://media.api-sports.io/football/teams/85.png',sport:'Football',w:20,d:20,l:60},
-    {home:'Lille',away:'Auxerre',league:'Ligue 1',date:'Dim 18 mai',dayLabel:'Aujourd\'hui',time:'21:00',status:'NS',homeGoals:null,awayGoals:null,homeLogo:'https://media.api-sports.io/football/teams/79.png',awayLogo:'https://media.api-sports.io/football/teams/778.png',sport:'Football',w:70,d:18,l:12},
-    {home:'OM',away:'Rennes',league:'Ligue 1',date:'Dim 18 mai',dayLabel:'Aujourd\'hui',time:'21:00',status:'NS',homeGoals:null,awayGoals:null,homeLogo:'https://media.api-sports.io/football/teams/81.png',awayLogo:'https://media.api-sports.io/football/teams/94.png',sport:'Football',w:47,d:25,l:28},
-    {home:'Man United',away:'Nottm Forest',league:'Premier League',date:'Dim 18 mai',dayLabel:'Aujourd\'hui',time:'13:30',status:'NS',homeGoals:null,awayGoals:null,homeLogo:'https://media.api-sports.io/football/teams/33.png',awayLogo:'https://media.api-sports.io/football/teams/65.png',sport:'Football',w:59,d:22,l:19},
-    {home:'Arsenal',away:'Burnley',league:'Premier League',date:'Lun 19 mai',dayLabel:'Demain',time:'21:00',status:'NS',homeGoals:null,awayGoals:null,homeLogo:'https://media.api-sports.io/football/teams/42.png',awayLogo:'https://media.api-sports.io/football/teams/44.png',sport:'Football',w:90,d:7,l:3},
-    {home:'Real Madrid',away:'Barcelone',league:'La Liga',date:'Mar 20 mai',dayLabel:'Cette semaine',time:'21:00',status:'NS',homeGoals:null,awayGoals:null,homeLogo:'https://media.api-sports.io/football/teams/541.png',awayLogo:'https://media.api-sports.io/football/teams/529.png',sport:'Football',w:45,d:25,l:30},
+    {home:'Paris FC',away:'PSG',leagueId:168,league:'Ligue 1',date:'Dim 18 mai',dayLabel:'Aujourd\'hui',time:'21:00',status:'NS',homeGoals:null,awayGoals:null,homeLogo:'https://media.api-sports.io/football/teams/569.png',awayLogo:'https://media.api-sports.io/football/teams/85.png',sport:'Football',w:20,d:20,l:60},
+    {home:'Lille',away:'Auxerre',leagueId:168,league:'Ligue 1',date:'Dim 18 mai',dayLabel:'Aujourd\'hui',time:'21:00',status:'NS',homeGoals:null,awayGoals:null,homeLogo:'https://media.api-sports.io/football/teams/79.png',awayLogo:'https://media.api-sports.io/football/teams/778.png',sport:'Football',w:70,d:18,l:12},
+    {home:'OM',away:'Rennes',leagueId:168,league:'Ligue 1',date:'Dim 18 mai',dayLabel:'Aujourd\'hui',time:'21:00',status:'NS',homeGoals:null,awayGoals:null,homeLogo:'https://media.api-sports.io/football/teams/81.png',awayLogo:'https://media.api-sports.io/football/teams/94.png',sport:'Football',w:47,d:25,l:28},
+    {home:'Man United',away:'Nottm Forest',leagueId:207,league:'Premier League',date:'Dim 18 mai',dayLabel:'Aujourd\'hui',time:'13:30',status:'NS',homeGoals:null,awayGoals:null,homeLogo:'https://media.api-sports.io/football/teams/33.png',awayLogo:'https://media.api-sports.io/football/teams/65.png',sport:'Football',w:59,d:22,l:19},
+    {home:'Arsenal',away:'Burnley',leagueId:207,league:'Premier League',date:'Lun 19 mai',dayLabel:'Demain',time:'21:00',status:'NS',homeGoals:null,awayGoals:null,homeLogo:'https://media.api-sports.io/football/teams/42.png',awayLogo:'https://media.api-sports.io/football/teams/44.png',sport:'Football',w:90,d:7,l:3},
+    {home:'Real Madrid',away:'Barcelone',leagueId:302,league:'La Liga',date:'Mar 20 mai',dayLabel:'Cette semaine',time:'21:00',status:'NS',homeGoals:null,awayGoals:null,homeLogo:'https://media.api-sports.io/football/teams/541.png',awayLogo:'https://media.api-sports.io/football/teams/529.png',sport:'Football',w:45,d:25,l:30},
   ];
   renderAll();
 }
@@ -926,7 +926,7 @@ function makeCard(m) {
   };
   const defaults = ['https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Estadio_del_FC_Barcelona%2C_Camp_Nou.jpg/800px-Estadio_del_FC_Barcelona%2C_Camp_Nou.jpg','https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Anfield_Liverpool.jpg/800px-Anfield_Liverpool.jpg','https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Olympiastadion_Berlin_2006.jpg/800px-Olympiastadion_Berlin_2006.jpg','https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Parc_des_Princes_septembre_2021.jpg/800px-Parc_des_Princes_septembre_2021.jpg'];
   const imgs = pool[m.leagueId] || defaults;
-  const bg = imgs[m.event_key % imgs.length];
+  const bg = imgs[idx % imgs.length];
 
   const homeCote = m.w > 0 ? (1/(m.w/100)*0.9).toFixed(2) : '—';
   const drawCote = m.d > 0 ? (1/(m.d/100)*0.9).toFixed(2) : '—';
