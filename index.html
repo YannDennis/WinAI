@@ -917,14 +917,14 @@ function makeCard(m) {
   const color = leagueColors[m.leagueId] || '#E8182C';
 
   const pool = {
-    168:['https://images.pexels.com/photos/274422/pexels-photo-274422.jpeg?auto=compress&cs=tinysrgb&w=600','https://images.pexels.com/photos/431991/pexels-photo-431991.jpeg?auto=compress&cs=tinysrgb&w=600'],
-    152:['https://images.pexels.com/photos/1884574/pexels-photo-1884574.jpeg?auto=compress&cs=tinysrgb&w=600','https://images.pexels.com/photos/3148452/pexels-photo-3148452.jpeg?auto=compress&cs=tinysrgb&w=600'],
-    3:['https://images.pexels.com/photos/46798/the-ball-stadion-football-the-pitch-46798.jpeg?auto=compress&cs=tinysrgb&w=600','https://images.pexels.com/photos/1618200/pexels-photo-1618200.jpeg?auto=compress&cs=tinysrgb&w=600'],
-    175:['https://images.pexels.com/photos/1618200/pexels-photo-1618200.jpeg?auto=compress&cs=tinysrgb&w=600','https://images.pexels.com/photos/274422/pexels-photo-274422.jpeg?auto=compress&cs=tinysrgb&w=600'],
-    207:['https://images.pexels.com/photos/46798/the-ball-stadion-football-the-pitch-46798.jpeg?auto=compress&cs=tinysrgb&w=600','https://images.pexels.com/photos/1884574/pexels-photo-1884574.jpeg?auto=compress&cs=tinysrgb&w=600'],
-    302:['https://images.pexels.com/photos/431991/pexels-photo-431991.jpeg?auto=compress&cs=tinysrgb&w=600','https://images.pexels.com/photos/1618200/pexels-photo-1618200.jpeg?auto=compress&cs=tinysrgb&w=600'],
+    168:['https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Parc_des_Princes_septembre_2021.jpg/800px-Parc_des_Princes_septembre_2021.jpg','https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Estadio_del_FC_Barcelona%2C_Camp_Nou.jpg/800px-Estadio_del_FC_Barcelona%2C_Camp_Nou.jpg'],
+    152:['https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Parc_des_Princes_septembre_2021.jpg/800px-Parc_des_Princes_septembre_2021.jpg','https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Anfield_Liverpool.jpg/800px-Anfield_Liverpool.jpg'],
+    3:['https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Estadio_del_FC_Barcelona%2C_Camp_Nou.jpg/800px-Estadio_del_FC_Barcelona%2C_Camp_Nou.jpg','https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Anfield_Liverpool.jpg/800px-Anfield_Liverpool.jpg'],
+    175:['https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Anfield_Liverpool.jpg/800px-Anfield_Liverpool.jpg','https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Parc_des_Princes_septembre_2021.jpg/800px-Parc_des_Princes_septembre_2021.jpg'],
+    207:['https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Anfield_Liverpool.jpg/800px-Anfield_Liverpool.jpg','https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Olympiastadion_Berlin_2006.jpg/800px-Olympiastadion_Berlin_2006.jpg'],
+    302:['https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Olympiastadion_Berlin_2006.jpg/800px-Olympiastadion_Berlin_2006.jpg','https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Estadio_del_FC_Barcelona%2C_Camp_Nou.jpg/800px-Estadio_del_FC_Barcelona%2C_Camp_Nou.jpg'],
   };
-  const defaults = ['https://images.pexels.com/photos/274422/pexels-photo-274422.jpeg?auto=compress&cs=tinysrgb&w=600','https://images.pexels.com/photos/46798/the-ball-stadion-football-the-pitch-46798.jpeg?auto=compress&cs=tinysrgb&w=600','https://images.pexels.com/photos/1884574/pexels-photo-1884574.jpeg?auto=compress&cs=tinysrgb&w=600','https://images.pexels.com/photos/1618200/pexels-photo-1618200.jpeg?auto=compress&cs=tinysrgb&w=600'];
+  const defaults = ['https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Estadio_del_FC_Barcelona%2C_Camp_Nou.jpg/800px-Estadio_del_FC_Barcelona%2C_Camp_Nou.jpg','https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Anfield_Liverpool.jpg/800px-Anfield_Liverpool.jpg','https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Olympiastadion_Berlin_2006.jpg/800px-Olympiastadion_Berlin_2006.jpg','https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Parc_des_Princes_septembre_2021.jpg/800px-Parc_des_Princes_septembre_2021.jpg'];
   const imgs = pool[m.leagueId] || defaults;
   const bg = imgs[m.event_key % imgs.length];
 
