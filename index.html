@@ -110,24 +110,28 @@ section{padding:7rem 5%;position:relative;z-index:1;}
 .day-header{font-family:var(--font-display);font-size:32px;letter-spacing:1px;color:var(--white);margin-bottom:1rem;display:flex;align-items:center;gap:12px;}
 .day-count{font-family:var(--font-cond);font-size:12px;color:var(--gray);letter-spacing:.08em;font-weight:600;}
 .day-live-dot{width:8px;height:8px;background:var(--red);border-radius:50%;animation:livePulse 1.5s infinite;}
-.matches-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.match-card{border-radius:14px;overflow:hidden;cursor:pointer;border:1px solid rgba(255,255,255,.08);transition:transform .15s;}
-.match-card:hover{transform:translateY(-3px);}
-.mc-league{font-family:var(--font-cond);font-size:9px;font-weight:700;color:var(--red);letter-spacing:.14em;text-transform:uppercase;margin-bottom:.75rem;display:flex;align-items:center;justify-content:space-between;}
-.mc-live{font-size:8px;color:var(--red);background:rgba(232,24,44,.1);padding:2px 7px;border-radius:2px;animation:livePulse 1.5s infinite;}
-.mc-teams{display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem;}
-.mc-team{display:flex;flex-direction:column;align-items:center;gap:5px;flex:1;}
-.mc-team img{width:38px;height:38px;object-fit:contain;filter:drop-shadow(0 2px 6px rgba(0,0,0,.5));transition:transform .2s;}
-.match-card:hover .mc-team img{transform:scale(1.08);}
-.mc-team-name{font-family:var(--font-display);font-size:12px;text-align:center;}
-.mc-vs{font-family:var(--font-cond);font-size:9px;color:var(--gray);padding:3px 8px;border:1px solid var(--black-5);font-weight:700;}
-.mc-bars{display:flex;gap:2px;height:2px;margin:.5rem 0 3px;}
-.mc-bar{border-radius:1px;}
-.mc-w{background:var(--red);}.mc-d{background:var(--gray);}.mc-l{background:var(--black-5);}
-.mc-probs{display:flex;justify-content:space-between;}
-.mc-prob{font-family:var(--font-cond);font-size:9px;color:var(--gray);font-weight:600;}
-.mc-cta{position:absolute;bottom:0;left:0;right:0;background:var(--red);color:#fff;font-family:var(--font-cond);font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;text-align:center;padding:5px;opacity:0;transform:translateY(100%);transition:all .2s;}
-.match-card:hover .mc-cta{opacity:1;transform:translateY(0);}
+.matches-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.match-card { border-radius: 12px; overflow: hidden; cursor: pointer; border: 1px solid rgba(255,255,255,.07); transition: all .2s; background: #111; }
+.match-card:hover { transform: translateY(-3px); border-color: rgba(255,255,255,.14); }
+.mc-photo { height: 170px; position: relative; overflow: hidden; }
+.mc-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.mc-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,.25) 0%, rgba(0,0,0,.88) 100%); }
+.mc-league { position: absolute; top: 10px; left: 12px; display: flex; align-items: center; gap: 5px; }
+.mc-league-dot { width: 5px; height: 5px; border-radius: 50%; }
+.mc-league-name { font-size: 8px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; background: rgba(0,0,0,.5); padding: 2px 7px; border-radius: 3px; }
+.mc-time { position: absolute; top: 8px; right: 12px; font-family: 'Russo One', sans-serif; font-size: 16px; color: #fff; background: rgba(0,0,0,.5); padding: 2px 8px; border-radius: 3px; }
+.mc-teams { position: absolute; bottom: 0; left: 0; right: 0; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; }
+.mc-team { display: flex; align-items: center; gap: 8px; }
+.mc-team-right { flex-direction: row-reverse; }
+.mc-logo { width: 40px; height: 40px; border-radius: 50%; object-fit: contain; background: rgba(255,255,255,.1); border: 2px solid rgba(255,255,255,.2); padding: 3px; flex-shrink: 0; }
+.mc-name { font-family: 'Russo One', sans-serif; font-size: 12px; color: #fff; text-shadow: 0 2px 6px rgba(0,0,0,.9); }
+.mc-vs { font-family: 'Russo One', sans-serif; font-size: 14px; color: rgba(255,255,255,.15); }
+.mc-bottom { background: #111; padding: 10px 14px; }
+.mc-odds { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; margin-bottom: 8px; }
+.mc-odd { border-radius: 5px; padding: 6px 4px; text-align: center; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.06); }
+.mc-odd-label { font-size: 7px; color: #444; letter-spacing: .08em; text-transform: uppercase; font-family: 'Barlow Condensed', sans-serif; margin-bottom: 2px; }
+.mc-odd-value { font-family: 'Russo One', sans-serif; font-size: 16px; color: #888; }
+.mc-cta { width: 100%; border-radius: 5px; padding: 8px; text-align: center; font-family: 'Barlow Condensed', sans-serif; font-size: 10px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; cursor: pointer; border: none; }
 #prono{background:var(--black);}
 .workflow-wrap{max-width:640px;margin:3rem auto 0;}
 .steps-bar{display:flex;align-items:center;margin-bottom:2.5rem;}
@@ -938,45 +942,46 @@ function makeCard(m) {
   const homeCote = m.w > 0 ? (1/(m.w/100)*0.9).toFixed(2) : '—';
   const drawCote = m.d > 0 ? (1/(m.d/100)*0.9).toFixed(2) : '—';
   const awayCote = m.l > 0 ? (1/(m.l/100)*0.9).toFixed(2) : '—';
-
   const homeWins = m.w > m.l;
   const awayWins = m.l > m.w;
 
   return `<div class="match-card" onclick="selectAndScroll(${idx})">
-    <div style="height:160px;position:relative;background:url('${bg}') center/cover no-repeat;">
-      <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.3) 0%,rgba(0,0,0,.85) 100%);"></div>
-      <div style="position:absolute;top:10px;left:12px;right:12px;display:flex;justify-content:space-between;align-items:center;">
-        <span style="font-size:8px;font-weight:800;color:rgba(${r},${g},${b},.9);letter-spacing:.12em;text-transform:uppercase;font-family:'Barlow Condensed',sans-serif;background:rgba(0,0,0,.5);padding:2px 7px;border-radius:3px;">${m.league}</span>
-        <span style="font-family:'Russo One',sans-serif;font-size:15px;color:#fff;background:rgba(0,0,0,.5);padding:2px 8px;border-radius:3px;">${m.time}</span>
+    <div class="mc-photo">
+      <img src="${bg}" alt="match" loading="lazy">
+      <div class="mc-overlay"></div>
+      <div class="mc-league">
+        <div class="mc-league-dot" style="background:${color};"></div>
+        <div class="mc-league-name" style="color:${color};">${m.league}</div>
       </div>
-      <div style="position:absolute;bottom:0;left:0;right:0;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;">
-        <div style="display:flex;align-items:center;gap:8px;">
-          <img src="${m.homeLogo}" onerror="this.style.background='rgba(255,255,255,.1)';this.style.padding='8px'" style="width:42px;height:42px;border-radius:50%;object-fit:contain;background:rgba(255,255,255,.1);border:2px solid rgba(255,255,255,.25);padding:3px;flex-shrink:0;">
-          <div style="font-family:'Russo One',sans-serif;font-size:13px;color:#fff;text-shadow:0 2px 6px rgba(0,0,0,.9);">${m.home}</div>
+      <div class="mc-time">${m.time}</div>
+      <div class="mc-teams">
+        <div class="mc-team">
+          <img class="mc-logo" src="${m.homeLogo}" onerror="this.style.display='none'">
+          <div class="mc-name">${m.home}</div>
         </div>
-        <div style="font-family:'Russo One',sans-serif;font-size:16px;color:rgba(255,255,255,.15);">VS</div>
-        <div style="display:flex;align-items:center;gap:8px;flex-direction:row-reverse;">
-          <img src="${m.awayLogo}" onerror="this.style.background='rgba(255,255,255,.1)';this.style.padding='8px'" style="width:42px;height:42px;border-radius:50%;object-fit:contain;background:rgba(255,255,255,.1);border:2px solid rgba(255,255,255,.25);padding:3px;flex-shrink:0;">
-          <div style="font-family:'Russo One',sans-serif;font-size:13px;color:#fff;text-shadow:0 2px 6px rgba(0,0,0,.9);">${m.away}</div>
+        <div class="mc-vs">VS</div>
+        <div class="mc-team mc-team-right">
+          <img class="mc-logo" src="${m.awayLogo}" onerror="this.style.display='none'">
+          <div class="mc-name">${m.away}</div>
         </div>
       </div>
     </div>
-    <div style="background:#111;padding:10px 14px;">
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-bottom:8px;">
-        <div style="background:${homeWins ? `rgba(${r},${g},${b},.1)` : 'rgba(255,255,255,.04)'};border:1px solid ${homeWins ? `rgba(${r},${g},${b},.25)` : 'rgba(255,255,255,.06)'};border-radius:5px;padding:5px;text-align:center;">
-          <div style="font-size:7px;color:${homeWins ? color : '#444'};letter-spacing:.08em;text-transform:uppercase;font-family:'Barlow Condensed',sans-serif;margin-bottom:2px;">${m.home.slice(0,6)}</div>
-          <div style="font-family:'Russo One',sans-serif;font-size:16px;color:${homeWins ? color : '#888'};">${homeCote}</div>
+    <div class="mc-bottom">
+      <div class="mc-odds">
+        <div class="mc-odd" style="${homeWins ? `background:rgba(${r},${g},${b},.1);border-color:rgba(${r},${g},${b},.25);` : ''}">
+          <div class="mc-odd-label" style="${homeWins ? `color:${color};` : ''}">${m.home.slice(0,8)}</div>
+          <div class="mc-odd-value" style="${homeWins ? `color:${color};` : ''}">${homeCote}</div>
         </div>
-        <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:5px;padding:5px;text-align:center;">
-          <div style="font-size:7px;color:#444;letter-spacing:.08em;text-transform:uppercase;font-family:'Barlow Condensed',sans-serif;margin-bottom:2px;">Nul</div>
-          <div style="font-family:'Russo One',sans-serif;font-size:16px;color:#888;">${drawCote}</div>
+        <div class="mc-odd">
+          <div class="mc-odd-label">Nul</div>
+          <div class="mc-odd-value">${drawCote}</div>
         </div>
-        <div style="background:${awayWins ? `rgba(${r},${g},${b},.1)` : 'rgba(255,255,255,.04)'};border:1px solid ${awayWins ? `rgba(${r},${g},${b},.25)` : 'rgba(255,255,255,.06)'};border-radius:5px;padding:5px;text-align:center;">
-          <div style="font-size:7px;color:${awayWins ? color : '#444'};letter-spacing:.08em;text-transform:uppercase;font-family:'Barlow Condensed',sans-serif;margin-bottom:2px;">${m.away.slice(0,6)}</div>
-          <div style="font-family:'Russo One',sans-serif;font-size:16px;color:${awayWins ? color : '#888'};">${awayCote}</div>
+        <div class="mc-odd" style="${awayWins ? `background:rgba(${r},${g},${b},.1);border-color:rgba(${r},${g},${b},.25);` : ''}">
+          <div class="mc-odd-label" style="${awayWins ? `color:${color};` : ''}">${m.away.slice(0,8)}</div>
+          <div class="mc-odd-value" style="${awayWins ? `color:${color};` : ''}">${awayCote}</div>
         </div>
       </div>
-      <div style="width:100%;background:rgba(${r},${g},${b},.08);border:1px solid rgba(${r},${g},${b},.18);border-radius:5px;padding:7px;text-align:center;font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:800;color:${color};letter-spacing:.12em;text-transform:uppercase;cursor:pointer;">⚡ Analyser →</div>
+      <button class="mc-cta" style="background:rgba(${r},${g},${b},.08);border:1px solid rgba(${r},${g},${b},.2);color:${color};">⚡ Lancer l'analyse →</button>
     </div>
   </div>`;
 }
